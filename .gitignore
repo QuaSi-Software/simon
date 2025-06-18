@@ -4,3 +4,6 @@
 # test files
 test_api.sh
 out.txt
+
+# simulation run data
+sim_api/runs
