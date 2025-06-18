@@ -36,7 +36,6 @@ def _write_temp_json(data: Dict[str, Any]) -> Path:
         json.dump(data, fp)
     return file_path
 
-
 def _run_simulation(input_file: Path) -> subprocess.CompletedProcess[str]:
     """Run the Julia simulation subprocess and capture output."""
     cmd = ["julia", "simulate.jl", str(input_file)]
@@ -47,6 +46,31 @@ def _create_run_dir(run_id: str) -> None:
     os.mkdir(Path(APP_ROOT / "runs" / run_id))
     with open(Path(APP_ROOT / "runs" / run_id / "status"), "w", encoding="utf-8") as file:
         file.write(f"new\n{datetime.now()}")
+
+def _validate_run_id(run_id: str) -> bool:
+    """Validates the given run_id.
+
+    This checks if the ID looks like something created by UUID4 hex representation."""
+    if not run_id or len(run_id) != 32 or not all(c in '0123456789abcdef' for c in str(run_id)):
+        return False
+    return True
+
+def _run_dir_exists(run_id: str) -> bool:
+    """Checks if the run directory exists for the given run_id."""
+    run_dir = Path(APP_ROOT / "runs" / run_id)
+    return run_dir.exists() and run_dir.is_dir()
+
+def _get_run_status(run_id: str) -> tuple[str,str]:
+    """Reads the run status from the status file in the run dir."""
+    status_file = Path(APP_ROOT / "runs" / run_id / "status")
+    if not status_file.exists():
+        return "unknown", "1970-01-01 00:00:00.0"
+
+    with open(status_file, "r", encoding="utf-8") as file:
+        lines = file.readlines()
+        if len(lines) < 2:
+            return "unknown", "1970-01-01 00:00:00.0"
+        return lines[0].strip(), lines[1].strip()
 
 # ---------------------------------------------------------------------------
 # Routes
@@ -66,6 +90,37 @@ def get_run_id():
     run_id = uuid.uuid4().hex
     _create_run_dir(run_id)
     return jsonify({"run_id": run_id}), 200
+
+@app.route('/run_status/<run_id>', methods=['GET'])
+def run_status(run_id):
+    """Endpoint: GET /run_status/<str:run_id>
+
+    Request arguments:
+        - run_id -> str: The ID of the run to which the status is requested
+
+    Response (JSON):
+        {
+            "run_id": "1a2b3c4e5f1a2b3c4e5f1a2b3c4e5f1a", # run ID
+            "code": "new",                                # status code, one of:
+                                                          # [new, waiting, running,
+                                                          # finished, old]
+            "timestamp": "2015-01-01 12:00:00"            # server time (default UTC), when
+                                                          # the status was written
+        }
+    """
+    if not (_validate_run_id(run_id) and _run_dir_exists(run_id)):
+        return jsonify({"error": "Run ID is not valid or run is not set up correctly"}), 500
+
+    status_code, status_ts = _get_run_status(run_id)
+    if status_code == "unknown":
+        return jsonify({"error": "Could not read run status"}), 500
+
+    status_payload = {
+        "run_id": run_id,
+        "code": status_code,
+        "timestamp": status_ts
+    }
+    return jsonify(status_payload), 200
 
 @app.route("/simulate", methods=["POST"])
 def simulate():
