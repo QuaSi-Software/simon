@@ -1,0 +1,6 @@
+# python cache
+*__pycache__
+
+# test files
+test_api.sh
+out.txt

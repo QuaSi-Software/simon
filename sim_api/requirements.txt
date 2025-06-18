@@ -1,0 +1,7 @@
+# requirements.txt
+flask==2.3.3
+# If you plan to use CORS or other Flask extensions later:
+flask-cors==4.0.0
+
+# Optional: for running subprocesses or handling requests more robustly
+requests==2.31.0

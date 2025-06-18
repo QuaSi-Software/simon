@@ -1,0 +1,23 @@
+services:
+  sim_api:
+    
+    build: ./sim_api
+    container_name: sim_api
+
+    # Map host port → container port
+    ports:
+      - "5000:5000"
+
+    # Environment variables (override or add to those in Dockerfile)
+    environment:
+      FLASK_ENV: development
+
+    # Mount source code for live reload during local development
+    volumes:
+      - ./sim_api:/app
+
+    restart: unless-stopped
+
+    # command overrides the Dockerfile CMD
+    # for production we'll use gunicorn; for dev, Flask's dev server is fine
+    # command: gunicorn --bind 0.0.0.0:5000 api:app
