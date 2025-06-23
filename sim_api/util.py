@@ -38,9 +38,11 @@ def validate_run_id(run_id: str) -> bool:
     """Validates the given run_id.
 
     This checks if the ID looks like something created by UUID4 hex representation."""
-    if not run_id or len(run_id) != 32 or not all(c in '0123456789abcdef' for c in str(run_id)):
-        return False
-    return True
+    return (
+        isinstance(run_id, str)
+        and len(str(run_id)) == 32
+        and all(c in '0123456789abcdef' for c in str(run_id))
+    )
 
 def run_dir_exists(run_id: str) -> bool:
     """Checks if the run directory exists for the given run_id."""
