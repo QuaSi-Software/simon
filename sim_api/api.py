@@ -9,8 +9,8 @@ from __future__ import annotations
 import subprocess
 import uuid
 from pathlib import Path
-from util import _create_run_dir, _get_run_status, _run_dir_exists, _run_simulation, \
-    _validate_run_id, _write_temp_json
+from util import create_run_dir, get_run_status, run_dir_exists, run_simulation, \
+    validate_run_id, write_temp_json
 
 from flask import Flask, jsonify, request
 
@@ -36,7 +36,7 @@ def get_run_id():
         }
     """
     run_id = uuid.uuid4().hex
-    _create_run_dir(run_id)
+    create_run_dir(run_id)
     return jsonify({"run_id": run_id}), 200
 
 @app.route('/run_status/<run_id>', methods=['GET'])
@@ -56,10 +56,10 @@ def run_status(run_id):
                                                           # the status was written
         }
     """
-    if not (_validate_run_id(run_id) and _run_dir_exists(run_id)):
+    if not (validate_run_id(run_id) and run_dir_exists(run_id)):
         return jsonify({"error": "Run ID is not valid or run is not set up correctly"}), 500
 
-    status_code, status_ts = _get_run_status(run_id)
+    status_code, status_ts = get_run_status(run_id)
     if status_code == "unknown":
         return jsonify({"error": "Could not read run status"}), 500
 
@@ -92,11 +92,11 @@ def simulate():
         return jsonify({"error": "Expected JSON payload."}), 400
 
     # Save input JSON to a temporary file
-    input_path = _write_temp_json(data)
+    input_path = write_temp_json(data)
 
     # Run the simulation and capture output
     try:
-        result = _run_simulation(input_path)
+        result = run_simulation(input_path)
         response = {
             "stdout": result.stdout,
             "stderr": result.stderr,

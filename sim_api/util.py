@@ -14,7 +14,7 @@ from typing import Any, Dict
 APP_ROOT = Path(__file__).resolve().parent
 TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
 
-def _write_temp_json(data: Dict[str, Any]) -> Path:
+def write_temp_json(data: Dict[str, Any]) -> Path:
     """Write request data to a temp JSON file and return the path."""
     temp_dir = tempfile.gettempdir()
     filename = f"sim_input_{uuid.uuid4().hex}.json"
@@ -23,18 +23,18 @@ def _write_temp_json(data: Dict[str, Any]) -> Path:
         json.dump(data, fp)
     return file_path
 
-def _run_simulation(input_file: Path) -> subprocess.CompletedProcess[str]:
+def run_simulation(input_file: Path) -> subprocess.CompletedProcess[str]:
     """Run the Julia simulation subprocess and capture output."""
     cmd = ["julia", "simulate.jl", str(input_file)]
     return subprocess.run(cmd, capture_output=True, text=True, timeout=TIMEOUT_SECONDS, check=False)
 
-def _create_run_dir(run_id: str) -> None:
+def create_run_dir(run_id: str) -> None:
     """Creates a run directory for the given run ID."""
     os.mkdir(Path(APP_ROOT / "runs" / run_id))
     with open(Path(APP_ROOT / "runs" / run_id / "status"), "w", encoding="utf-8") as file:
         file.write(f"new\n{datetime.now()}")
 
-def _validate_run_id(run_id: str) -> bool:
+def validate_run_id(run_id: str) -> bool:
     """Validates the given run_id.
 
     This checks if the ID looks like something created by UUID4 hex representation."""
@@ -42,12 +42,12 @@ def _validate_run_id(run_id: str) -> bool:
         return False
     return True
 
-def _run_dir_exists(run_id: str) -> bool:
+def run_dir_exists(run_id: str) -> bool:
     """Checks if the run directory exists for the given run_id."""
     run_dir = Path(APP_ROOT / "runs" / run_id)
     return run_dir.exists() and run_dir.is_dir()
 
-def _get_run_status(run_id: str) -> tuple[str,str]:
+def get_run_status(run_id: str) -> tuple[str,str]:
     """Reads the run status from the status file in the run dir."""
     status_file = Path(APP_ROOT / "runs" / run_id / "status")
     if not status_file.exists():
