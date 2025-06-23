@@ -9,16 +9,19 @@ from __future__ import annotations
 import subprocess
 import uuid
 from pathlib import Path
-from util import create_run_dir, get_run_status, run_dir_exists, run_simulation, \
-    validate_run_id, write_temp_json
-
 from flask import Flask, jsonify, request
+from sim_api.util import create_run_dir, get_run_status, run_dir_exists, run_simulation, \
+    validate_run_id, write_temp_json
 
 APP_ROOT = Path(__file__).resolve().parent
 TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
 
 # construct app so routes can be registered via annotation
 app = Flask(__name__)
+
+def get_app():
+    """Get the global app variable."""
+    return app
 
 # ---------------------------------------------------------------------------
 # Routes
