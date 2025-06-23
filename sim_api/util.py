@@ -6,6 +6,7 @@ import json
 import subprocess
 import tempfile
 import uuid
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
@@ -60,3 +61,36 @@ def get_run_status(run_id: str) -> tuple[str,str]:
         if len(lines) < 2:
             return "unknown", "1970-01-01 00:00:00.0"
         return lines[0].strip(), lines[1].strip()
+
+def validate_uploaded_filename(filename: str) -> tuple[bool,str]:
+    """Validates the given filename of a presumably uploaded file.
+
+    Note: This validation cannot be perfect, it merely catches some common problems
+    and attack vectors.
+    """
+    if not filename or filename == "":
+        return False, "No filename provided"
+
+    # check for any bad characters. unicode "letters" should be included in \w
+    pattern = r"[^\d\w\s\-.,#+=())&%$§~!{}\[\]]+"
+    matches = re.findall(pattern, filename)
+    if len(matches) > 0:
+        return False, "Filename must contain only alphanumeric (unicode) characters, " + \
+                      "whitespace and the following characters: .,_-#+=&%$§~!(){}[]"
+
+    # replace all whitespace characters with empty string to check if it collapses
+    # to an empty string
+    collapsed = re.sub(r"\s+", "", filename)
+    if collapsed == "":
+        return False, "Filename collapses to empty string when all whitespace is removed"
+
+    # replace all whitespace characters with space, trim the string, so in the following
+    # we can check against the "text" part of the filename
+    trimmed = re.sub(r"\s+", " ", filename).strip()
+
+    # forbid path traversal and hidden files at the beginning. since / is already forbidden,
+    # we only have to check the beginning
+    if trimmed[0] == ".":
+        return False, "Filename must not start with period"
+
+    return True, "Filename appears valid"

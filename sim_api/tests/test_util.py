@@ -29,3 +29,40 @@ def test_validate_run_id():
     # weird, but valid IDs
     assert validate_run_id("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     assert validate_run_id("00000000000000000000000000000000")
+
+def test_validate_uploaded_filename():
+    """Tests for validate_uploaded_filename without client"""
+    # filename is empty
+    file = FileStorage(filename="")
+    success, msg = validate_uploaded_filename(file.filename)
+    assert not success
+    assert "No filename provided" in msg
+
+    # filename contains forbidden characters
+    file = FileStorage(filename="a\"/2:")
+    success, msg = validate_uploaded_filename(file.filename)
+    assert not success
+    assert "Filename must contain only" in msg
+
+    # filename collapses to empty string
+    file = FileStorage(filename=" \n\t \r")
+    success, msg = validate_uploaded_filename(file.filename)
+    assert not success
+    assert "Filename collapses" in msg
+
+    # filename attempts path traversal "hidden" by whitespace
+    file = FileStorage(filename="\t..important config")
+    success, msg = validate_uploaded_filename(file.filename)
+    assert not success
+    assert "Filename must not start with period" in msg
+
+    # normal filenames
+    file = FileStorage(filename="ideal_filename.json")
+    success, msg = validate_uploaded_filename(file.filename)
+    assert success
+    assert "Filename appears valid" in msg
+
+    file = FileStorage(filename="  with §3,14 oddities \t+(500$) but valid.old.json")
+    success, msg = validate_uploaded_filename(file.filename)
+    assert success
+    assert "Filename appears valid" in msg
