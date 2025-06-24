@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import stat
 import json
 import subprocess
 import tempfile
@@ -10,6 +11,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
+from werkzeug.datastructures import FileStorage
 
 
 APP_ROOT = Path(__file__).resolve().parent
@@ -94,3 +96,43 @@ def validate_uploaded_filename(filename: str) -> tuple[bool,str]:
         return False, "Filename must not start with period"
 
     return True, "Filename appears valid"
+
+def load_file_index(run_id: str) -> dict:
+    """Reads the file index for the given run."""
+    file_index_path = Path(APP_ROOT / "runs" / run_id / "file_index.json")
+    if not (file_index_path.exists() and file_index_path.is_file()):
+        return {"forward": {}, "reverse": {}}
+
+    try:
+        with open(file_index_path, "r", encoding="utf-8") as file:
+            file_index = json.load(file)
+    except json.JSONDecodeError:
+        return {"forward": {}, "reverse": {}}
+
+    return file_index
+
+def write_file_index(run_id: str, file_index: dict) -> None:
+    """Writes the file index for the given run."""
+    file_index_path = Path(APP_ROOT / "runs" / run_id / "file_index.json")
+    with open(file_index_path, "w", encoding="utf-8") as file:
+        json.dump(file_index, file, indent=4)
+
+def save_file_for_run(run_id: str, file: FileStorage) -> str:
+    """Saves the given file in the given run in a safe manner by renaming it"""
+    file_index = load_file_index(run_id)
+
+    if file.filename in file_index["forward"]:
+        safe_filename = file_index["forward"][file.filename]
+    else:
+        safe_filename = uuid.uuid4().hex
+        file_index["forward"][file.filename] = safe_filename
+        file_index["reverse"][safe_filename] = file.filename
+
+    write_file_index(run_id, file_index)
+
+    filepath = Path(APP_ROOT / "runs" / run_id / safe_filename)
+    file.save(filepath)
+    # set as owner-has-write, group-has-read, other-has-read
+    os.chmod(filepath, stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+
+    return safe_filename

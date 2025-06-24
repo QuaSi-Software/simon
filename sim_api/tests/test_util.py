@@ -1,8 +1,12 @@
 """Unit tests for module util."""
+import uuid
+from pathlib import Path
+from io import BytesIO
 import pytest
 from werkzeug.datastructures import FileStorage
 from sim_api.api import get_app
-from sim_api.util import validate_run_id, validate_uploaded_filename
+from sim_api.util import validate_run_id, validate_uploaded_filename, save_file_for_run, \
+    create_run_dir
 
 @pytest.fixture()
 def app():
@@ -66,3 +70,22 @@ def test_validate_uploaded_filename():
     success, msg = validate_uploaded_filename(file.filename)
     assert success
     assert "Filename appears valid" in msg
+
+def test_save_file_for_run():
+    """Tests for save_file_for_run"""
+    # normal file saving
+    run_id = uuid.uuid4().hex
+    create_run_dir(run_id)
+    file = FileStorage(BytesIO("file contents".encode("utf8")), filename="test.txt")
+    filename = save_file_for_run(run_id, file)
+    assert Path(Path(__file__).resolve().parent.parent / "runs" / run_id / filename).exists
+
+    # malicious file is circumvented
+    run_id = uuid.uuid4().hex
+    create_run_dir(run_id)
+    file = FileStorage(
+        BytesIO("r m -rf --no-preserve-root /".encode("utf8")), # don't remove the space in 'r m'
+        filename=("../path/traversal/" + '"' + "\n" + "escape.sh")
+    )
+    filename = save_file_for_run(run_id, file)
+    assert Path(Path(__file__).resolve().parent.parent / "runs" / run_id / filename).exists
