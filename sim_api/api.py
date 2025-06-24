@@ -19,6 +19,9 @@ TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
 # construct app so routes can be registered via annotation
 app = Flask(__name__)
 
+# set configs (@TODO: move this to a config file)
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
+
 def get_app():
     """Get the global app variable."""
     return app
