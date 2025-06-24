@@ -11,7 +11,7 @@ import uuid
 from pathlib import Path
 from flask import Flask, jsonify, request
 from sim_api.util import create_run_dir, get_run_status, run_dir_exists, run_simulation, \
-    validate_run_id, write_temp_json
+    validate_run_id, write_temp_json, validate_uploaded_filename, save_file_for_run
 
 APP_ROOT = Path(__file__).resolve().parent
 TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
@@ -75,6 +75,40 @@ def run_status(run_id):
         "timestamp": status_ts
     }
     return jsonify(status_payload), 200
+
+@app.route("/upload_file/<run_id>", methods=["POST"])
+def upload_file(run_id):
+    """Endpoint: POST /upload_file/<str:run_id>
+
+    Request arguments:
+        - run_id -> str: The ID of the run to which the file is uploaded
+
+    Request body (form-data):
+        - file: The file to upload
+
+    Response (JSON):
+        {
+            "message": "File uploaded successfully"
+        }
+
+    Error Response (JSON) example:
+        {
+            "error": "No file part in the request"
+        }
+    """
+    if not (validate_run_id(run_id) and run_dir_exists(run_id)):
+        return jsonify({"error": "Run ID is not valid or run is not set up correctly"}), 500
+
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part in the request"}), 400
+
+    file = request.files['file']
+    is_valid, msg = validate_uploaded_filename(file.filename)
+    if not is_valid:
+        return jsonify({"error": f"Filename of uploaded file is not valid: {msg}"}), 400
+
+    save_file_for_run(run_id, file)
+    return jsonify({"message": "File uploaded successfully"}), 200
 
 @app.route("/simulate", methods=["POST"])
 def simulate():
