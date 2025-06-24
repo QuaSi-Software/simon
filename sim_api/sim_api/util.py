@@ -14,7 +14,7 @@ from typing import Any, Dict
 from werkzeug.datastructures import FileStorage
 
 
-APP_ROOT = Path(__file__).resolve().parent
+APP_ROOT = Path(__file__).resolve().parent.parent
 TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
 
 def write_temp_json(data: Dict[str, Any]) -> Path:

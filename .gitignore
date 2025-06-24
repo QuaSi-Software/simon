@@ -3,9 +3,12 @@
 
 # python cache
 *__pycache__
+*.egg-info
+*.pytest_cache
 
 # test files
 test_api.sh
+in.txt
 out.txt
 
 # simulation run data

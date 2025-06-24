@@ -13,11 +13,11 @@ from flask import Flask, jsonify, request
 from sim_api.util import create_run_dir, get_run_status, run_dir_exists, run_simulation, \
     validate_run_id, write_temp_json, validate_uploaded_filename, save_file_for_run
 
-APP_ROOT = Path(__file__).resolve().parent
+APP_ROOT = Path(__file__).resolve().parent.parent
 TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
 
 # construct app so routes can be registered via annotation
-app = Flask(__name__)
+app = Flask("sim_api")
 
 # set configs (@TODO: move this to a config file)
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024

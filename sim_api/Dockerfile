@@ -24,12 +24,15 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . ./
 
+# install the package for itself
+RUN pip3 install -e .
+
 RUN chmod +x simulate.jl
 
 EXPOSE 5000
 
 # set up flask via env variables
-ENV FLASK_APP=api.py \
+ENV FLASK_APP=/app/sim_api/api.py \
     FLASK_RUN_HOST=0.0.0.0 \
     PYTHONUNBUFFERED=1
 
