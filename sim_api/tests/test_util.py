@@ -8,8 +8,8 @@ from sim_api.api import get_app
 from sim_api.util import validate_run_id, validate_uploaded_filename, save_file_for_run, \
     create_run_dir
 
-@pytest.fixture()
-def app():
+@pytest.fixture(name="app")
+def fixture_app():
     """Fixture to get the app and set it to testing mode"""
     testapp = get_app()
     testapp.config.update({
@@ -19,10 +19,10 @@ def app():
     yield testapp
     # clean up / reset resources here
 
-@pytest.fixture()
-def client(testapp):
+@pytest.fixture(name="client")
+def fixture_client(app):
     """Fixture to get a test client"""
-    return testapp.test_client()
+    return app.test_client()
 
 def test_validate_run_id():
     """Tests for validate_run_id for common good/bad cases."""
