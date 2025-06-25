@@ -136,3 +136,22 @@ def save_file_for_run(run_id: str, file: FileStorage) -> str:
     os.chmod(filepath, stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
     return safe_filename
+
+def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
+    """Creates a copy of the given config file where all references to files are replaced
+    by their alias."""
+    alias_path = Path(APP_ROOT / "runs" / run_id / alias_filename)
+    if not alias_path.exists():
+        return False, "Could not find alias file"
+
+    with open(alias_path, "r", encoding="utf-8") as file:
+        content = file.read()
+        file_index = load_file_index(run_id)
+        for original in file_index["forward"]:
+            content = content.replace(original, file_index["forward"][original])
+
+    aliased_config_path = Path(APP_ROOT / "runs" / run_id / "aliased_config.json")
+    with open(aliased_config_path, "w", encoding="utf-8") as file:
+        file.write(content)
+
+    return True, aliased_config_path
