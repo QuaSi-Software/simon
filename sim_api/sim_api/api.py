@@ -6,12 +6,12 @@ Endpoints:
 
 from __future__ import annotations
 
-import subprocess
 import uuid
 from pathlib import Path
 from flask import Flask, jsonify, request
-from sim_api.util import create_run_dir, get_run_status, run_dir_exists, run_simulation, \
-    validate_run_id, write_temp_json, validate_uploaded_filename, save_file_for_run
+from sim_api.util import create_run_dir, get_run_status, run_dir_exists, \
+    validate_run_id, validate_uploaded_filename, save_file_for_run, load_file_index, \
+    alias_config_file, update_run_status
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
@@ -110,47 +110,54 @@ def upload_file(run_id):
     save_file_for_run(run_id, file)
     return jsonify({"message": "File uploaded successfully"}), 200
 
-@app.route("/simulate", methods=["POST"])
-def simulate():
-    """Endpoint: POST /simulate
+@app.route("/start_simulation/<run_id>", methods=["POST"])
+def simulate(run_id):
+    """Endpoint: POST /start_simulation/<run_id>
 
-    Request body (JSON): arbitrary JSON payload that the Julia simulation
-    expects. The payload is written to a temporary file and passed as the
-    first argument to `simulate.jl`.
+    Request arguments:
+        - run_id -> str: The ID of the run to which the file is uploaded
+
+    Request body (JSON):
+        {
+            "config_file": "resie_input.json" # the filename of the config file
+        }
 
     Response (JSON):
         {
             "stdout": "...",      # Standard output from Julia process
             "stderr": "...",      # Standard error from Julia process
-            "exit_code": 0         # Exit code of the process
+            "exit_code": 0        # Exit code of the process
         }
 
-    If the simulation times out or the Julia script is not found, an error
-    response is returned with the appropriate HTTP status code."""
-    data = request.get_json(force=True, silent=True)
-    if data is None:
+    Error Response (JSON) example:
+        {
+            "error": "Expected JSON payload."
+        }
+    """
+    if not (validate_run_id(run_id) and run_dir_exists(run_id)):
+        return jsonify({"error": "Run ID is not valid or run is not set up correctly"}), 500
+
+    request_data = request.get_json(force=True, silent=True)
+    if request_data is None:
         return jsonify({"error": "Expected JSON payload."}), 400
 
-    # Save input JSON to a temporary file
-    input_path = write_temp_json(data)
+    if "config_file" not in request_data:
+        return jsonify({"error": "Missing JSON argument `config_file`"}), 400
 
-    # Run the simulation and capture output
-    try:
-        result = run_simulation(input_path)
-        response = {
-            "stdout": result.stdout,
-            "stderr": result.stderr,
-            "exit_code": result.returncode,
-        }
-        status_code = 200 if result.returncode == 0 else 500
-        return jsonify(response), status_code
-    except subprocess.TimeoutExpired:
-        return jsonify({"error": f"Simulation timed out after {TIMEOUT_SECONDS} seconds."}), 504
-    except FileNotFoundError:
-        return jsonify({"error": "Julia executable or simulation script not found."}), 500
-    finally:
-        # Clean up temporary file
-        try:
-            input_path.unlink(missing_ok=True)
-        except OSError:
-            pass
+    config_filename = str(request_data["config_file"])
+    file_index = load_file_index(run_id)
+    if config_filename not in file_index["forward"]:
+        return jsonify({"error": "Cannot find given `config_file` in file index"}), 400
+
+    alias = file_index["forward"][config_filename]
+    alias_path = Path(APP_ROOT / "runs" / run_id / alias)
+    if not alias_path.exists():
+        return jsonify({"error": "Cannot find alias for given `config_file`"}), 400
+
+    success, msg = alias_config_file(run_id, alias)
+    if not success:
+        return jsonify({"error": f"Could not load config_file: {msg}"}), 400
+    _aliased_path = msg # it's only a message in the error case, otherwise a filepath
+
+    update_run_status(run_id, "waiting")
+    return jsonify({"message": "Queued run for simulation"}), 200
