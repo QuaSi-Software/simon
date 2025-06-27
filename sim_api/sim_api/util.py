@@ -31,11 +31,15 @@ def run_simulation(input_file: Path) -> subprocess.CompletedProcess[str]:
     cmd = ["julia", "simulate.jl", str(input_file)]
     return subprocess.run(cmd, capture_output=True, text=True, timeout=TIMEOUT_SECONDS, check=False)
 
+def update_run_status(run_id: str, new_status: str) -> None:
+    """Update the status of the given run with the new status."""
+    with open(Path(APP_ROOT / "runs" / run_id / "status"), "w", encoding="utf-8") as file:
+        file.write(f"{new_status}\n{datetime.now()}")
+
 def create_run_dir(run_id: str) -> None:
     """Creates a run directory for the given run ID."""
     os.mkdir(Path(APP_ROOT / "runs" / run_id))
-    with open(Path(APP_ROOT / "runs" / run_id / "status"), "w", encoding="utf-8") as file:
-        file.write(f"new\n{datetime.now()}")
+    update_run_status(run_id, "new")
 
 def validate_run_id(run_id: str) -> bool:
     """Validates the given run_id.
