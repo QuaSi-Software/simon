@@ -2,27 +2,9 @@
 import uuid
 from pathlib import Path
 from io import BytesIO
-import pytest
 from werkzeug.datastructures import FileStorage
-from sim_api.api import get_app
 from sim_api.util import validate_run_id, validate_uploaded_filename, save_file_for_run, \
     create_run_dir
-
-@pytest.fixture(name="app")
-def fixture_app():
-    """Fixture to get the app and set it to testing mode"""
-    testapp = get_app()
-    testapp.config.update({
-        "TESTING": True,
-    })
-    # other setup can go here
-    yield testapp
-    # clean up / reset resources here
-
-@pytest.fixture(name="client")
-def fixture_client(app):
-    """Fixture to get a test client"""
-    return app.test_client()
 
 def test_validate_run_id():
     """Tests for validate_run_id for common good/bad cases."""
