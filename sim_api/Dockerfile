@@ -27,14 +27,12 @@ COPY . ./
 # install the package for itself
 RUN pip3 install -e .
 
-RUN chmod +x simulate.jl
-
 EXPOSE 5000
-
 # set up flask via env variables
 ENV FLASK_APP=/app/sim_api/api.py \
     FLASK_RUN_HOST=0.0.0.0 \
     PYTHONUNBUFFERED=1
 
-# entry point is the flask dev server
-CMD ["flask", "run", "--port", "5000"]
+RUN chmod +x start.sh
+# entry point is a script that runs the flask server and starts the scanner
+CMD ["./start.sh"]
