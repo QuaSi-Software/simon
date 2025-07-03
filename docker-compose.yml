@@ -8,6 +8,10 @@ services:
     ports:
       - "5000:5000"
 
+    # User supplied environment file
+    env_file:
+      - ./sim_api/config.env
+
     # Environment variables (override or add to those in Dockerfile)
     environment:
       FLASK_ENV: development

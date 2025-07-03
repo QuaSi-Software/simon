@@ -33,6 +33,9 @@ ENV FLASK_APP=/app/sim_api/api.py \
     FLASK_RUN_HOST=0.0.0.0 \
     PYTHONUNBUFFERED=1
 
+# other env variables
+ENV SIM_NR_THREADS=1
+
 RUN chmod +x start.sh
 # entry point is a script that runs the flask server and starts the scanner
 CMD ["./start.sh"]

@@ -13,3 +13,6 @@ out.txt
 
 # simulation run data
 sim_api/runs
+
+# user config files
+sim_api/config.env
