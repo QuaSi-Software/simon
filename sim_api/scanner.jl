@@ -2,9 +2,11 @@ using Base.Threads
 using Printf
 using Dates
 
+include("simulate.jl")
+
 function process_subdirectory(dir_path::String)
     @info "[$(Dates.now())] Started processing: $(dir_path) on thread #$(Threads.threadid())"
-    sleep(10) # Simulate work
+    simulate(dir_path)
     set_status(dir_path, "finished")
     @info "[$(Dates.now())] Finished processing: $(dir_path)"
 end
