@@ -16,3 +16,4 @@ sim_api/runs
 
 # user config files
 sim_api/config.env
+webapp/config.env

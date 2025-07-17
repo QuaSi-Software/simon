@@ -25,3 +25,30 @@ services:
     # command overrides the Dockerfile CMD
     # for production we'll use gunicorn; for dev, Flask's dev server is fine
     # command: gunicorn --bind 0.0.0.0:5000 api:app
+
+  webapp:
+
+    build: ./webapp
+    container_name: webapp
+
+    # Map host port → container port
+    ports:
+      - "5001:5001"
+
+    # User supplied environment file
+    env_file:
+      - ./webapp/config.env
+
+    # Environment variables (override or add to those in Dockerfile)
+    environment:
+      FLASK_ENV: development
+
+    # Mount source code for live reload during local development
+    volumes:
+      - ./webapp:/app
+
+    restart: unless-stopped
+
+    # command overrides the Dockerfile CMD
+    # for production we'll use gunicorn; for dev, Flask's dev server is fine
+    # command: gunicorn --bind 0.0.0.0:5000 api:app
