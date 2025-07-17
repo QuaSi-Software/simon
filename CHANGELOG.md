@@ -2,7 +2,10 @@
 Lists changes to the code by version.
 
 ## SIMON Webapp
-No version released yet
+The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
+
+### Version 0.1.0
+* First version with simple/empty flask app for providing the webapp as SPA
 
 ## Simulation API
 The simulation API is used by the SIMON webapp internally and is not exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package.
