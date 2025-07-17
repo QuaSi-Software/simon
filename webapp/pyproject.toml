@@ -1,0 +1,8 @@
+[project]
+name = "simon_webapp"
+version = "0.1.0"
+description = "Webapp to run ReSiE simulations with NextCloud file sync"
+
+[build-system]
+build-backend = "flit_core.buildapi"
+requires = ["flit_core >=3.2,<4"]
