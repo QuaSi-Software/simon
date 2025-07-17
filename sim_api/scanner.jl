@@ -3,7 +3,7 @@ using Printf
 using Dates
 
 function process_subdirectory(dir_path::String)
-    @info "[$(Dates.now())] Started processing: $(dir_path)"
+    @info "[$(Dates.now())] Started processing: $(dir_path) on thread #$(Threads.threadid())"
     sleep(10) # Simulate work
     set_status(dir_path, "finished")
     @info "[$(Dates.now())] Finished processing: $(dir_path)"
@@ -32,6 +32,7 @@ function get_status(dir_path::String)
 end
 
 function scan_loop()
+    @info "Starting scanner with $(Threads.nthreads()) threads and on #$(Threads.threadid())"
     while true
         try
             for dir_path in readdir("./runs", join=true)
