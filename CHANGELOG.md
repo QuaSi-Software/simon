@@ -7,6 +7,11 @@ No version released yet
 ## Simulation API
 The simulation API is used by the SIMON webapp internally and is not exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package.
 
+### Version 0.1.1
+* Restructure Docker compose structure for customizable configs
+* Implement multithreading of scanner and simulation
+* Add README with simple installation and usage instructions
+
 ### Version 0.1.0
 * Switch to more modern pyproject.toml config for editable self-install of the package
 * Add/implement routes for:
