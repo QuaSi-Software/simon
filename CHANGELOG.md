@@ -4,6 +4,11 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
+### Version 0.1.1
+* Set MIT licensing of code
+* Implement basic Bootstrap site structure
+* Add imprint
+
 ### Version 0.1.0
 * First version with simple/empty flask app for providing the webapp as SPA
 
