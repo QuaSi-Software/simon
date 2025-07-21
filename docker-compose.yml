@@ -3,6 +3,8 @@ services:
     
     build: ./sim_api
     container_name: sim_api
+    networks:
+      - simnet
 
     # Map host port → container port
     ports:
@@ -30,6 +32,8 @@ services:
 
     build: ./webapp
     container_name: webapp
+    networks:
+      - simnet
 
     # Map host port → container port
     ports:
@@ -52,3 +56,7 @@ services:
     # command overrides the Dockerfile CMD
     # for production we'll use gunicorn; for dev, Flask's dev server is fine
     # command: gunicorn --bind 0.0.0.0:5000 api:app
+
+networks:
+  simnet:
+    driver: bridge
