@@ -110,6 +110,52 @@ def upload_file(run_id):
     save_file_for_run(run_id, file)
     return jsonify({"message": "File uploaded successfully"}), 200
 
+@app.route("/download_file/<run_id>", methods=["POST"])
+def download_file(run_id):
+    """Endpoint: POST /download_file/<str:run_id>
+
+    Request arguments:
+        - run_id -> str: The ID of the run of which the file is requested
+
+    Request body (JSON):
+        {
+            "filename": "..." # The name of the file to download
+        }
+
+    Response (Bytestream): The file content
+
+    Error Response (JSON) example:
+        {
+            "error": "No such file exists"
+        }
+    """
+    if not (validate_run_id(run_id) and run_dir_exists(run_id)):
+        return jsonify({"error": "Run ID is not valid or run is not set up correctly"}), 500
+
+    request_data = request.get_json(force=True, silent=True)
+    if request_data is None:
+        return jsonify({"error": "Expected JSON payload."}), 400
+
+    if "filename" not in request_data:
+        return jsonify({"error": "Missing JSON argument `filename`"}), 400
+
+    filename = request_data['filename']
+    file_index = load_file_index(run_id)
+    if filename not in file_index["forward"]:
+        return jsonify({"error": "Cannot find given `filename` in file index"}), 400
+
+    alias = file_index["forward"][filename]
+    alias_path = Path(APP_ROOT / "runs" / run_id / alias)
+    if not alias_path.exists():
+        return jsonify({"error": "Cannot find alias for given `filename`"}), 400
+
+    with open(alias_path, 'rb') as f:
+        content = f.read()
+
+    response = app.response_class(content, mimetype='application/octet-stream')
+    response.headers.set('Content-Disposition', f'attachment; filename={filename}')
+    return response, 200
+
 @app.route("/start_simulation/<run_id>", methods=["POST"])
 def simulate(run_id):
     """Endpoint: POST /start_simulation/<run_id>

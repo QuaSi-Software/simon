@@ -68,3 +68,25 @@ def test_endpoint_start_simulation_good_input(client):
     status, date = get_run_status(run_id)
     assert status == "waiting"
     assert date != "1970-01-01 00:00:00.0"
+
+def test_endpoint_download_file_good_input(client):
+    """Tests endpoint download_file with good input."""
+    # set up run
+    run_id = uuid.uuid4().hex
+    create_run_dir(run_id)
+    file_raw_str = """Lorem ipsum"""
+    file_fs = FileStorage(BytesIO(file_raw_str.encode("utf8")), filename="output.txt")
+    save_file_for_run(run_id, file_fs)
+
+    # request file
+    response = client.post("/download_file/" + run_id, json={
+        "filename": "output.txt"
+    })
+
+    # check response
+    assert response.status_code == 200
+    assert response.data is not None
+
+    # put bytestream into string and check
+    content = response.data.decode("utf-8")
+    assert content == "Lorem ipsum"
