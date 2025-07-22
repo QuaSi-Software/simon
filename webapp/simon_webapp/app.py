@@ -115,3 +115,29 @@ def start_simulation():
         return jsonify({"error": "Could not start simulation"}), 501
 
     return jsonify({"run_id": run_id}), 200
+
+@app.route('/run_status/<run_id>', methods=['GET'])
+def run_status(run_id):
+    """Endpoint: GET /run_status/<str:run_id>
+
+    Request arguments:
+        - run_id -> str: The ID of the run to which the status is requested
+
+    Response (JSON):
+        {
+            "run_id": "1a2b3c4e5f1a2b3c4e5f1a2b3c4e5f1a", # run ID
+            "code": "new",                                # status code, one of:
+                                                          # [new, waiting, running,
+                                                          # finished, old]
+            "timestamp": "2015-01-01 12:00:00"            # server time (default UTC), when
+                                                          # the status was written
+        }
+    """
+    response = requests.get(SIM_API_ROOT + "run_status/" + run_id, timeout=SIM_API_TIMEOUT)
+    if response.ok:
+        data = response.json()
+        if "error" in data:
+            return jsonify({"error": data["error"]}), 400
+        return data, 200
+    else:
+        return jsonify({"error": "Could not get run status from sim API"}), 501
