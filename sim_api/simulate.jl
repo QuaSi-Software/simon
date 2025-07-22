@@ -1,6 +1,8 @@
 using JSON
 using Plots
 
+include("util.jl")
+
 function julia_set(sx, sy, nx, ny, c=-0.744 + 0.148im)::Array{UInt8, 2}
 	iterations_till_divergence = Array{UInt8, 2}(undef, nx, ny)
     step_x = sx / nx
@@ -37,7 +39,11 @@ function plot_julia_set(sx, sy, values::Array{UInt8, 2}, working_dir::String)
         ylabel="Im",
         dpi=1000
     )
-    savefig(joinpath(working_dir, "julia_set.png"))
+    alias = update_file_index(working_dir, "julia_set.png")
+    png(joinpath(working_dir, alias))
+    # rename saved file without file ending as the png function always adds the file ending
+    # but the file index does not expect it
+    mv(joinpath(working_dir, alias * ".png"), joinpath(working_dir, alias))
 end
 
 function simulate(working_dir)
