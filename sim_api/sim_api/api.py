@@ -124,9 +124,7 @@ def simulate(run_id):
 
     Response (JSON):
         {
-            "stdout": "...",      # Standard output from Julia process
-            "stderr": "...",      # Standard error from Julia process
-            "exit_code": 0        # Exit code of the process
+            "message": "Queued run for simulation"
         }
 
     Error Response (JSON) example:

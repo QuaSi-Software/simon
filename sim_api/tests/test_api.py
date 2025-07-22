@@ -5,7 +5,7 @@ from io import BytesIO
 import pytest
 from werkzeug.datastructures import FileStorage
 from sim_api.api import get_app
-from sim_api.util import save_file_for_run, create_run_dir, get_run_status
+from sim_api.util import save_file_for_run, create_run_dir, get_run_status, load_file_index
 
 @pytest.fixture(name="app")
 def fixture_app():
@@ -53,8 +53,18 @@ def test_endpoint_start_simulation_good_input(client):
     assert "message" in response.json
     assert "Queued run for simulation" in response.json["message"]
 
-    # check config was aliased and status updated
-    assert Path(Path(__file__).resolve().parent.parent / "runs" / run_id / "output.txt").exists
+    # check config was aliased
+    file_index = load_file_index(run_id)
+    alias = file_index["forward"]["some_file.csv"]
+    assert Path(Path(__file__).resolve().parent.parent / "runs" / run_id / alias).exists()
+    alias_config_path = Path(
+        Path(__file__).resolve().parent.parent / "runs" / run_id / "aliased_config.json"
+    )
+    with open(alias_config_path, "r", encoding="utf-8") as file:
+        content = file.read()
+        assert alias in content
+
+    # check status was updated
     status, date = get_run_status(run_id)
     assert status == "waiting"
     assert date != "1970-01-01 00:00:00.0"
