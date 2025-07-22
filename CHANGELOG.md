@@ -15,6 +15,10 @@ The SIMON webapp provides the user interface for running simulations and uses th
 ## Simulation API
 The simulation API is used by the SIMON webapp internally and is not exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package.
 
+### Version 0.1.3
+* Add endpoint for downloading files
+* Fix simulation output files bypassing the file index and therefore not being addressable
+
 ### Version 0.1.2
 * Implement simulation as calculating Julia sets, for testing purposes
 * Fix missing Julia environment parameter when starting scanner
