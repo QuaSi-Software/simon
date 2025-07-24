@@ -141,3 +141,22 @@ def run_status(run_id):
         return data, 200
     else:
         return jsonify({"error": "Could not get run status from sim API"}), 501
+
+@app.route('/fetch_results/<run_id>', methods=['GET'])
+def fetch_results(run_id):
+    """Endpoint: GET /fetch_results/<str:run_id>
+
+    Request arguments:
+        - run_id -> str: The ID of the run for which to fetch results
+
+    Response (ByteStream): The results file
+    """
+    response = requests.post(
+        SIM_API_ROOT + "download_file/" + run_id,
+        json={"filename": "julia_set.png"},
+        timeout=SIM_API_TIMEOUT
+    )
+    if response.ok:
+        return response.content, 200
+    else:
+        return jsonify({"error": "Could not fetch results from sim API"}), 501
