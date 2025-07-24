@@ -4,6 +4,13 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
+### Version 0.2.0
+* Implement full simulation workflow with testing simulation implementation of sim API. This includes:
+  * A form for configuring the simulation beforehand
+  * Starting the simulation
+  * Feedback on the status of the simulation
+  * Fetching and displaying results once the simulation is complete
+
 ### Version 0.1.1
 * Set MIT licensing of code
 * Implement basic Bootstrap site structure
