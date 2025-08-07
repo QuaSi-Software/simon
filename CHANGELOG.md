@@ -4,6 +4,10 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
+### Version 0.2.1
+* Implement app config loading from yaml file for webapp
+* Implement sending API key in headers for requests to sim_api from webapp, which is required in sim API v0.2.0
+
 ### Version 0.2.0
 * Implement full simulation workflow with testing simulation implementation of sim API. This includes:
   * A form for configuring the simulation beforehand
