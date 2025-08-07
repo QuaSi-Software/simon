@@ -1,0 +1,6 @@
+sim_api:
+  endpoint: "http://sim_api:5000/"
+  api_key: ""
+  timeout: 30
+MAX_CONTENT_LENGTH: 104857600
+TEMPLATES_AUTO_RELOAD: true # useful for dev. set this to false in production for a tiny performance boost

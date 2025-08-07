@@ -18,3 +18,4 @@ sim_api/runs
 sim_api/config.env
 sim_api/api_config.json
 webapp/config.env
+webapp/webapp_config.yml

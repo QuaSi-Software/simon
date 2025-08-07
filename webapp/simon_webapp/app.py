@@ -6,19 +6,27 @@ from __future__ import annotations
 from pathlib import Path
 import io
 import requests
+import yaml
 from flask import Flask, render_template, jsonify, request
 
 APP_ROOT = Path(__file__).resolve().parent.parent
-SIM_API_ROOT = "http://sim_api:5000/" # @TODO: Implement linking via config
-SIM_API_TIMEOUT = 30
+APP_CONFIG_PATH = APP_ROOT / "webapp_config.yml"
+
+# ---------------------------------------------------------------------------
+# App construction
+# ---------------------------------------------------------------------------
 
 # construct app so routes can be registered via annotation
 app = Flask("simon_webapp")
 
-# set configs (@TODO: move this to a config file)
-app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
-# enables autoreload for templates, useful for dev (@TODO: should this be enabled for production?)
-app.config['TEMPLATES_AUTO_RELOAD'] = True
+# read config and transfer to app config object
+if not APP_CONFIG_PATH.exists() or not APP_CONFIG_PATH.is_file():
+    raise FileNotFoundError(f"Configuration file {APP_CONFIG_PATH} does not exist or is " +
+                             "not a file.")
+with open("webapp_config.yml", "r", encoding="utf-8") as config_file:
+    webapp_config = yaml.safe_load(config_file)
+    for key in webapp_config:
+        app.config[key] = webapp_config[key]
 
 def get_app():
     """Get the global app variable."""
@@ -77,7 +85,10 @@ def start_simulation():
 
     # fetch run ID
     run_id = None
-    response = requests.get(SIM_API_ROOT + "get_run_id", timeout=SIM_API_TIMEOUT)
+    response = requests.get(
+        app.config["sim_api"]["endpoint"] + "get_run_id",
+        timeout=app.config["sim_api"]["timeout"]
+    )
     if response.ok:
         data = response.json()
         run_id = data["run_id"] if "run_id" in data else None
@@ -94,9 +105,9 @@ def start_simulation():
     ).encode("utf-8")
     file_obj = io.BytesIO(file_content)
     response = requests.post(
-        SIM_API_ROOT + "upload_file/" + run_id,
+        app.config["sim_api"]["endpoint"] + "upload_file/" + run_id,
         files={"file": ("config.json", file_obj)},
-        timeout=SIM_API_TIMEOUT
+        timeout=app.config["sim_api"]["timeout"]
     )
     if response.ok:
         data = response.json()
@@ -105,9 +116,9 @@ def start_simulation():
 
     # start simulation
     response = requests.post(
-        SIM_API_ROOT + "start_simulation/" + run_id,
+        app.config["sim_api"]["endpoint"] + "start_simulation/" + run_id,
         json={"config_file": "config.json"},
-        timeout=SIM_API_TIMEOUT
+        timeout=app.config["sim_api"]["timeout"]
     )
     if response.ok:
         data = response.json()
@@ -133,7 +144,10 @@ def run_status(run_id):
                                                           # the status was written
         }
     """
-    response = requests.get(SIM_API_ROOT + "run_status/" + run_id, timeout=SIM_API_TIMEOUT)
+    response = requests.get(
+        app.config["sim_api"]["endpoint"] + "run_status/" + run_id,
+        timeout=app.config["sim_api"]["timeout"]
+    )
     if response.ok:
         data = response.json()
         if "error" in data:
@@ -152,9 +166,9 @@ def fetch_results(run_id):
     Response (ByteStream): The results file
     """
     response = requests.post(
-        SIM_API_ROOT + "download_file/" + run_id,
+        app.config["sim_api"]["endpoint"] + "download_file/" + run_id,
         json={"filename": "julia_set.png"},
-        timeout=SIM_API_TIMEOUT
+        timeout=app.config["sim_api"]["timeout"]
     )
     if response.ok:
         return response.content, 200
