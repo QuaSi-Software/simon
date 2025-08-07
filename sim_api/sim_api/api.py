@@ -12,10 +12,29 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from sim_api.util import create_run_dir, get_run_status, run_dir_exists, \
     validate_run_id, validate_uploaded_filename, save_file_for_run, load_file_index, \
-    alias_config_file, update_run_status
+    alias_config_file, update_run_status, parse_key_from_auth_header
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "api_config.json"
+
+def api_key_required(function):
+    """Decorator for routes that require an API key."""
+    def decorated(*args, **kwargs):
+        auth_header = request.headers.get('Authorization')
+        api_key = parse_key_from_auth_header(str(auth_header))
+        if not api_key:
+            return jsonify({'error': 'API key is missing'}), 403
+        if api_key not in get_app().config['api_keys']:
+            return jsonify({'error': 'API key is not valid'}), 403
+        return function(*args, **kwargs)
+    # renaming the wrapper is necessary due to a bug in flask. see also
+    # https://stackoverflow.com/questions/17256602/assertionerror-view-function-mapping-is-overwriting-an-existing-endpoint-functi
+    decorated.__name__ = function.__name__
+    return decorated
+
+# ---------------------------------------------------------------------------
+# App construction
+# ---------------------------------------------------------------------------
 
 # construct app so routes can be registered via annotation
 app = Flask("sim_api")

@@ -4,7 +4,7 @@ from pathlib import Path
 from io import BytesIO
 from werkzeug.datastructures import FileStorage
 from sim_api.util import validate_run_id, validate_uploaded_filename, save_file_for_run, \
-    create_run_dir
+    create_run_dir, parse_key_from_auth_header
 
 def test_validate_run_id():
     """Tests for validate_run_id for common good/bad cases."""
@@ -71,3 +71,13 @@ def test_save_file_for_run():
     )
     filename = save_file_for_run(run_id, file)
     assert Path(Path(__file__).resolve().parent.parent / "runs" / run_id / filename).exists
+
+def test_parse_key_from_auth_header():
+    """Tests for parse_key_from_auth_header"""
+    # good input
+    assert parse_key_from_auth_header("Bearer 192378z873de8913g") == "192378z873de8913g"
+    assert parse_key_from_auth_header("bearer  192378z873de8913g") == "192378z873de8913g"
+    # bas input
+    assert not parse_key_from_auth_header("")
+    assert not parse_key_from_auth_header("82fhj39whf")
+    assert not parse_key_from_auth_header("flisdahf isuadfhsadi 92374239")

@@ -13,9 +13,18 @@ from pathlib import Path
 from typing import Any, Dict
 from werkzeug.datastructures import FileStorage
 
-
 APP_ROOT = Path(__file__).resolve().parent.parent
 TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
+
+def parse_key_from_auth_header(header: str) -> str:
+    """Parses an API from the given value of the authorization header."""
+    header = re.sub(r"\s+", " ", header.strip()) # compress consecutive whitespaces into a
+    parts = header.split(" ")                    # single space character, so we can split
+    if len(parts) < 2:
+        return False
+    if parts[0].lower() != "bearer":
+        return False
+    return parts[1].strip()
 
 def write_temp_json(data: Dict[str, Any]) -> Path:
     """Write request data to a temp JSON file and return the path."""
