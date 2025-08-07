@@ -7,6 +7,7 @@ Endpoints:
 from __future__ import annotations
 
 import uuid
+import json
 from pathlib import Path
 from flask import Flask, jsonify, request
 from sim_api.util import create_run_dir, get_run_status, run_dir_exists, \
@@ -14,13 +15,19 @@ from sim_api.util import create_run_dir, get_run_status, run_dir_exists, \
     alias_config_file, update_run_status
 
 APP_ROOT = Path(__file__).resolve().parent.parent
-TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
+APP_CONFIG_PATH = APP_ROOT / "api_config.json"
 
 # construct app so routes can be registered via annotation
 app = Flask("sim_api")
 
-# set configs (@TODO: move this to a config file)
-app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
+# read config and transfer to app config object
+if not APP_CONFIG_PATH.exists() or not APP_CONFIG_PATH.is_file():
+    raise FileNotFoundError(f"Configuration file {APP_CONFIG_PATH} does not exist or is " +
+                             "not a file.")
+with open(APP_CONFIG_PATH, 'r', encoding="utf-8") as config_file:
+    app_config = json.load(config_file)
+    for key in app_config:
+        app.config[key] = app_config[key]
 
 def get_app():
     """Get the global app variable."""
