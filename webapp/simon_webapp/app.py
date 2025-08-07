@@ -87,7 +87,8 @@ def start_simulation():
     run_id = None
     response = requests.get(
         app.config["sim_api"]["endpoint"] + "get_run_id",
-        timeout=app.config["sim_api"]["timeout"]
+        timeout=app.config["sim_api"]["timeout"],
+        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
     )
     if response.ok:
         data = response.json()
@@ -107,7 +108,8 @@ def start_simulation():
     response = requests.post(
         app.config["sim_api"]["endpoint"] + "upload_file/" + run_id,
         files={"file": ("config.json", file_obj)},
-        timeout=app.config["sim_api"]["timeout"]
+        timeout=app.config["sim_api"]["timeout"],
+        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
     )
     if response.ok:
         data = response.json()
@@ -118,7 +120,8 @@ def start_simulation():
     response = requests.post(
         app.config["sim_api"]["endpoint"] + "start_simulation/" + run_id,
         json={"config_file": "config.json"},
-        timeout=app.config["sim_api"]["timeout"]
+        timeout=app.config["sim_api"]["timeout"],
+        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
     )
     if response.ok:
         data = response.json()
@@ -146,7 +149,8 @@ def run_status(run_id):
     """
     response = requests.get(
         app.config["sim_api"]["endpoint"] + "run_status/" + run_id,
-        timeout=app.config["sim_api"]["timeout"]
+        timeout=app.config["sim_api"]["timeout"],
+        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
     )
     if response.ok:
         data = response.json()
@@ -168,7 +172,8 @@ def fetch_results(run_id):
     response = requests.post(
         app.config["sim_api"]["endpoint"] + "download_file/" + run_id,
         json={"filename": "julia_set.png"},
-        timeout=app.config["sim_api"]["timeout"]
+        timeout=app.config["sim_api"]["timeout"],
+        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
     )
     if response.ok:
         return response.content, 200
