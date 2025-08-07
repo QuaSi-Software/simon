@@ -13,6 +13,7 @@ def fixture_app():
     testapp = get_app()
     testapp.config.update({
         "TESTING": True,
+        "api_keys": ["123456789abcdef"]
     })
     # other setup can go here
     yield testapp
@@ -45,6 +46,8 @@ def test_endpoint_start_simulation_good_input(client):
     # start simulation
     response = client.post("/start_simulation/" + run_id, json={
         "config_file": "config.json"
+    }, headers={
+        "Authorization": "Bearer 123456789abcdef"
     })
 
     # check response
@@ -81,6 +84,8 @@ def test_endpoint_download_file_good_input(client):
     # request file
     response = client.post("/download_file/" + run_id, json={
         "filename": "output.txt"
+    }, headers={
+        "Authorization": "Bearer 123456789abcdef"
     })
 
     # check response

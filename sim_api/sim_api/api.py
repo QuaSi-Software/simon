@@ -57,6 +57,7 @@ def get_app():
 # ---------------------------------------------------------------------------
 
 @app.route("/get_run_id", methods=["GET"])
+@api_key_required
 def get_run_id():
     """Endpoint: GET /get_run_id
 
@@ -72,6 +73,7 @@ def get_run_id():
     return jsonify({"run_id": run_id}), 200
 
 @app.route('/run_status/<run_id>', methods=['GET'])
+@api_key_required
 def run_status(run_id):
     """Endpoint: GET /run_status/<str:run_id>
 
@@ -103,6 +105,7 @@ def run_status(run_id):
     return jsonify(status_payload), 200
 
 @app.route("/upload_file/<run_id>", methods=["POST"])
+@api_key_required
 def upload_file(run_id):
     """Endpoint: POST /upload_file/<str:run_id>
 
@@ -137,6 +140,7 @@ def upload_file(run_id):
     return jsonify({"message": "File uploaded successfully"}), 200
 
 @app.route("/download_file/<run_id>", methods=["POST"])
+@api_key_required
 def download_file(run_id):
     """Endpoint: POST /download_file/<str:run_id>
 
@@ -183,6 +187,7 @@ def download_file(run_id):
     return response, 200
 
 @app.route("/start_simulation/<run_id>", methods=["POST"])
+@api_key_required
 def simulate(run_id):
     """Endpoint: POST /start_simulation/<run_id>
 
