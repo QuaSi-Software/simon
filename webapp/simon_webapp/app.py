@@ -23,7 +23,7 @@ app = Flask("simon_webapp")
 if not APP_CONFIG_PATH.exists() or not APP_CONFIG_PATH.is_file():
     raise FileNotFoundError(f"Configuration file {APP_CONFIG_PATH} does not exist or is " +
                              "not a file.")
-with open("webapp_config.yml", "r", encoding="utf-8") as config_file:
+with open(APP_CONFIG_PATH, "r", encoding="utf-8") as config_file:
     webapp_config = yaml.safe_load(config_file)
     for key in webapp_config:
         app.config[key] = webapp_config[key]
