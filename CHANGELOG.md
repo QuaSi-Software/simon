@@ -5,6 +5,9 @@ Lists changes to the code by version.
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
 ### Version 0.2.1
+* Fix path of config file in app construction being relative instead of absolute
+
+### Version 0.2.1
 * Implement app config loading from yaml file for webapp
 * Implement sending API key in headers for requests to sim_api from webapp, which is required in sim API v0.2.0
 
