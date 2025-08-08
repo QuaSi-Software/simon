@@ -7,7 +7,7 @@ Endpoints:
 from __future__ import annotations
 
 import uuid
-import json
+import yaml
 from pathlib import Path
 from flask import Flask, jsonify, request
 from sim_api.util import create_run_dir, get_run_status, run_dir_exists, \
@@ -15,7 +15,7 @@ from sim_api.util import create_run_dir, get_run_status, run_dir_exists, \
     alias_config_file, update_run_status, parse_key_from_auth_header
 
 APP_ROOT = Path(__file__).resolve().parent.parent
-APP_CONFIG_PATH = APP_ROOT / "api_config.json"
+APP_CONFIG_PATH = APP_ROOT / "api_config.yml"
 
 def api_key_required(function):
     """Decorator for routes that require an API key."""
@@ -44,7 +44,7 @@ if not APP_CONFIG_PATH.exists() or not APP_CONFIG_PATH.is_file():
     raise FileNotFoundError(f"Configuration file {APP_CONFIG_PATH} does not exist or is " +
                              "not a file.")
 with open(APP_CONFIG_PATH, 'r', encoding="utf-8") as config_file:
-    app_config = json.load(config_file)
+    app_config = yaml.safe_load(config_file)
     for key in app_config:
         app.config[key] = app_config[key]
 
