@@ -19,3 +19,6 @@ sim_api/config.env
 sim_api/api_config.yml
 webapp/config.env
 webapp/webapp_config.yml
+
+# session data
+webapp/flask_session

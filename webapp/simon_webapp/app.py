@@ -7,7 +7,8 @@ from pathlib import Path
 import io
 import requests
 import yaml
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, session
+from flask_session import Session
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "webapp_config.yml"
@@ -32,6 +33,9 @@ def get_app():
     """Get the global app variable."""
     return app
 
+# set session to be managed server-side
+Session(app)
+
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
@@ -44,7 +48,7 @@ def index():
 
     Response (HTML): The index page containing all frontend code as SPA
     """
-    return render_template("index.html"), 200
+    return render_template("index.html", session=session), 200
 
 @app.route("/imprint", methods=["GET"])
 def imprint():
