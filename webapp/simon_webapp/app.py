@@ -7,8 +7,9 @@ from pathlib import Path
 import io
 import requests
 import yaml
-from flask import Flask, render_template, jsonify, request, session
+from flask import Flask, render_template, jsonify, request, session, url_for, redirect
 from flask_session import Session
+from authlib.integrations.flask_client import OAuth
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "webapp_config.yml"
@@ -36,6 +37,10 @@ def get_app():
 # set session to be managed server-side
 Session(app)
 
+# register NextCloud oauth
+oauth = OAuth(app)
+oauth.register('nextcloud')
+
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
@@ -48,7 +53,37 @@ def index():
 
     Response (HTML): The index page containing all frontend code as SPA
     """
+    if "user" not in session:
+        session["user"] = "__anonymous__"
+        session["nextcloud_authorized"] = False
     return render_template("index.html", session=session), 200
+
+@app.route("/nextcloud_login", methods=["GET"])
+def nextcloud_login():
+    """NextCloud login route.
+
+    Request body: None
+
+    Response (HTML): A redirect to the NextCloud login
+    """
+    if "nextcloud_authorized" in session and session["nextcloud_authorized"]:
+        redirect(url_for("index"))
+
+    redirect_uri = url_for("callback_nextcloud", _external=True)
+    return oauth.nextcloud.authorize_redirect(redirect_uri)
+
+@app.route('/callback/nextcloud', methods=["GET"])
+def callback_nextcloud():
+    """NextCloud callback route.
+
+    Request body: None
+
+    Response (HTML): A redirect to the index page
+    """
+    token = oauth.nextcloud.authorize_access_token()
+    session["nextcloud_token"] = token
+    session["nextcloud_authorized"] = True
+    return redirect(url_for("index"))
 
 @app.route("/imprint", methods=["GET"])
 def imprint():
