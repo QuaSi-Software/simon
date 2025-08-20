@@ -1,6 +1,5 @@
 flask==2.3.3
 flask-cors==4.0.0
 flask-session==0.8.0
-authlib==1.6.1
 requests==2.31.0
 pyyaml==6.0.2

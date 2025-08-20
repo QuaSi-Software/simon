@@ -5,11 +5,12 @@ from __future__ import annotations
 
 from pathlib import Path
 import io
+import uuid
+from urllib.parse import urlencode
 import requests
 import yaml
 from flask import Flask, render_template, jsonify, request, session, url_for, redirect
 from flask_session import Session
-from authlib.integrations.flask_client import OAuth
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "webapp_config.yml"
@@ -37,10 +38,6 @@ def get_app():
 # set session to be managed server-side
 Session(app)
 
-# register NextCloud oauth
-oauth = OAuth(app)
-oauth.register('nextcloud')
-
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
@@ -53,8 +50,8 @@ def index():
 
     Response (HTML): The index page containing all frontend code as SPA
     """
-    if "user" not in session:
-        session["user"] = "__anonymous__"
+    if "user_id" not in session:
+        session["user_id"] = "__anonymous__"
         session["nextcloud_authorized"] = False
     return render_template("index.html", session=session), 200
 
@@ -69,8 +66,17 @@ def nextcloud_login():
     if "nextcloud_authorized" in session and session["nextcloud_authorized"]:
         redirect(url_for("index"))
 
-    redirect_uri = url_for("callback_nextcloud", _external=True)
-    return oauth.nextcloud.authorize_redirect(redirect_uri)
+    session['nextcloud_login_state'] = str(uuid.uuid4())
+
+    qs = urlencode({
+        'client_id': app.config['NEXTCLOUD_CLIENT_ID'],
+        'redirect_uri': url_for('callback_nextcloud', _external=True),
+        'response_type': 'code',
+        'scope': "",
+        'state': session['nextcloud_login_state'],
+    })
+
+    return redirect(app.config['NEXTCLOUD_AUTHORIZE_URL'] + '?' + qs)
 
 @app.route('/callback/nextcloud', methods=["GET"])
 def callback_nextcloud():
@@ -80,9 +86,50 @@ def callback_nextcloud():
 
     Response (HTML): A redirect to the index page
     """
-    token = oauth.nextcloud.authorize_access_token()
-    session["nextcloud_token"] = token
+    if "nextcloud_authorized" in session and session["nextcloud_authorized"]:
+        redirect(url_for("index"))
+
+    # if the callback request from NextCloud has an error, we might catch this here, however
+    # it is not clear how errors are presented in the request for the callback
+    # if "error" in request.args:
+    #     return jsonify({"error": "NextCloud callback has errors"}), 400
+
+    if request.args["state"] != session["nextcloud_login_state"]:
+        return jsonify({"error": "CSRF warning! Request states do not match."}), 403
+
+    if "code" not in request.args or request.args["code"] == "":
+        return jsonify({"error": "Did not receive valid code in NextCloud callback"}), 400
+
+    response = requests.post(
+        app.config['NEXTCLOUD_ACCESS_TOKEN_URL'],
+        data={
+            'client_id': app.config['NEXTCLOUD_CLIENT_ID'],
+            'client_secret': app.config['NEXTCLOUD_SECRET'],
+            'code': request.args['code'],
+            'grant_type': 'authorization_code',
+            'redirect_uri': url_for('callback_nextcloud', _external=True),
+        },
+        headers={'Accept': 'application/json'},
+        timeout=10
+    )
+
+    if response.status_code != 200:
+        return jsonify({"error": "Invalid response while fetching access token"}), 400
+
+    response_data = response.json()
+    access_token = response_data.get('access_token')
+    if not access_token:
+        return jsonify({"error": "Could not find access token in response"}), 400
+
+    refresh_token = response_data.get('refresh_token')
+    if not refresh_token:
+        return jsonify({"error": "Could not find refresh token in reponse"}), 400
+
+    session["nextcloud_access_token"] = access_token
+    session["nextcloud_refresh_token"] = refresh_token
     session["nextcloud_authorized"] = True
+    session["user_id"] = response_data.get("user_id")
+
     return redirect(url_for("index"))
 
 @app.route("/imprint", methods=["GET"])

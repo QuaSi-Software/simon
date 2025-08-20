@@ -19,6 +19,12 @@
         </p>
       </div>
 
+      {% if session['nextcloud_authorized'] %}
+        <span>Logged in with NextCloud as {{session['user_id']}}</span>
+      {% else %}
+        <a href="{{ url_for('nextcloud_login') }}">Login with NextCloud</a>
+      {% endif %}
+
       <form id="parameters-form" action="" method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <label for="c_re">c_re</label>
