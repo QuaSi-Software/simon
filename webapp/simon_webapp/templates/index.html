@@ -21,6 +21,7 @@
 
       {% if session['nextcloud_authorized'] %}
         <span>Logged in with NextCloud as {{session['user_id']}}</span>
+        <a href="{{ url_for('nextcloud_logout') }}">Log out of NextCloud</a>
       {% else %}
         <a href="{{ url_for('nextcloud_login') }}">Login with NextCloud</a>
       {% endif %}

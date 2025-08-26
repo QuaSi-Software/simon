@@ -64,7 +64,7 @@ def nextcloud_login():
     Response (HTML): A redirect to the NextCloud login
     """
     if "nextcloud_authorized" in session and session["nextcloud_authorized"]:
-        redirect(url_for("index"))
+        return redirect(url_for("index"))
 
     session['nextcloud_login_state'] = str(uuid.uuid4())
 
@@ -77,6 +77,24 @@ def nextcloud_login():
     })
 
     return redirect(app.config['NEXTCLOUD_AUTHORIZE_URL'] + '?' + qs)
+
+@app.route("/nextcloud_logout", methods=["GET"])
+def nextcloud_logout():
+    """NextCloud logout route.
+
+    Request body: None
+
+    Response (HTML): A redirect to the home page
+    """
+    if not ("nextcloud_authorized" in session and session["nextcloud_authorized"]):
+        return redirect(url_for("index"))
+
+    session["user_id"] = "__anonymous__"
+    session["nextcloud_authorized"] = False
+    session["nextcloud_access_token"] = None
+    session["nextcloud_refresh_token"] = None
+
+    return redirect(url_for("index"))
 
 @app.route('/callback/nextcloud', methods=["GET"])
 def callback_nextcloud():
