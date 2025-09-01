@@ -11,6 +11,7 @@ import requests
 import yaml
 from flask import Flask, render_template, jsonify, request, session, url_for, redirect
 from flask_session import Session
+from .nc_requests import fetch_access_token
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "webapp_config.yml"
@@ -118,18 +119,7 @@ def callback_nextcloud():
     if "code" not in request.args or request.args["code"] == "":
         return jsonify({"error": "Did not receive valid code in NextCloud callback"}), 400
 
-    response = requests.post(
-        app.config['NEXTCLOUD_ACCESS_TOKEN_URL'],
-        data={
-            'client_id': app.config['NEXTCLOUD_CLIENT_ID'],
-            'client_secret': app.config['NEXTCLOUD_SECRET'],
-            'code': request.args['code'],
-            'grant_type': 'authorization_code',
-            'redirect_uri': url_for('callback_nextcloud', _external=True),
-        },
-        headers={'Accept': 'application/json'},
-        timeout=10
-    )
+    response = fetch_access_token(app, request.args["code"])
 
     if response.status_code != 200:
         return jsonify({"error": "Invalid response while fetching access token"}), 400

@@ -1,6 +1,6 @@
 """Functions for performing requests to NextCloud using oauth authentication."""
 import requests
-from flask import session
+from flask import session, url_for
 
 def refresh_access_token(app, timeout=10):
     """Fetches a new access token using the refresh token.
@@ -27,6 +27,32 @@ def refresh_access_token(app, timeout=10):
     response_data = response.json()
     session["nextcloud_access_token"] = response_data.get('access_token')
     session["nextcloud_refresh_token"] = response_data.get('refresh_token')
+
+def fetch_access_token(app, auth_code, timeout=10):
+    """Performs the request to get the access and refresh tokens during the oauth login
+    procedure when the user has been redirected to the callback route.
+
+    The redirect request contains a temporary auth code, which is required for getting the
+    access and refresh tokens.
+
+    Args:
+    -`app`: The flask app, used for settings
+    -`auth_code:str`: The temporary auth code from the callback request
+    -`timeout:int`: (Optional) The timeout in seconds to wait for a response. Defaults to
+        10 seconds.
+    """
+    return requests.post(
+        app.config['NEXTCLOUD_ACCESS_TOKEN_URL'],
+        data={
+            'client_id': app.config['NEXTCLOUD_CLIENT_ID'],
+            'client_secret': app.config['NEXTCLOUD_SECRET'],
+            'code': auth_code,
+            'grant_type': 'authorization_code',
+            'redirect_uri': url_for('callback_nextcloud', _external=True),
+        },
+        headers={'Accept': 'application/json'},
+        timeout=timeout
+    )
 
 def ensure_request(url, app, method="GET", data=None, json=None, headers=None, timeout=10):
     """Performs a request to the configured NextCloud instance, ensuring the request is
