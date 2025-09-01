@@ -4,7 +4,12 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
-### Version 0.2.1
+### Version 0.3.0
+* Implement server-side session storage instead of the default local storage
+* Implement authentication flow using oauth with a configured NextCloud instance
+  * The authentication tokens acquired during login are persisted in the session as they are required for further requests against the NextCloud APIs
+
+### Version 0.2.2
 * Fix path of config file in app construction being relative instead of absolute
 
 ### Version 0.2.1
