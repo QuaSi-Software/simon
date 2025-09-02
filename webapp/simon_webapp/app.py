@@ -285,6 +285,9 @@ def get_files(dir_path=""):
 
     Response (JSON): The file list
     """
+    if not session["nextcloud_authorized"]:
+        return jsonify({"error": "Must be logged in to NextCloud"}), 401
+
     args = request.json
     dir_path = args.get("dir_path")
 
