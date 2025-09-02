@@ -2,6 +2,14 @@
 import requests
 from flask import session, url_for
 
+WEBDAV_REQUEST_PROPFIND_DATA = """<?xml version="1.0" encoding="UTF-8"?>
+    <d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:nc="http://nextcloud.org/ns">
+      <d:prop>
+        <d:getcontenttype/>
+        <d:resourcetype/>
+      </d:prop>
+    </d:propfind>"""
+
 def refresh_access_token(app, timeout=10):
     """Fetches a new access token using the refresh token.
 
