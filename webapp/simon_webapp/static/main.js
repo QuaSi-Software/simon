@@ -90,6 +90,8 @@ async function switch_directory(item) {
 }
 
 async function fetch_nc_file_list() {
+    by_id("nc-file-list-blocker").classList.remove("hidden")
+
     let curr_dir = by_id("nc-current-dir").dataset.dirname
 
     let response = await fetch(
@@ -122,7 +124,7 @@ async function fetch_nc_file_list() {
         }
     })
 
-    by_id('nc-file-list').innerHTML = (
+    by_id('nc-file-list-items').innerHTML = (
         '<ul class="no-bullet">'
         + '<li class="nc-file-list-dir" data-dirname="..">|\>&nbsp;..</li>'
         + items.join("\n") + "</ul>"
@@ -134,6 +136,8 @@ async function fetch_nc_file_list() {
             switch_directory(item)
         }
     })
+
+    by_id("nc-file-list-blocker").classList.add("hidden")
 }
 
 async function start_simulation() {
