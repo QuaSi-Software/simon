@@ -1,3 +1,24 @@
 .w-25 {
     width: 25%;
 }
+
+.no-bullet {
+    list-style: none;
+}
+
+#nc-file-list {
+    border: 1px solid #494949;
+    border-radius: 10px;
+    width: 700px;
+    min-height: 50px;
+    overflow-x: auto;
+}
+
+#nc-file-list ul li {
+    white-space: nowrap;
+}
+
+.nc-file-list-dir {
+    cursor: pointer;
+    color: #321dd0;
+}

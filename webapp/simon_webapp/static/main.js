@@ -1,9 +1,29 @@
-API_ROOT = "http://127.0.0.1:5001/"
+API_ROOT = "http://localhost:5001/"
 
 run_status = {}
 
 function by_id(id) {
     return document.getElementById(id)
+}
+
+function by_cl(class_name) {
+    return Array.from(document.getElementsByClassName(class_name))
+}
+
+function format_filename(filename, full_path) {
+    if (filename.startsWith("/")) {
+        filename = filename.slice(1);
+    }
+    if (filename[filename.length-1] === "/") {
+        filename = filename.slice(0,filename.length-1);
+    }
+
+    if (full_path) {
+        return decodeURI(filename)
+    }
+
+    let splitted = filename.split("/")
+    return decodeURI(splitted[splitted.length - 1]);
 }
 
 async function fetch_results(run_id) {
@@ -56,6 +76,66 @@ async function check_status(run_id) {
     }
 }
 
+async function switch_directory(item) {
+    let new_val = item.dataset.dirname
+    if (new_val == "..") {
+        new_val = by_id("nc-current-dir").dataset.dirname
+        let splitted = new_val.split("/")
+        splitted = splitted.slice(0,-2)
+        new_val = splitted.join("/")
+    }
+    by_id("nc-current-dir").setAttribute("data-dirname", new_val)
+    by_id("nc-current-dir").innerText = "/" + format_filename(new_val, true)
+    fetch_nc_file_list()
+}
+
+async function fetch_nc_file_list() {
+    let curr_dir = by_id("nc-current-dir").dataset.dirname
+
+    let response = await fetch(
+        API_ROOT + "get_files",
+        {
+            method: "POST",
+            body: JSON.stringify({"dir_path": curr_dir}),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    )
+    let files = await response.json()
+
+    let items = []
+    files.sort((a, b) => {
+        if (a.is_dir !== b.is_dir) return a.is_dir ? -1 : 1
+        return a.name.localeCompare(b.name)
+    }).forEach(item => {
+        if (item.name != "/" && item.name != curr_dir) {
+            let prefix = item.is_dir ? "|\>&nbsp;" : "|&nbsp;&nbsp;"
+            items.push(
+                "<li"
+                + (item.is_dir ? " class='nc-file-list-dir'" : "")
+                + (item.is_dir ? " data-dirname='" + item.name + "'" : "")
+                + ">"
+                + prefix + format_filename(item.name, false)
+                + "</li>"
+            )
+        }
+    })
+
+    by_id('nc-file-list').innerHTML = (
+        '<ul class="no-bullet">'
+        + '<li class="nc-file-list-dir" data-dirname="..">|\>&nbsp;..</li>'
+        + items.join("\n") + "</ul>"
+    )
+
+    by_cl("nc-file-list-dir").forEach(item => {
+        item.onclick = async function(event) {
+            event.preventDefault()
+            switch_directory(item)
+        }
+    })
+}
+
 function main() {
     document.getElementById('parameters-form').onsubmit = async function(event) {
         event.preventDefault()
@@ -82,6 +162,11 @@ function main() {
             clearInterval(run_status["interval_id"]);
         }
         run_status["interval_id"] = setInterval(check_status, 10 * 1000, run_status["run_id"])
+    }
+
+    by_id('nc-get-files').onclick = async function(event) {
+        event.preventDefault()
+        fetch_nc_file_list()
     }
 }
 
