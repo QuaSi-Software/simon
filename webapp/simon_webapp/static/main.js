@@ -136,37 +136,47 @@ async function fetch_nc_file_list() {
     })
 }
 
+async function start_simulation() {
+    let form_data = new FormData(this)
+    let response = await fetch(API_ROOT + 'start_simulation', {
+        method: 'POST',
+        body: form_data
+    })
+    let result = await response.json()
+
+    run_status["run_id"] = result["run_id"]
+    by_id('run-id').innerText = run_status["run_id"]
+
+    let item = '<div class="query-result card"><div class="card-body">'
+        + '<span>Request: start_simulation</span><br/>'
+        + '<span>Code: ' + (response.status ? response.status : 'Error') + '</span><br/>'
+        + '<span>Message: ' + (result["message"] ? result["message"] : '') + '</span><br/>'
+        + '<span>Error: ' + (result["error"] ? result["error"] : '') + '</span>'
+        + '</div></div>'
+    by_id('query-list').innerHTML = item + by_id('query-list').innerHTML
+
+    if (run_status["interval_id"]) {
+        clearInterval(run_status["interval_id"]);
+    }
+    run_status["interval_id"] = setInterval(check_status, 10 * 1000, run_status["run_id"])
+}
+
 function main() {
+    // attaching listeners to elements that exist when the JS is being executed
     document.getElementById('parameters-form').onsubmit = async function(event) {
         event.preventDefault()
-
-        let form_data = new FormData(this)
-        let response = await fetch(API_ROOT + 'start_simulation', {
-            method: 'POST',
-            body: form_data
-        })
-        let result = await response.json()
-
-        run_status["run_id"] = result["run_id"]
-        by_id('run-id').innerText = run_status["run_id"]
-
-        let item = '<div class="query-result card"><div class="card-body">'
-            + '<span>Request: start_simulation</span><br/>'
-            + '<span>Code: ' + (response.status ? response.status : 'Error') + '</span><br/>'
-            + '<span>Message: ' + (result["message"] ? result["message"] : '') + '</span><br/>'
-            + '<span>Error: ' + (result["error"] ? result["error"] : '') + '</span>'
-            + '</div></div>'
-        by_id('query-list').innerHTML = item + by_id('query-list').innerHTML
-
-        if (run_status["interval_id"]) {
-            clearInterval(run_status["interval_id"]);
-        }
-        run_status["interval_id"] = setInterval(check_status, 10 * 1000, run_status["run_id"])
+        start_simulation()
     }
 
-    by_id('nc-get-files').onclick = async function(event) {
-        event.preventDefault()
-        fetch_nc_file_list()
+    // events to handle when the document is ready
+    document.onreadystatechange = async function(event) {
+        if (document.readyState == "complete") {
+            // fetch content for the user's NC root dir, but only if the user is logged in.
+            // spoofing the login status client-side is not a security concern as the API
+            // checks authentication anyway
+            let logged_in = by_id("nc-logged-in-info")
+            if (logged_in) fetch_nc_file_list()
+        }
     }
 }
 

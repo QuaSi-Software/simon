@@ -20,7 +20,7 @@
       </div>
 
       {% if session['nextcloud_authorized'] %}
-        <span>Logged in with NextCloud as {{session['user_id']}}</span>
+        <span id="nc-logged-in-info">Logged in with NextCloud as {{session['user_id']}}</span>
         <a href="{{ url_for('nextcloud_logout') }}">Log out of NextCloud</a>
       {% else %}
         <a href="{{ url_for('nextcloud_login') }}">Login with NextCloud</a>
@@ -37,7 +37,6 @@
         </div>
       </form>
 
-      <p><button id="nc-get-files">Get files</button></p>
       <p>
         <span>Current dir: </span>
         <span id="nc-current-dir" data-dirname="">/</span>
