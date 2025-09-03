@@ -155,9 +155,41 @@ def imprint():
 # API Routes
 # ---------------------------------------------------------------------------
 
-@app.route("/start_simulation", methods=["POST"])
-def start_simulation():
-    """Endpoint: POST /start_simulation
+@app.route("/get_run_id", methods=["GET"])
+def get_run_id():
+    """Endpoint: GET /get_run_id
+
+    Response (JSON):
+        {
+            "run_id": "...", # ID of the run, required for uploading files, checking status
+                             # and fetching results
+        }
+    """
+    run_id = None
+    response = requests.get(
+        app.config["sim_api"]["endpoint"] + "get_run_id",
+        timeout=app.config["sim_api"]["timeout"],
+        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
+    )
+    if response.ok:
+        data = response.json()
+        run_id = data["run_id"] if "run_id" in data else None
+    else:
+        run_id = None
+
+    if run_id is None:
+        session["run_id"] = ""
+        return jsonify({"error": "Could not acquire run ID from sim API"}), 500
+
+    session["run_id"] = run_id
+    return jsonify({"run_id": run_id}), 200
+
+@app.route("/start_simulation_from_form/<run_id>", methods=["POST"])
+def start_simulation_from_form(run_id):
+    """Endpoint: POST /start_simulation_from_form/<run_id>
+
+    Request arguments (HTTP):
+        - run_id -> str: The ID of the run that should be started
 
     Request body (JSON):
         {
@@ -178,20 +210,10 @@ def start_simulation():
     if request_data is None:
         return jsonify({"error": "Expected form data."}), 400
 
-    # fetch run ID
-    run_id = None
-    response = requests.get(
-        app.config["sim_api"]["endpoint"] + "get_run_id",
-        timeout=app.config["sim_api"]["timeout"],
-        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
-    )
-    if response.ok:
-        data = response.json()
-        run_id = data["run_id"] if "run_id" in data else None
-    else:
-        run_id = None
-    if run_id is None:
-        return jsonify({"error": "Could not acquire run ID from sim API"}), 501
+    # check run ID
+    if run_id is None or run_id == "" or run_id != session["run_id"]:
+        return jsonify({"error": "Run ID is empty or does not match server-side. Request "
+                        + "a new run ID with the corresponding endpoint."}), 409
 
     # upload config file
     file_content = (
@@ -206,10 +228,8 @@ def start_simulation():
         timeout=app.config["sim_api"]["timeout"],
         headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
     )
-    if response.ok:
-        data = response.json()
-    else:
-        return jsonify({"error": "Could not upload config file"}), 501
+    if not response.ok:
+        return jsonify({"error": "Could not upload config file"}), 500
 
     # start simulation
     response = requests.post(
@@ -218,12 +238,10 @@ def start_simulation():
         timeout=app.config["sim_api"]["timeout"],
         headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
     )
-    if response.ok:
-        data = response.json()
-    else:
-        return jsonify({"error": "Could not start simulation"}), 501
+    if not response.ok:
+        return jsonify({"error": "Could not start simulation"}), 500
 
-    return jsonify({"run_id": run_id}), 200
+    return jsonify({"run_id": run_id}), 202
 
 @app.route('/run_status/<run_id>', methods=['GET'])
 def run_status(run_id):

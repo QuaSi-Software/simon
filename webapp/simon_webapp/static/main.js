@@ -140,16 +140,18 @@ async function fetch_nc_file_list() {
     by_id("nc-file-list-blocker").classList.add("hidden")
 }
 
-async function start_simulation() {
-    let form_data = new FormData(this)
-    let response = await fetch(API_ROOT + 'start_simulation', {
+async function start_simulation_from_form(form_element) {
+    let response = await fetch(API_ROOT + "get_run_id", {method: "GET"})
+    let result = await response.json()
+    run_status["run_id"] = result["run_id"]
+    by_id('run-id').innerText = run_status["run_id"]
+
+    let form_data = new FormData(form_element)
+    response = await fetch(API_ROOT + 'start_simulation_from_form/' + run_status["run_id"], {
         method: 'POST',
         body: form_data
     })
-    let result = await response.json()
-
-    run_status["run_id"] = result["run_id"]
-    by_id('run-id').innerText = run_status["run_id"]
+    result = await response.json()
 
     let item = '<div class="query-result card"><div class="card-body">'
         + '<span>Request: start_simulation</span><br/>'
@@ -169,7 +171,7 @@ function main() {
     // attaching listeners to elements that exist when the JS is being executed
     document.getElementById('parameters-form').onsubmit = async function(event) {
         event.preventDefault()
-        start_simulation()
+        start_simulation_from_form(this)
     }
 
     // events to handle when the document is ready
