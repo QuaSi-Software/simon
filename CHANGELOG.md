@@ -4,6 +4,9 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
+### Version 0.3.1
+* Add a directory navigation of the user's NextCloud file system to the frontend. This is the main element for configuring the simulation input, by selecting files to be uploaded to a simulation run.
+
 ### Version 0.3.0
 * Implement server-side session storage instead of the default local storage
 * Implement authentication flow using oauth with a configured NextCloud instance
