@@ -89,6 +89,41 @@ async function switch_directory(item) {
     fetch_nc_file_list()
 }
 
+async function get_run_id() {
+    let response = await fetch(
+        API_ROOT + "get_run_id"
+    )
+    let data = await response.json()
+    return data["run_id"]
+}
+
+async function upload_file(item) {
+    console.log("uploading " + item.dataset.filename)
+
+    if (run_status["run_id"] === undefined) {
+        run_status["run_id"] = await get_run_id()
+        by_id('run-id').innerText = run_status["run_id"]
+    }
+
+    let response = await fetch(
+        API_ROOT + "upload_file_to_sim_run/" + run_status["run_id"],
+        {
+            method: "POST",
+            body: JSON.stringify({"file_path": item.dataset.filename}),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }
+    )
+
+    if (response.status < 300) {
+        by_id("uploaded-files").innerText = by_id("uploaded-files").innerText +
+            item.dataset.filename + "<br/>"
+    } else {
+        console.log("File upload failed :" + response.json()["error"])
+    }
+}
+
 async function fetch_nc_file_list() {
     by_id("nc-file-list-blocker").classList.remove("hidden")
 
@@ -114,9 +149,9 @@ async function fetch_nc_file_list() {
         if (item.name != "/" && item.name != curr_dir) {
             let prefix = item.is_dir ? "|\>&nbsp;" : "|&nbsp;&nbsp;"
             items.push(
-                "<li"
-                + (item.is_dir ? " class='nc-file-list-dir'" : "")
-                + (item.is_dir ? " data-dirname='" + item.name + "'" : "")
+                "<li "
+                + "class='" + (item.is_dir ? "nc-file-list-dir" : "nc-file-list-file") + "' "
+                + "data-" + (item.is_dir ? "dirname" : "filename") + "='"+ item.name + "' "
                 + ">"
                 + prefix + format_filename(item.name, false)
                 + "</li>"
@@ -134,6 +169,13 @@ async function fetch_nc_file_list() {
         item.onclick = async function(event) {
             event.preventDefault()
             switch_directory(item)
+        }
+    })
+
+    by_cl("nc-file-list-file").forEach(item => {
+        item.onclick = async function(event) {
+            event.preventDefault()
+            upload_file(item)
         }
     })
 

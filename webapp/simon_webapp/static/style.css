@@ -40,3 +40,7 @@
     cursor: pointer;
     color: #321dd0;
 }
+
+.nc-file-list-file {
+    cursor: cell;
+}

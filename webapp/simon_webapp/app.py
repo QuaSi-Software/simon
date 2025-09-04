@@ -322,3 +322,46 @@ def get_files(dir_path=""):
         return jsonify(files), 200
     else:
         return jsonify({"error": "Could not fetch files from nextcloud"}), 500
+
+@app.route('/upload_file_to_sim_run/<run_id>', methods=['POST'])
+def upload_file_to_sim_run(run_id):
+    """Endpoint: POST /upload_file_to_sim_run/<run_id>
+
+    Request arguments (HTTP):
+        - run_id -> str: The ID of the run to which to upload to the file
+    Request arguments (JSON):
+        - file_path -> str: The NC-relative path of the file to upload
+
+    Response (JSON): The file list
+    """
+    if not session["nextcloud_authorized"]:
+        return jsonify({"error": "Must be logged in to NextCloud"}), 401
+
+    if run_id is None or run_id == "" or run_id != session["run_id"]:
+        return jsonify({"error": "Run ID is empty or does not match server-side. Request "
+                        + "a new run ID with the corresponding endpoint."}), 409
+
+    args = request.json
+    file_path = encode_nc_path(args.get("file_path"))
+    filename = filename_from_nc_path(file_path)
+
+    user = quote(session["user_id"])
+    url = app.config["NEXTCLOUD_API_BASE_URL"] + "remote.php/dav/files/" + user \
+        + "/" + file_path
+    response = ensure_request(url, app, method="GET")
+
+    if not response.ok:
+        return jsonify({"error": "Could not fetch file from NextCloud: "
+                       + f"{response.status_code} {response.reason}"}), 404
+
+    file_obj = io.BytesIO(response.content)
+    response = requests.post(
+        app.config["sim_api"]["endpoint"] + "upload_file/" + run_id,
+        files={"file": (filename, file_obj)},
+        timeout=app.config["sim_api"]["timeout"],
+        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
+    )
+    if not response.ok:
+        return jsonify({"error": "Could not upload file to sim API"}), 500
+
+    return ("", 204)
