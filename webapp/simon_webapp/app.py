@@ -6,13 +6,13 @@ from __future__ import annotations
 from pathlib import Path
 import io
 import uuid
-from urllib.parse import urlencode, quote, unquote
+from urllib.parse import urlencode, quote
 import requests
 import yaml
 from flask import Flask, render_template, jsonify, request, session, url_for, redirect
 from flask_session import Session
 from .nc_requests import ensure_request, fetch_access_token, WEBDAV_REQUEST_PROPFIND_DATA
-from .util import parse_webdav_files_response
+from .util import parse_webdav_files_response, filename_from_nc_path, encode_nc_path
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "webapp_config.yml"
@@ -309,15 +309,12 @@ def get_files(dir_path=""):
     args = request.json
     dir_path = args.get("dir_path")
 
-    if dir_path == "":
-        parts = []
-    else:
-        parts = unquote(dir_path).split("/")
-        parts = [quote(p) for p in parts if p != ""]
+    if dir_path != "":
+        dir_path = encode_nc_path(dir_path)
 
     user = quote(session["user_id"])
     url = app.config["NEXTCLOUD_API_BASE_URL"] + "remote.php/dav/files/" + user \
-        + "/" + "/".join(parts)
+        + "/" + dir_path
     response = ensure_request(url, app, method="PROPFIND", data=WEBDAV_REQUEST_PROPFIND_DATA)
     success, files = parse_webdav_files_response(response.content, session["user_id"])
 

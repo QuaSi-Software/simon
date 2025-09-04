@@ -1,6 +1,7 @@
 """Various utility functions for the webapp."""
 
 from __future__ import annotations
+from urllib.parse import quote, unquote
 import xml.etree.ElementTree as ET
 
 def name_from_href(href: str, username: str) -> str:
@@ -69,3 +70,26 @@ def parse_webdav_files_response(content: str, username: str) -> tuple[bool,list]
         })
 
     return True, files
+
+def filename_from_nc_path(file_path: str) -> str:
+    """Extracts a file's name from its full NC-like path.
+
+    Args:
+    -`file_path:str`: The full NC-like path
+    Returns:
+    -`str`: The extracted filename
+    """
+    splitted = str(file_path).split("/")
+    return splitted[len(splitted)-1]
+
+def encode_nc_path(path: str) -> str:
+    """Encodes the given NC-like path and removes leading and trailing slashes.
+
+    Args:
+    -`path:str`: The NC-like path
+    Returns:
+    -`str`: The encoded NC-like path with stripped slashes
+    """
+    parts = unquote(path).split("/")
+    parts = [quote(p) for p in parts if p != ""]
+    return "/".join(parts)
