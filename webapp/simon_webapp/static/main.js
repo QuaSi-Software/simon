@@ -26,19 +26,20 @@ function format_filename(filename, full_path) {
     return decodeURI(splitted[splitted.length - 1]);
 }
 
-async function fetch_results(run_id) {
-    let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {method: 'GET'})
-    let result = {}
-    if (response.status >= 400) {
-        result = response.json()
-    }
+function add_to_query_list(query_name, response, result) {
     let item = '<div class="query-result card"><div class="card-body">'
-            + '<span>Request: fetch_results</span><br/>'
+            + '<span>Request: ' + query_name + '</span><br/>'
             + '<span>Code: ' + (response.status ? response.status : 'Error') + '</span><br/>'
             + '<span>Message: ' + (result["message"] ? result["message"] : '') + '</span><br/>'
             + '<span>Error: ' + (result["error"] ? result["error"] : '') + '</span>'
             + '</div></div>'
     by_id('query-list').innerHTML = item + by_id('query-list').innerHTML
+}
+
+async function fetch_results(run_id) {
+    let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {method: 'GET'})
+    let result = response.status >= 400 ? await response.json() : {}
+    add_to_query_list('fetch_results', response, result)
 
     let blob = await response.blob();
     let img = document.createElement('img');
@@ -58,17 +59,10 @@ async function check_status(run_id) {
         {method: 'GET'}
     )
     let result = await response.json()
+    add_to_query_list('run_status', response, result)
 
     run_status["status"] = result["code"]
     by_id('run-status').innerText = run_status["status"]
-
-    let item = '<div class="query-result card"><div class="card-body">'
-            + '<span>Request: run_status</span><br/>'
-            + '<span>Code: ' + (response.status ? response.status : 'Error') + '</span><br/>'
-            + '<span>Message: ' + (result["message"] ? result["message"] : '') + '</span><br/>'
-            + '<span>Error: ' + (result["error"] ? result["error"] : '') + '</span>'
-            + '</div></div>'
-    by_id('query-list').innerHTML = item + by_id('query-list').innerHTML
 
     if (run_status["status"] === "finished") {
         clearInterval(run_status["interval_id"])
@@ -94,6 +88,7 @@ async function get_run_id() {
         API_ROOT + "get_run_id"
     )
     let data = await response.json()
+    add_to_query_list("get_run_id", response, data)
     return data["run_id"]
 }
 
@@ -115,6 +110,8 @@ async function upload_file(item) {
             }
         }
     )
+    let result = await response.json()
+    add_to_query_list("upload_file_to_sim_run", response, result)
 
     if (response.status < 300) {
         by_id("uploaded-files").innerText = by_id("uploaded-files").innerText +
@@ -140,6 +137,7 @@ async function fetch_nc_file_list() {
         }
     )
     let files = await response.json()
+    add_to_query_list("get_files", response, files)
 
     let items = []
     files.sort((a, b) => {
@@ -194,14 +192,7 @@ async function start_simulation_from_form(form_element) {
         body: form_data
     })
     result = await response.json()
-
-    let item = '<div class="query-result card"><div class="card-body">'
-        + '<span>Request: start_simulation</span><br/>'
-        + '<span>Code: ' + (response.status ? response.status : 'Error') + '</span><br/>'
-        + '<span>Message: ' + (result["message"] ? result["message"] : '') + '</span><br/>'
-        + '<span>Error: ' + (result["error"] ? result["error"] : '') + '</span>'
-        + '</div></div>'
-    by_id('query-list').innerHTML = item + by_id('query-list').innerHTML
+    add_to_query_list("start_simulation_from_form", response, result)
 
     if (run_status["interval_id"]) {
         clearInterval(run_status["interval_id"]);
