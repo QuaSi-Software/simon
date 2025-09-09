@@ -114,7 +114,7 @@ def callback_nextcloud():
     # if "error" in request.args:
     #     return jsonify({"error": "NextCloud callback has errors"}), 400
 
-    if request.args["state"] != session["nextcloud_login_state"]:
+    if str(request.args["state"]) != str(session["nextcloud_login_state"]):
         return jsonify({"error": "CSRF warning! Request states do not match."}), 403
 
     if "code" not in request.args or request.args["code"] == "":
