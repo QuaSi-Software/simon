@@ -36,6 +36,10 @@ function add_to_query_list(query_name, response, result) {
     by_id('query-list').innerHTML = item + by_id('query-list').innerHTML
 }
 
+function set_error(message) {
+    by_id("error-list").innerText = message
+}
+
 async function fetch_results(run_id) {
     let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {method: 'GET'})
     let result = response.status >= 400 ? await response.json() : {}
@@ -93,11 +97,10 @@ async function get_run_id() {
 }
 
 async function upload_file(item) {
-    console.log("uploading " + item.dataset.filename)
-
     if (run_status["run_id"] === undefined) {
         run_status["run_id"] = await get_run_id()
         by_id('run-id').innerText = run_status["run_id"]
+        by_id('run-status').innerText = "new"
     }
 
     let response = await fetch(
@@ -110,14 +113,17 @@ async function upload_file(item) {
             }
         }
     )
-    let result = await response.json()
-    add_to_query_list("upload_file_to_sim_run", response, result)
+    add_to_query_list("upload_file_to_sim_run", response, {})
 
     if (response.status < 300) {
         by_id("uploaded-files").innerText = by_id("uploaded-files").innerText +
-            item.dataset.filename + "<br/>"
+            item.dataset.filename + "\n"
+        by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
+            '<option value="' + format_filename(item.dataset.filename, false) + '">' +
+            format_filename(item.dataset.filename, false) + "</option>"
     } else {
-        console.log("File upload failed :" + response.json()["error"])
+        let result = await response.json()
+        set_error("File upload failed :" + result["error"])
     }
 }
 
@@ -181,10 +187,10 @@ async function fetch_nc_file_list() {
 }
 
 async function start_simulation_from_form(form_element) {
-    let response = await fetch(API_ROOT + "get_run_id", {method: "GET"})
-    let result = await response.json()
-    run_status["run_id"] = result["run_id"]
-    by_id('run-id').innerText = run_status["run_id"]
+    if (run_status["run_id"] === undefined) {
+        set_error("No run ID is set - you need to upload files to get a run ID.")
+        return
+    }
 
     let form_data = new FormData(form_element)
     response = await fetch(API_ROOT + 'start_simulation_from_form/' + run_status["run_id"], {

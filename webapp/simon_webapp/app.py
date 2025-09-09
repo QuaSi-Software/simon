@@ -215,26 +215,15 @@ def start_simulation_from_form(run_id):
         return jsonify({"error": "Run ID is empty or does not match server-side. Request "
                         + "a new run ID with the corresponding endpoint."}), 409
 
-    # upload config file
-    file_content = (
-        f'{{ \
-            "c_re": {request_data.get("c_re", -0.4)}, \
-            "c_im": {request_data.get("c_im", 1.3)}}}'
-    ).encode("utf-8")
-    file_obj = io.BytesIO(file_content)
-    response = requests.post(
-        app.config["sim_api"]["endpoint"] + "upload_file/" + run_id,
-        files={"file": ("config.json", file_obj)},
-        timeout=app.config["sim_api"]["timeout"],
-        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
-    )
-    if not response.ok:
-        return jsonify({"error": "Could not upload config file"}), 500
+    # check if input file is set
+    input_file = request_data.get("config_file_selection")
+    if input_file is None or not input_file or input_file == "":
+        return jsonify({"error": "Must be given value for selected config file"}), 500
 
     # start simulation
     response = requests.post(
         app.config["sim_api"]["endpoint"] + "start_simulation/" + run_id,
-        json={"config_file": "config.json"},
+        json={"config_file": input_file},
         timeout=app.config["sim_api"]["timeout"],
         headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
     )

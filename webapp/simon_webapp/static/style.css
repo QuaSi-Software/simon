@@ -44,3 +44,8 @@
 .nc-file-list-file {
     cursor: cell;
 }
+
+#error-list {
+    color: red;
+    font-weight: bold;
+}

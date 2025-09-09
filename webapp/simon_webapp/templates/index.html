@@ -26,17 +26,6 @@
         <a href="{{ url_for('nextcloud_login') }}">Login with NextCloud</a>
       {% endif %}
 
-      <form id="parameters-form" action="" method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="c_re">c_re</label>
-          <input type="number" class="form-control w-25" id="c_re" name="c_re" value="-0.4" step="0.1">
-          <label for="c_re">c_im</label>
-          <input type="number" class="form-control w-25" id="c_im" name="c_im" value="1.2" step="0.1">
-
-          <input id="submit-simulate" type="submit" value="Simulate">
-        </div>
-      </form>
-
       <p>
         <span>Current dir: </span>
         <span id="nc-current-dir" data-dirname="">/</span>
@@ -46,15 +35,26 @@
         <div id="nc-file-list-items"></div>
       </div>
 
-      <p><div id="simulation-results"></div></p>
       <p>Run ID: <span id="run-id"></span></p>
       <p>Run status: <span id="run-status"></span></p>
+
+      <form id="parameters-form" action="" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="config-file-selection" class="w-25">Input file</label>
+          <select id="config-file-selection" name="config_file_selection" class="form-control w-25">
+          </select>
+          <input id="submit-simulate" type="submit" value="Simulate">
+        </div>
+      </form>
+
+      <p>Errors</p>
+      <div id="error-list"></div>
+
+      <p><div id="simulation-results"></div></p>
       <p>Uploaded files: <span id="uploaded-files"></span></p>
 
       <p>Query list</p>
-      <div id="query-list">
-
-      </div>
+      <div id="query-list"></div>
 
       <footer class="my-5 pt-5 text-muted text-center text-small">
         <p class="mb-1">&copy; 2025 Etienne Ott</p>
