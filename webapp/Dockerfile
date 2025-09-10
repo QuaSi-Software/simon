@@ -34,4 +34,4 @@ ENV FLASK_APP=/app/simon_webapp/app.py \
     PYTHONUNBUFFERED=1
 
 # entry point is running the flask server
-CMD ["flask", "run", "--port", "5001"]
+CMD ["python", "-Xfrozen_modules=off", "-m", "flask", "run", "--port", "5001"]

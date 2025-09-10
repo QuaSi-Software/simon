@@ -38,6 +38,7 @@ services:
     # Map host port → container port
     ports:
       - "5001:5001"
+      - "5002:5002"
 
     # User supplied environment file
     env_file:

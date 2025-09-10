@@ -6,13 +6,18 @@ from __future__ import annotations
 from pathlib import Path
 import io
 import uuid
+import os
 from urllib.parse import urlencode, quote
 import requests
 import yaml
+import debugpy
 from flask import Flask, render_template, jsonify, request, session, url_for, redirect
 from flask_session import Session
 from .nc_requests import ensure_request, fetch_access_token, WEBDAV_REQUEST_PROPFIND_DATA
 from .util import parse_webdav_files_response, filename_from_nc_path, encode_nc_path
+
+if os.environ.get("FLASK_ENV") == "development":
+    debugpy.listen(("0.0.0.0", 5002))
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "webapp_config.yml"
