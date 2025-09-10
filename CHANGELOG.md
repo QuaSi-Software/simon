@@ -4,6 +4,13 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
+### Version 0.3.2
+* Implement file uploading from NC navigation in frontend to the current simulation run
+* Restructure simulation input form to select the input file from the list of uploaded files instead of containing the simulation parameters in the form
+* Restructure endpoint fetch_results to also upload the results to the same directory as the input file
+* Implement option to debug webapp flask server from VS Code via remote attach
+* Extend README with useful information for developers
+
 ### Version 0.3.1
 * Add a directory navigation of the user's NextCloud file system to the frontend. This is the main element for configuring the simulation input, by selecting files to be uploaded to a simulation run.
 

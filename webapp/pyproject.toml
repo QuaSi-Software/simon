@@ -1,6 +1,6 @@
 [project]
 name = "simon_webapp"
-version = "0.3.1"
+version = "0.3.2"
 description = "Webapp to run ReSiE simulations with NextCloud file sync"
 
 [build-system]
