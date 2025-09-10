@@ -65,7 +65,13 @@ function set_error(message) {
 }
 
 async function fetch_results(run_id) {
-    let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {method: 'GET'})
+    let element = by_id("config-file-selection")
+    let input_file_dir = element.options[element.selectedIndex].dataset.dirname
+    let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {
+        method: 'POST',
+        body: JSON.stringify({"destination_dir": input_file_dir}),
+        headers: {"Content-Type": "application/json"}
+    })
     let result = response.status >= 400 ? await response.json() : {}
     add_to_query_list('fetch_results', response, result)
 
@@ -223,6 +229,10 @@ async function start_simulation_from_form(form_element) {
     })
     result = await response.json()
     add_to_query_list("start_simulation_from_form", response, result)
+    if (response.status >= 400) {
+        set_error("Error: " + result["error"])
+        return
+    }
 
     if (run_status["interval_id"]) {
         clearInterval(run_status["interval_id"]);
