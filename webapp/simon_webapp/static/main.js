@@ -10,20 +10,44 @@ function by_cl(class_name) {
     return Array.from(document.getElementsByClassName(class_name))
 }
 
-function format_filename(filename, full_path) {
-    if (filename.startsWith("/")) {
-        filename = filename.slice(1);
+function last(array) {
+    return array[array.length-1]
+}
+
+function except_first(array) {
+    return array.slice(1)
+}
+
+function except_last(array) {
+    return array.slice(0, -1)
+}
+
+function format_nc_file_path(file_path, selector, decode) {
+    if (selector === undefined) {
+        selector = "filename"
     }
-    if (filename[filename.length-1] === "/") {
-        filename = filename.slice(0,filename.length-1);
+    if (decode === undefined) {
+        decode = true
     }
 
-    if (full_path) {
-        return decodeURI(filename)
+    if (file_path.startsWith("/")) {
+        file_path = except_first(file_path)
+    }
+    if (last(file_path) === "/") {
+        file_path = except_last(file_path)
     }
 
-    let splitted = filename.split("/")
-    return decodeURI(splitted[splitted.length - 1]);
+    let path = file_path
+    let splitted = file_path.split("/")
+    if (selector == "full") {
+        path = file_path
+    } else if (selector == "filename") {
+        path = last(splitted)
+    } else if (selector == "dir_path") {
+        path = except_last(splitted).join("/");
+    }
+
+    return decode ? decodeURI(path) : path
 }
 
 function add_to_query_list(query_name, response, result) {
@@ -79,11 +103,10 @@ async function switch_directory(item) {
     if (new_val == "..") {
         new_val = by_id("nc-current-dir").dataset.dirname
         let splitted = new_val.split("/")
-        splitted = splitted.slice(0,-2)
-        new_val = splitted.join("/")
+        new_val = except_last(splitted).join("/")
     }
     by_id("nc-current-dir").setAttribute("data-dirname", new_val)
-    by_id("nc-current-dir").innerText = "/" + format_filename(new_val, true)
+    by_id("nc-current-dir").innerText = "/" + format_nc_file_path(new_val, "filename", true)
     fetch_nc_file_list()
 }
 
@@ -119,8 +142,9 @@ async function upload_file(item) {
         by_id("uploaded-files").innerText = by_id("uploaded-files").innerText +
             item.dataset.filename + "\n"
         by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
-            '<option value="' + format_filename(item.dataset.filename, false) + '">' +
-            format_filename(item.dataset.filename, false) + "</option>"
+            '<option value="' + format_nc_file_path(item.dataset.filename, "filename", false) + '" ' +
+            'data-dirname="'  + format_nc_file_path(item.dataset.filename, "dir_path", false) + '">' +
+            format_nc_file_path(item.dataset.filename, "filename", true) + "</option>"
     } else {
         let result = await response.json()
         set_error("File upload failed :" + result["error"])
@@ -157,7 +181,7 @@ async function fetch_nc_file_list() {
                 + "class='" + (item.is_dir ? "nc-file-list-dir" : "nc-file-list-file") + "' "
                 + "data-" + (item.is_dir ? "dirname" : "filename") + "='"+ item.name + "' "
                 + ">"
-                + prefix + format_filename(item.name, false)
+                + prefix + format_nc_file_path(item.name, "filename", true)
                 + "</li>"
             )
         }
