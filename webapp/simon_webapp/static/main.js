@@ -60,8 +60,22 @@ function add_to_query_list(query_name, response, result) {
     by_id('query-list').innerHTML = item + by_id('query-list').innerHTML
 }
 
-function set_error(message) {
-    by_id("error-list").innerText = message
+function clear_errors() {
+    by_id("error-list").innerHTML = ""
+    by_id("error-list").classList.add("hidden")
+    by_id("error-label").classList.add("hidden")
+}
+
+function set_errors(message) {
+    by_id("error-list").innerHTML = "<li>" + message + "</li>"
+    by_id("error-list").classList.remove("hidden")
+    by_id("error-label").classList.remove("hidden")
+}
+
+function add_error(message) {
+    by_id("error-list").innerHTML = by_id("error-list").innerHTML + "<li>" + message + "</li>"
+    by_id("error-list").classList.remove("hidden")
+    by_id("error-label").classList.remove("hidden")
 }
 
 async function fetch_results(run_id) {
@@ -153,7 +167,7 @@ async function upload_file(item) {
             format_nc_file_path(item.dataset.filename, "filename", true) + "</option>"
     } else {
         let result = await response.json()
-        set_error("File upload failed :" + result["error"])
+        set_errors("File upload failed :" + result["error"])
     }
 }
 
@@ -218,7 +232,7 @@ async function fetch_nc_file_list() {
 
 async function start_simulation_from_form(form_element) {
     if (run_status["run_id"] === undefined) {
-        set_error("No run ID is set - you need to upload files to get a run ID.")
+        set_errors("No run ID is set - you need to upload files to get a run ID.")
         return
     }
 
@@ -230,7 +244,7 @@ async function start_simulation_from_form(form_element) {
     result = await response.json()
     add_to_query_list("start_simulation_from_form", response, result)
     if (response.status >= 400) {
-        set_error("Error: " + result["error"])
+        set_errors("Error: " + result["error"])
         return
     }
 
