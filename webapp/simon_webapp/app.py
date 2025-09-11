@@ -296,8 +296,6 @@ def fetch_results(run_id):
     # upload to NC
     user = quote(session["user_id"])
     destination = request.json["destination_dir"] + "/" + file_name
-    print(f"destination is {destination}\n")
-    print(f"encoded destination is {encode_nc_path(destination)}")
     url = app.config["NEXTCLOUD_API_BASE_URL"] + "remote.php/dav/files/" + user \
         + "/" + encode_nc_path(destination)
     nc_response = ensure_request(url, app, method="PUT", data=sim_response.content)
