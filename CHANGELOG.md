@@ -4,6 +4,9 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
+### Version 0.3.3
+* Improve frontend design and element structure
+
 ### Version 0.3.2
 * Implement file uploading from NC navigation in frontend to the current simulation run
 * Restructure simulation input form to select the input file from the list of uploaded files instead of containing the simulation parameters in the form
