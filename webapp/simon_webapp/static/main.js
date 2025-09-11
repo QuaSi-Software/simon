@@ -159,8 +159,8 @@ async function upload_file(item) {
     add_to_query_list("upload_file_to_sim_run", response, {})
 
     if (response.status < 300) {
-        by_id("uploaded-files").innerText = by_id("uploaded-files").innerText +
-            item.dataset.filename + "\n"
+        by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
+            "<li>/" + format_nc_file_path(item.dataset.filename, "full", true) + "</li>"
         by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
             '<option value="' + format_nc_file_path(item.dataset.filename, "filename", false) + '" ' +
             'data-dirname="'  + format_nc_file_path(item.dataset.filename, "dir_path", false) + '">' +

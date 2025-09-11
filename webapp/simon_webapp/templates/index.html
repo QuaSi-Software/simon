@@ -26,35 +26,51 @@
         <a href="{{ url_for('nextcloud_login') }}">Login with NextCloud</a>
       {% endif %}
 
-      <p>
-        <span>Current dir: </span>
-        <span id="nc-current-dir" data-dirname="">/</span>
-      </p>
-      <div id="nc-file-list">
-        <div id="nc-file-list-blocker" class="hidden"></div>
-        <div id="nc-file-list-items"></div>
-      </div>
+      <p class="element-group">
+        <h4>NextCloud files</h4>
 
-      <p>Run ID: <span id="run-id"></span></p>
-      <p>Run status: <span id="run-status"></span></p>
+        <div id="nc-file-list">
+          <div id="nc-file-list-blocker" class="hidden"></div>
 
-      <form id="parameters-form" action="" method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="config-file-selection" class="w-25">Input file</label>
-          <select id="config-file-selection" name="config_file_selection" class="form-control w-25">
-          </select>
-          <input id="submit-simulate" type="submit" value="Simulate">
+          <span>Current dir: </span>
+          <span id="nc-current-dir" data-dirname="">/</span>
+
+          <div id="nc-file-list-items"></div>
         </div>
-      </form>
+      </p>
 
-      <p>Errors</p>
-      <div id="error-list"></div>
+      <h4>Configure simulation</h4>
+      <p class="element-group">
+        <span class="bold">Run ID:</span> <span id="run-id">-</span>
+        <span class="bold">Run status:</span> <span id="run-status">-</span>
+        <div>
+          <span class="bold">Uploaded files:</span>
+          <ul id="uploaded-files"></ul>
+        </div>
 
-      <p><div id="simulation-results"></div></p>
-      <p>Uploaded files: <span id="uploaded-files"></span></p>
+        <form id="parameters-form" action="" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="config-file-selection" class="bold">Input file</label>
+            <select id="config-file-selection" name="config_file_selection" class="form-control w-25">
+            </select>
+            <input id="submit-simulate" class="bold" type="submit" value="Simulate">
+          </div>
+        </form>
+      </p>
 
-      <p>Query list</p>
-      <div id="query-list"></div>
+      <h4>Simulation results</h4>
+      <p class="element-group">
+        <span id="error-label" class="hidden">Errors</span>
+        <ul id="error-list" class="hidden"></ul>
+
+        <div id="simulation-results"></div>
+      </p>
+
+      <h4>Debug output</h4>
+      <p class="element-group">
+        <span class="bold">Query list</span>
+        <div id="query-list"></div>
+      </p>
 
       <footer class="my-5 pt-5 text-muted text-center text-small">
         <p class="mb-1">&copy; 2025 Etienne Ott</p>

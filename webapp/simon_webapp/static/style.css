@@ -10,12 +10,21 @@
     visibility: hidden;
 }
 
+.bold {
+    font-weight: bold;
+}
+
 #nc-file-list {
     border: 1px solid #494949;
     border-radius: 10px;
-    width: 700px;
+    max-width: 50%;
     min-height: 50px;
     position: relative;
+    background: white;
+}
+
+#nc-file-list span {
+    margin-left: 10px;
 }
 
 #nc-file-list-blocker {
@@ -43,6 +52,40 @@
 
 .nc-file-list-file {
     cursor: cell;
+}
+
+#uploaded-files {
+    list-style: none;
+}
+
+#run-status {
+    margin-right: 20px;
+}
+
+label[for="config-file-selection"] {
+    display: inline;
+    margin: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+#config-file-selection {
+    display: inline;
+    cursor: pointer;
+}
+
+#submit-simulate {
+    display: block;
+    margin-top: 15px;
+    padding: 5px 20px;
+    border-radius: 5px;
+    border-color: #6eacfb;
+    background-color: #bce9ff;
+}
+
+#error-label {
+    color: red;
+    font-weight: bold;
 }
 
 #error-list {
