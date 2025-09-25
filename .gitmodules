@@ -1,0 +1,3 @@
+[submodule "sim_api/resie"]
+	path = sim_api/resie
+	url = git@github.com:QuaSi-Software/resie.git
