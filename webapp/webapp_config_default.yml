@@ -5,9 +5,9 @@ sim_api:
 MAX_CONTENT_LENGTH: 104857600 # 100 MiB
 NEXTCLOUD_CLIENT_ID: ""
 NEXTCLOUD_SECRET: ""
-NEXTCLOUD_API_BASE_URL: ""
-NEXTCLOUD_AUTHORIZE_URL: ""
-NEXTCLOUD_ACCESS_TOKEN_URL: ""
+NEXTCLOUD_API_BASE_URL: "https://cloud.example.de/"
+NEXTCLOUD_AUTHORIZE_URL: "https://cloud.example.org/apps/oauth2/authorize"
+NEXTCLOUD_ACCESS_TOKEN_URL: "https://cloud.example.org/apps/oauth2/api/v1/token"
 SECRET_KEY: ""
 TEMPLATES_AUTO_RELOAD: true # useful for dev. set this to false in production for a tiny performance boost
 SESSION_PERMANENT: True
