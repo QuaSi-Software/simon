@@ -35,6 +35,11 @@ end
 
 function scan_loop()
     @info "Starting scanner with $(Threads.nthreads()) threads and on #$(Threads.threadid())"
+
+    if !isdir("./runs")
+        mkpath("./runs")
+    end
+
     while true
         try
             for dir_path in readdir("./runs", join=true)
