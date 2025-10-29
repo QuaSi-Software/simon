@@ -6,6 +6,9 @@
 *.egg-info
 *.pytest_cache
 
+# julia packages
+sim_api/Manifest.toml
+
 # test files
 test_api.sh
 in.txt
