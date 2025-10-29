@@ -2,8 +2,15 @@
 
 FROM julia:1.11.5-bookworm
 
+# the seemingly random packages added are copied from a testing environment CI script at
+# https://github.com/MakieOrg/Makie.jl/blob/8504b27c28c45a522467c7c57f6953c3a680fa6a/.github/workflows/glmakie.yaml
+# which we use to fix an exceedingly annoying bug with trying to compile Makie in a headless
+# environment. we could perhaps remove some of the packages, but the effort to figure that
+# out was not worth it
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3 python3-pip && \
+    apt-get install -y --no-install-recommends python3 python3-pip xorg-dev mesa-utils \
+    xvfb libgl1 freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev \
+    libxext-dev xauth && \
     rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------------------------------------
