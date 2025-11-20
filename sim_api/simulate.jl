@@ -14,9 +14,29 @@ function simulate(working_dir)
         return
     end
 
-    println("dummy")
-    run = Resie.SimulationRun(parameters::Dict{String,Any}(), Dict{String,Any}(), Vector{Any}())
-    println(run)
+    log_to_console = false
+    log_to_file = true
+    general_logfile_path = joinpath(working_dir, "./logfile_general.log")
+    balanceWarn_logfile_path = joinpath(working_dir, "./logfile_balanceWarn.log")
+    min_log_level = Resie_Logger.Logging.Info
+    log_file_general, log_file_balanceWarn = Resie_Logger.start_logger(log_to_console,
+                                                                       log_to_file,
+                                                                       general_logfile_path,
+                                                                       balanceWarn_logfile_path,
+                                                                       min_log_level,
+                                                                       config_file)
 
-    println("Success: Simulation complete")
+    run_ID = uuid1() # should we rather use the sim API run ID?
+    try
+        Resie.load_and_run(config_file, run_ID)
+    catch exc
+        io = IOBuffer()
+        showerror(io, exc)
+        print(io, stacktrace(catch_backtrace()))
+        msg = String(take!(io))
+        @error msg
+    finally
+        Resie.close_run(run_ID)
+        Resie_Logger.close_logger(log_file_general, log_file_balanceWarn)
+    end
 end
