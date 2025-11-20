@@ -151,17 +151,38 @@ def save_file_for_run(run_id: str, file: FileStorage) -> str:
     return safe_filename
 
 def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
-    """Creates a copy of the given config file where all references to files are replaced
-    by their alias."""
+    """Creates an aliased copy of the given config file.
+
+    All references to files that exist in the file index (are uploaded) are replaced by
+    their alias. However this doesn't change the path, which is why only a path of './'
+    or not using a path at all will work. In addition, the output file settings are set
+    to fixed values so that fetching the results knows where to find the files.
+    """
     alias_path = Path(APP_ROOT / "runs" / run_id / alias_filename)
     if not alias_path.exists():
         return False, "Could not find alias file"
 
     with open(alias_path, "r", encoding="utf-8") as file:
-        content = file.read()
-        file_index = load_file_index(run_id)
-        for original in file_index["forward"]:
-            content = content.replace(original, file_index["forward"][original])
+        config = json.load(file)
+
+    # set base to the run directory so relative paths point to the correct dir for the run
+    config["io_settings"]["base_path"] = str(Path(APP_ROOT / "runs" / run_id))
+
+    # replace output filenames with fixed values
+    config["io_settings"]["csv_output_file"] = "./out.csv"
+    config["io_settings"]["auxiliary_info_file"] = "./auxiliary_info.md"
+    config["io_settings"]["output_plot_file"] = "./output_plot.html"
+    config["io_settings"]["sankey_plot_file"] = "./output_sankey.html"
+    config["io_settings"]["auxiliary_plots_path"] = "./"
+
+    # produce a JSON string from the (potentially modified) config so later filename
+    # aliasing can be performed via simple string replacements to avoid recursive iteration
+    content = json.dumps(config, ensure_ascii=False)
+
+    # dumb filename aliasing via string replacement, does not adjust paths
+    file_index = load_file_index(run_id)
+    for original in file_index["forward"]:
+        content = content.replace(original, file_index["forward"][original])
 
     aliased_config_path = Path(APP_ROOT / "runs" / run_id / "aliased_config.json")
     with open(aliased_config_path, "w", encoding="utf-8") as file:
