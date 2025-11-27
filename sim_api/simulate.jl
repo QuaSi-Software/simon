@@ -1,4 +1,5 @@
 using JSON
+using Logging
 
 include("./resie/src/resie_logger.jl")
 using .Resie_Logger
@@ -19,16 +20,18 @@ function simulate(working_dir)
     general_logfile_path = joinpath(working_dir, "./logfile_general.log")
     balanceWarn_logfile_path = joinpath(working_dir, "./logfile_balanceWarn.log")
     min_log_level = Resie_Logger.Logging.Info
-    log_file_general, log_file_balanceWarn = Resie_Logger.start_logger(log_to_console,
-                                                                       log_to_file,
-                                                                       general_logfile_path,
-                                                                       balanceWarn_logfile_path,
-                                                                       min_log_level,
-                                                                       config_file)
+    logger = Resie_Logger.start_logger(log_to_console,
+                                       log_to_file,
+                                       general_logfile_path,
+                                       balanceWarn_logfile_path,
+                                       min_log_level,
+                                       config_file)
 
     run_ID = uuid1() # should we rather use the sim API run ID?
     try
-        Resie.load_and_run(config_file, run_ID)
+        with_logger(logger) do
+            Resie.load_and_run(config_file, run_ID)
+        end
     catch exc
         io = IOBuffer()
         showerror(io, exc)
@@ -37,6 +40,10 @@ function simulate(working_dir)
         @error msg
     finally
         Resie.close_run(run_ID)
-        Resie_Logger.close_logger(log_file_general, log_file_balanceWarn)
+        with_logger(logger) do
+            # the close_logger makes logs itself, which is why we need to use with_logger
+            # or else these messages pop up in the global logger
+            Resie_Logger.close_logger(logger)
+        end
     end
 end
