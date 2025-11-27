@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM julia:1.11.5-bookworm
+FROM julia:1.12.2-bookworm
 
 # the seemingly random packages added are copied from a testing environment CI script at
 # https://github.com/MakieOrg/Makie.jl/blob/8504b27c28c45a522467c7c57f6953c3a680fa6a/.github/workflows/glmakie.yaml
