@@ -78,27 +78,44 @@ function add_error(message) {
     by_id("error-label").classList.remove("hidden")
 }
 
+async function create_results_element(type, response) {
+    if (type == "img") {
+        let blob = await response.blob();
+        let img = document.createElement('img');
+        img.src = URL.createObjectURL(blob);
+        img.alt = 'Simulation Result';
+        img.width = 900;
+        img.height = 533;
+        return img
+    } else if (type == "p") {
+        let obj = document.createElement('p')
+        obj.innerText = await response.text()
+        return obj
+    } else {
+        let obj = document.createElement('span')
+        obj.innerText = "Could not render unknown file type"
+        return obj
+    }
+}
+
 async function fetch_results(run_id) {
     let element = by_id("config-file-selection")
     let input_file_dir = element.options[element.selectedIndex].dataset.dirname
     let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {
         method: 'POST',
-        body: JSON.stringify({"destination_dir": input_file_dir}),
+        body: JSON.stringify({
+            "filename": "logfile_general.log",
+            "destination_dir": input_file_dir
+        }),
         headers: {"Content-Type": "application/json"}
     })
     let result = response.status >= 400 ? await response.json() : {}
     add_to_query_list('fetch_results', response, result)
 
-    let blob = await response.blob();
-    let img = document.createElement('img');
-    img.src = URL.createObjectURL(blob);
-    img.alt = 'Simulation Result';
-    img.className = 'simulation-results';
-    img.width = 900;
-    img.height = 533;
-    let results_div = by_id('simulation-results');
+    let obj = await create_results_element("p", response)
+    let results_div = by_id('genlog-tab');
     results_div.innerHTML = '';
-    results_div.appendChild(img);
+    results_div.appendChild(obj);
 }
 
 async function check_status(run_id) {
@@ -259,6 +276,11 @@ function main() {
     document.getElementById('parameters-form').onsubmit = async function(event) {
         event.preventDefault()
         start_simulation_from_form(this)
+    }
+
+    document.getElementById("fetch-results").onclick = async function(event) {
+        event.preventDefault()
+        fetch_results(by_id('run-id').innerText)
     }
 
     // events to handle when the document is ready

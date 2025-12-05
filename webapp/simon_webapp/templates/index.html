@@ -54,6 +54,7 @@
             <select id="config-file-selection" name="config_file_selection" class="form-control w-25">
             </select>
             <input id="submit-simulate" class="bold" type="submit" value="Simulate">
+            <input id="fetch-results" class="bold" type="button" value="Fetch results">
           </div>
         </form>
       </p>
@@ -63,7 +64,25 @@
         <span id="error-label" class="hidden">Errors</span>
         <ul id="error-list" class="hidden"></ul>
 
-        <div id="simulation-results"></div>
+        <ul class="nav nav-tabs" id="results-tabs-control" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="genlog-tab-control"
+                data-bs-toggle="tab" data-bs-target="#genlog-tab" type="button" role="tab"
+                aria-controls="genlog-tab" aria-selected="true">General log</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="ballog-tab-control"
+                data-bs-toggle="tab" data-bs-target="#ballog-tab" type="button" role="tab"
+                aria-controls="ballog-tab" aria-selected="true">Balance log</button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="results-tabs-container">
+          <div class="tab-pane fade show active" id="genlog-tab"
+            role="tabpanel" aria-labelledby="genlog-tab-control"></div>
+          <div class="tab-pane fade" id="ballog-tab"
+            role="tabpanel" aria-labelledby="ballog-tab-control"></div>
+        </div>
       </p>
 
       <h4>Debug output</h4>
