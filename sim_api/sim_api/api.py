@@ -17,6 +17,15 @@ from sim_api.util import create_run_dir, get_run_status, run_dir_exists, \
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "api_config.yml"
 
+RESULTS_FILES = {
+    "auxiliary_info.md",
+    "logfile_balanceWarn.log",
+    "logfile_general.log",
+    "out.csv",
+    "output_plot.html",
+    "output_sankey.html"
+}
+
 def api_key_required(function):
     """Decorator for routes that require an API key."""
     def decorated(*args, **kwargs):
@@ -171,10 +180,14 @@ def download_file(run_id):
 
     filename = request_data['filename']
     file_index = load_file_index(run_id)
-    if filename not in file_index["forward"]:
+
+    if filename in file_index["forward"]:
+        alias = file_index["forward"][filename]
+    elif filename in RESULTS_FILES:
+        alias = filename
+    else:
         return jsonify({"error": "Cannot find given `filename` in file index"}), 400
 
-    alias = file_index["forward"][filename]
     alias_path = Path(APP_ROOT / "runs" / run_id / alias)
     if not alias_path.exists():
         return jsonify({"error": "Cannot find alias for given `filename`"}), 400
