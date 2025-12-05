@@ -274,19 +274,21 @@ def fetch_results(run_id):
     Request arguments (route):
         - run_id -> str: The ID of the run for which to fetch results
     Request arguments (json):
+        - filename -> str: The name of the file to fetch
         - destination_dir -> str: The directory path on NC to where the results should
             be uploaded. This should be a NC-encoded path.
 
     Response (ByteStream): The results file
     """
-    file_name = "julia_set.png" # will be dynamic later
+    if "filename" not in request.json:
+        return jsonify({"error": "No file name specified"}), 400
     if "destination_dir" not in request.json:
         return jsonify({"error": "No destination specified"}), 400
 
     # fetch file from sim API
     sim_response = requests.post(
         app.config["sim_api"]["endpoint"] + "download_file/" + run_id,
-        json={"filename": file_name},
+        json={"filename": request.json["filename"]},
         timeout=app.config["sim_api"]["timeout"],
         headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
     )
@@ -295,7 +297,7 @@ def fetch_results(run_id):
 
     # upload to NC
     user = quote(session["user_id"])
-    destination = request.json["destination_dir"] + "/" + file_name
+    destination = request.json["destination_dir"] + "/" + request.json["filename"]
     url = app.config["NEXTCLOUD_API_BASE_URL"] + "remote.php/dav/files/" + user \
         + "/" + encode_nc_path(destination)
     nc_response = ensure_request(url, app, method="PUT", data=sim_response.content)
