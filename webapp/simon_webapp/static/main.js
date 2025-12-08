@@ -1,6 +1,6 @@
-API_ROOT = "http://localhost:5001/"
+const API_ROOT = "http://localhost:5001/"
 
-run_status = {}
+var run_status = {}
 
 function by_id(id) {
     return document.getElementById(id)
@@ -128,6 +128,7 @@ async function check_status(run_id) {
 
     run_status["status"] = result["code"]
     by_id('run-status').innerText = run_status["status"]
+    sessionStorage.setItem("run_status", run_status["status"])
 
     if (run_status["status"] === "finished") {
         clearInterval(run_status["interval_id"])
@@ -136,14 +137,23 @@ async function check_status(run_id) {
 }
 
 async function switch_directory(item) {
-    let new_val = item.dataset.dirname
+    set_directory(item.dataset.dirname, true)
+}
+
+async function set_directory(new_dir, relative) {
+    let new_val = new_dir
     if (new_val == "..") {
         new_val = by_id("nc-current-dir").dataset.dirname
         let splitted = new_val.split("/")
+        if (last(splitted) == "") splitted = except_last(splitted)
         new_val = except_last(splitted).join("/")
     }
     by_id("nc-current-dir").setAttribute("data-dirname", new_val)
-    by_id("nc-current-dir").innerText = "/" + format_nc_file_path(new_val, "filename", true)
+    by_id("nc-current-dir").innerText = "/" + format_nc_file_path(
+        // new_val, relative ? "filename" : "full", true
+        new_val, "full", true
+    )
+    sessionStorage.setItem("nc_current_dir", new_val)
     fetch_nc_file_list()
 }
 
@@ -153,7 +163,28 @@ async function get_run_id() {
     )
     let data = await response.json()
     add_to_query_list("get_run_id", response, data)
+    sessionStorage.setItem("run_id", data["run_id"])
     return data["run_id"]
+}
+
+function add_file_to_uploaded_files(file) {
+    by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
+        "<li>/" + format_nc_file_path(file, "full", true) + "</li>"
+    by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
+        '<option value="' + format_nc_file_path(file, "filename", false) + '" ' +
+        'data-dirname="'  + format_nc_file_path(file, "dir_path", false) + '">' +
+        format_nc_file_path(file, "filename", true) + "</option>"
+}
+
+function add_uploaded_file_to_session_storage(file) {
+    let file_list = sessionStorage.getItem("uploaded_files")
+    if (file_list === null) {
+        file_list = []
+    } else {
+        file_list = JSON.parse(file_list)
+    }
+    file_list.push(file)
+    sessionStorage.setItem("uploaded_files", JSON.stringify(file_list))
 }
 
 async function upload_file(item) {
@@ -161,6 +192,7 @@ async function upload_file(item) {
         run_status["run_id"] = await get_run_id()
         by_id('run-id').innerText = run_status["run_id"]
         by_id('run-status').innerText = "new"
+        sessionStorage.setItem("run_status", "new")
     }
 
     let response = await fetch(
@@ -176,12 +208,8 @@ async function upload_file(item) {
     add_to_query_list("upload_file_to_sim_run", response, {})
 
     if (response.status < 300) {
-        by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
-            "<li>/" + format_nc_file_path(item.dataset.filename, "full", true) + "</li>"
-        by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
-            '<option value="' + format_nc_file_path(item.dataset.filename, "filename", false) + '" ' +
-            'data-dirname="'  + format_nc_file_path(item.dataset.filename, "dir_path", false) + '">' +
-            format_nc_file_path(item.dataset.filename, "filename", true) + "</option>"
+        add_file_to_uploaded_files(item.dataset.filename)
+        add_uploaded_file_to_session_storage(item.dataset.filename)
     } else {
         let result = await response.json()
         set_errors("File upload failed :" + result["error"])
@@ -211,12 +239,15 @@ async function fetch_nc_file_list() {
         if (a.is_dir !== b.is_dir) return a.is_dir ? -1 : 1
         return a.name.localeCompare(b.name)
     }).forEach(item => {
-        if (item.name != "/" && item.name != curr_dir) {
+        item.name = item.name.startsWith("/") ? except_first(item.name) : item.name
+        item.name = last(item.name) == "/" ? except_last(item.name) : item.name
+        if (item.name != "" && item.name != curr_dir) {
             let prefix = item.is_dir ? "|\>&nbsp;" : "|&nbsp;&nbsp;"
             items.push(
                 "<li "
                 + "class='" + (item.is_dir ? "nc-file-list-dir" : "nc-file-list-file") + "' "
-                + "data-" + (item.is_dir ? "dirname" : "filename") + "='"+ item.name + "' "
+                + "data-" + (item.is_dir ? "dirname" : "filename") + "='"
+                + format_nc_file_path(item.name, "full", false) + "' "
                 + ">"
                 + prefix + format_nc_file_path(item.name, "filename", true)
                 + "</li>"
@@ -269,6 +300,9 @@ async function start_simulation_from_form(form_element) {
         clearInterval(run_status["interval_id"]);
     }
     run_status["interval_id"] = setInterval(check_status, 10 * 1000, run_status["run_id"])
+    run_status["status"] = "waiting"
+    sessionStorage.setItem("run_status", "waiting")
+    by_id('run-status').innerText = "waiting"
 }
 
 function main() {
@@ -286,11 +320,39 @@ function main() {
     // events to handle when the document is ready
     document.onreadystatechange = async function(event) {
         if (document.readyState == "complete") {
+            // load run ID from session storage
+            let run_id = sessionStorage.getItem("run_id")
+            if (run_id !== null && run_id !== undefined) {
+                run_status["run_id"] = run_id
+                by_id('run-id').innerText = run_id
+            }
+
+            // load run status from session storage
+            let session_run_status = sessionStorage.getItem("run_status")
+            if (session_run_status !== null && session_run_status !== undefined) {
+                run_status["status"] = session_run_status
+                by_id('run-status').innerText = session_run_status
+            }
+
+            // load uploaded file list from session storage
+            let file_list = sessionStorage.getItem("uploaded_files")
+            if (file_list !== null && file_list !== undefined) {
+                file_list = JSON.parse(file_list)
+                file_list.forEach(file => {
+                    add_file_to_uploaded_files(file)
+                })
+            }
+
             // fetch content for the user's NC root dir, but only if the user is logged in.
             // spoofing the login status client-side is not a security concern as the API
-            // checks authentication anyway
+            // checks authentication anyway. if a run exist in session storage, load that
+            // directory instead
             let logged_in = by_id("nc-logged-in-info")
-            if (logged_in) fetch_nc_file_list()
+            if (logged_in) {
+                let dir_name = sessionStorage.getItem("nc_current_dir")
+                dir_name = (dir_name === null || dir_name === undefined) ? "" : dir_name
+                set_directory(dir_name, false)
+            }
         }
     }
 }
