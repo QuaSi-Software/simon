@@ -85,9 +85,9 @@ function clear_results() {
 }
 
 function reset_run() {
+    stop_simulation()
     clear_results()
     clear_errors()
-    stop_polling()
     sessionStorage.removeItem("run_id")
     sessionStorage.removeItem("run_status")
     sessionStorage.removeItem("uploaded_files")
@@ -109,6 +109,13 @@ function stop_polling() {
     if (run_status["interval_id"]) {
         clearInterval(run_status["interval_id"]);
     }
+}
+
+function stop_simulation() {
+    stop_polling()
+    by_id("run-status").innerText = "stopped"
+    by_id("submit-simulate").removeAttribute("disabled")
+    by_id("stop-simulation").setAttribute("disabled", "")
 }
 
 async function create_results_element(type, response) {
@@ -153,6 +160,8 @@ async function fetch_results(run_id) {
     by_id("fetch-results").removeAttribute("disabled")
     by_id("results-tabs-control").classList.remove("hidden")
     by_id("results-tabs-container").classList.remove("hidden")
+    by_id("submit-simulate").removeAttribute("disabled")
+    by_id("stop-simulation").setAttribute("disabled", "")
 }
 
 async function check_status(run_id) {
@@ -340,6 +349,8 @@ async function start_simulation_from_form(form_element) {
     run_status["status"] = "waiting"
     sessionStorage.setItem("run_status", "waiting")
     by_id('run-status').innerText = "waiting"
+    by_id("submit-simulate").setAttribute("disabled", "")
+    by_id("stop-simulation").removeAttribute("disabled")
 }
 
 function main() {
@@ -348,11 +359,12 @@ function main() {
         event.preventDefault()
         start_simulation_from_form(this)
     }
-
+    document.getElementById("stop-simulation").onclick = async function(event) {
+        stop_simulation()
+    }
     document.getElementById("fetch-results").onclick = async function(event) {
         fetch_results(by_id('run-id').innerText)
     }
-
     document.getElementById("reset-run").onclick = async function(event) {
         reset_run()
     }

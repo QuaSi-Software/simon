@@ -85,7 +85,12 @@ label[for="config-file-selection"] {
 }
 
 #submit-simulate {
-    display: block;
+    display: inline-block;
+    margin-top: 15px;
+}
+
+#stop-simulation {
+    display: inline-block;
     margin-top: 15px;
 }
 
