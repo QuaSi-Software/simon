@@ -167,6 +167,22 @@ async function get_run_id() {
     return data["run_id"]
 }
 
+function reset_run() {
+    sessionStorage.removeItem("run_id")
+    sessionStorage.removeItem("run_status")
+    sessionStorage.removeItem("uploaded_files")
+    by_id("uploaded-files").innerHTML = ""
+    by_id("config-file-selection").innerHTML = ""
+    by_id("run-id").innerHTML = ""
+    by_id("run-status").innerHTML = "new"
+    by_id("reset-run").setAttribute("disabled", "")
+    by_id("fetch-results").setAttribute("disabled", "")
+    if (run_status["interval_id"]) {
+        clearInterval(run_status["interval_id"]);
+    }
+    run_status = {}
+}
+
 function add_file_to_uploaded_files(file) {
     by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
         "<li>/" + format_nc_file_path(file, "full", true) + "</li>"
@@ -313,8 +329,11 @@ function main() {
     }
 
     document.getElementById("fetch-results").onclick = async function(event) {
-        event.preventDefault()
         fetch_results(by_id('run-id').innerText)
+    }
+
+    document.getElementById("reset-run").onclick = async function(event) {
+        reset_run()
     }
 
     // events to handle when the document is ready
@@ -325,6 +344,10 @@ function main() {
             if (run_id !== null && run_id !== undefined) {
                 run_status["run_id"] = run_id
                 by_id('run-id').innerText = run_id
+
+                // activate reset run and fetch results buttons
+                by_id('reset-run').removeAttribute('disabled')
+                by_id('fetch-results').removeAttribute('disabled')
             }
 
             // load run status from session storage

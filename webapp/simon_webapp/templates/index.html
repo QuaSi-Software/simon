@@ -41,6 +41,7 @@
 
       <h4>Configure simulation</h4>
       <p class="element-group">
+        <button id="reset-run" type="button" class="btn btn-warning" disabled>Reset run</button>
         <span class="bold">Run ID:</span> <span id="run-id">-</span>
         <span class="bold">Run status:</span> <span id="run-status">-</span>
         <div>
@@ -53,13 +54,13 @@
             <label for="config-file-selection" class="bold">Input file</label>
             <select id="config-file-selection" name="config_file_selection" class="form-control w-25">
             </select>
-            <input id="submit-simulate" class="bold" type="submit" value="Simulate">
-            <input id="fetch-results" class="bold" type="button" value="Fetch results">
+            <input id="submit-simulate" class="btn btn-primary" type="submit" value="Simulate">
           </div>
         </form>
       </p>
 
       <h4>Simulation results</h4>
+      <button id="fetch-results" type="button" class="btn btn-secondary" disabled>Fetch results</button>
       <p class="element-group">
         <span id="error-label" class="hidden">Errors</span>
         <ul id="error-list" class="hidden"></ul>
