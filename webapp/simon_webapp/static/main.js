@@ -61,8 +61,8 @@ function add_to_query_list(query_name, response, result) {
 }
 
 function clear_errors() {
-    by_id("error-list").innerHTML = ""
     by_id("error-list").classList.add("hidden")
+    by_id("error-list").innerHTML = ""
     by_id("error-label").classList.add("hidden")
 }
 
@@ -76,6 +76,39 @@ function add_error(message) {
     by_id("error-list").innerHTML = by_id("error-list").innerHTML + "<li>" + message + "</li>"
     by_id("error-list").classList.remove("hidden")
     by_id("error-label").classList.remove("hidden")
+}
+
+function clear_results() {
+    by_id("results-tabs-control").classList.add("hidden")
+    by_id("results-tabs-container").classList.add("hidden")
+    by_id("genlog-tab").innerHTML = ""
+}
+
+function reset_run() {
+    clear_results()
+    clear_errors()
+    stop_polling()
+    sessionStorage.removeItem("run_id")
+    sessionStorage.removeItem("run_status")
+    sessionStorage.removeItem("uploaded_files")
+    by_id("uploaded-files").innerHTML = ""
+    by_id("config-file-selection").innerHTML = ""
+    by_id("run-id").innerHTML = "-"
+    by_id("run-status").innerHTML = "-"
+    by_id("reset-run").setAttribute("disabled", "")
+    by_id("fetch-results").setAttribute("disabled", "")
+    run_status = {}
+}
+
+function start_polling() {
+    stop_polling()
+    run_status["interval_id"] = setInterval(check_status, 10 * 1000, run_status["run_id"])
+}
+
+function stop_polling() {
+    if (run_status["interval_id"]) {
+        clearInterval(run_status["interval_id"]);
+    }
 }
 
 async function create_results_element(type, response) {
@@ -116,6 +149,10 @@ async function fetch_results(run_id) {
     let results_div = by_id('genlog-tab');
     results_div.innerHTML = '';
     results_div.appendChild(obj);
+
+    by_id("fetch-results").removeAttribute("disabled")
+    by_id("results-tabs-control").classList.remove("hidden")
+    by_id("results-tabs-container").classList.remove("hidden")
 }
 
 async function check_status(run_id) {
@@ -131,7 +168,7 @@ async function check_status(run_id) {
     sessionStorage.setItem("run_status", run_status["status"])
 
     if (run_status["status"] === "finished") {
-        clearInterval(run_status["interval_id"])
+        stop_polling()
         await fetch_results(run_id)
     }
 }
@@ -149,10 +186,7 @@ async function set_directory(new_dir, relative) {
         new_val = except_last(splitted).join("/")
     }
     by_id("nc-current-dir").setAttribute("data-dirname", new_val)
-    by_id("nc-current-dir").innerText = "/" + format_nc_file_path(
-        // new_val, relative ? "filename" : "full", true
-        new_val, "full", true
-    )
+    by_id("nc-current-dir").innerText = "/" + format_nc_file_path(new_val, "full", true)
     sessionStorage.setItem("nc_current_dir", new_val)
     fetch_nc_file_list()
 }
@@ -164,23 +198,8 @@ async function get_run_id() {
     let data = await response.json()
     add_to_query_list("get_run_id", response, data)
     sessionStorage.setItem("run_id", data["run_id"])
+    by_id("reset-run").removeAttribute("disabled")
     return data["run_id"]
-}
-
-function reset_run() {
-    sessionStorage.removeItem("run_id")
-    sessionStorage.removeItem("run_status")
-    sessionStorage.removeItem("uploaded_files")
-    by_id("uploaded-files").innerHTML = ""
-    by_id("config-file-selection").innerHTML = ""
-    by_id("run-id").innerHTML = ""
-    by_id("run-status").innerHTML = "new"
-    by_id("reset-run").setAttribute("disabled", "")
-    by_id("fetch-results").setAttribute("disabled", "")
-    if (run_status["interval_id"]) {
-        clearInterval(run_status["interval_id"]);
-    }
-    run_status = {}
 }
 
 function add_file_to_uploaded_files(file) {
@@ -300,6 +319,9 @@ async function start_simulation_from_form(form_element) {
         return
     }
 
+    clear_errors()
+    clear_results()
+
     let form_data = new FormData(form_element)
     response = await fetch(API_ROOT + 'start_simulation_from_form/' + run_status["run_id"], {
         method: 'POST',
@@ -307,15 +329,14 @@ async function start_simulation_from_form(form_element) {
     })
     result = await response.json()
     add_to_query_list("start_simulation_from_form", response, result)
+
     if (response.status >= 400) {
         set_errors("Error: " + result["error"])
+        stop_polling()
         return
     }
 
-    if (run_status["interval_id"]) {
-        clearInterval(run_status["interval_id"]);
-    }
-    run_status["interval_id"] = setInterval(check_status, 10 * 1000, run_status["run_id"])
+    start_polling()
     run_status["status"] = "waiting"
     sessionStorage.setItem("run_status", "waiting")
     by_id('run-status').innerText = "waiting"
