@@ -1,5 +1,38 @@
 const API_ROOT = "http://localhost:5001/"
 
+const RESULT_FILES = [
+    {
+        filename: "auxiliary_info.md",
+        tab_name: "aux-tab",
+        element: "p"
+    },
+    {
+        filename: "logfile_balanceWarn.log",
+        tab_name: "ballog-tab",
+        element: "p"
+    },
+    {
+        filename: "logfile_general.log",
+        tab_name: "genlog-tab",
+        element: "p"
+    },
+    {
+        filename: "out.csv",
+        tab_name: "csv-tab",
+        element: "table"
+    },
+    {
+        filename: "output_plot.html",
+        tab_name: "plot-tab",
+        element: "html"
+    },
+    {
+        filename: "output_sankey.html",
+        tab_name: "sankey-tab",
+        element: "html"
+    }
+]
+
 var run_status = {}
 
 function by_id(id) {
@@ -131,6 +164,16 @@ async function create_results_element(type, response) {
         let obj = document.createElement('p')
         obj.innerText = await response.text()
         return obj
+    } else if (type == "table") {
+        // TODO: render as html table, maybe with bootstrap table tools like sorting
+        let obj = document.createElement('p')
+        obj.innerText = (await response.text()).slice(0,1024*10) // cut off at 10 kB
+        return obj
+    } else if (type == "html") {
+        // TODO: render as i-frame or similar
+        let obj = document.createElement('div')
+        obj.innerHTML = await response.text()
+        return obj
     } else {
         let obj = document.createElement('span')
         obj.innerText = "Could not render unknown file type"
@@ -141,21 +184,24 @@ async function create_results_element(type, response) {
 async function fetch_results(run_id) {
     let element = by_id("config-file-selection")
     let input_file_dir = element.options[element.selectedIndex].dataset.dirname
-    let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {
-        method: 'POST',
-        body: JSON.stringify({
-            "filename": "logfile_general.log",
-            "destination_dir": input_file_dir
-        }),
-        headers: {"Content-Type": "application/json"}
-    })
-    let result = response.status >= 400 ? await response.json() : {}
-    add_to_query_list('fetch_results', response, result)
 
-    let obj = await create_results_element("p", response)
-    let results_div = by_id('genlog-tab');
-    results_div.innerHTML = '';
-    results_div.appendChild(obj);
+    for (const file of RESULT_FILES) {
+        let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {
+            method: 'POST',
+            body: JSON.stringify({
+                "filename": file.filename,
+                "destination_dir": input_file_dir
+            }),
+            headers: {"Content-Type": "application/json"}
+        })
+        let result = response.status >= 400 ? await response.json() : {}
+        add_to_query_list('fetch_results', response, result)
+
+        let obj = await create_results_element(file.element, response)
+        let results_div = by_id(file.tab_name);
+        results_div.innerHTML = '';
+        results_div.appendChild(obj);
+    }
 
     by_id("fetch-results").removeAttribute("disabled")
     by_id("results-tabs-control").classList.remove("hidden")

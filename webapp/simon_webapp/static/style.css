@@ -24,6 +24,15 @@
     font-weight: bold;
 }
 
+.tab-pane {
+  max-height: 800px;
+  overflow-y: scroll;
+  width: 100%;
+  overflow-x: scroll;
+  background-color: #ececec;
+  padding: 5px;
+}
+
 #nc-file-list {
     border: 1px solid #494949;
     border-radius: 10px;
