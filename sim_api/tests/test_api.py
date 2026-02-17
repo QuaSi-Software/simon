@@ -38,7 +38,8 @@ def test_endpoint_start_simulation_good_input(client):
     # upload config
     config_raw_str = """{
         "foo": "bar",
-        "some_file": "some_file.csv"
+        "some_file": "some_file.csv",
+        "io_settings": {}
     }"""
     config_fs = FileStorage(BytesIO(config_raw_str.encode("utf8")), filename="config.json")
     save_file_for_run(run_id, config_fs)
