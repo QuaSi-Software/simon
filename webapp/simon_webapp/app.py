@@ -60,7 +60,9 @@ def index():
     if "user_id" not in session:
         session["user_id"] = "__anonymous__"
         session["nextcloud_authorized"] = False
-    return render_template("index.html", session=session), 200
+
+    api_root = app.config["SIMON_API_ROOT"]
+    return render_template("index.html", session=session, api_root=api_root), 200
 
 @app.route("/nextcloud_login", methods=["GET"])
 def nextcloud_login():

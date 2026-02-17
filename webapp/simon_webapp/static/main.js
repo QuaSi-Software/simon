@@ -1,5 +1,3 @@
-const API_ROOT = "http://localhost:5001/"
-
 const RESULT_FILES = [
     {
         filename: "auxiliary_info.md",
