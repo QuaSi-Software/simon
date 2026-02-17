@@ -293,7 +293,8 @@ def fetch_results(run_id):
         headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
     )
     if not sim_response.ok:
-        return jsonify({"error": "Could not fetch results from sim API"}), 500
+        msg = f"Could not fetch result file {request.json["filename"]} from sim API"
+        return jsonify({"error": msg}), 500
 
     # upload to NC
     user = quote(session["user_id"])
@@ -303,7 +304,8 @@ def fetch_results(run_id):
     nc_response = ensure_request(url, app, method="PUT", data=sim_response.content)
 
     if not nc_response.ok:
-        return jsonify({"error": "Could not upload results to NextCloud"}), 500
+        msg = f"Could not upload result file {request.json["filename"]} to NextCloud"
+        return jsonify({"error": msg}), 500
 
     # return results so the frontend can display them too
     return sim_response.content, 200

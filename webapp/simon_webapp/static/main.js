@@ -197,10 +197,12 @@ async function fetch_results(run_id) {
         let result = response.status >= 400 ? await response.json() : {}
         add_to_query_list('fetch_results', response, result)
 
-        let obj = await create_results_element(file.element, response)
-        let results_div = by_id(file.tab_name);
-        results_div.innerHTML = '';
-        results_div.appendChild(obj);
+        if (response.status < 400) {
+            let obj = await create_results_element(file.element, response)
+            let results_div = by_id(file.tab_name);
+            results_div.innerHTML = '';
+            results_div.appendChild(obj);
+        }
     }
 
     by_id("fetch-results").removeAttribute("disabled")
