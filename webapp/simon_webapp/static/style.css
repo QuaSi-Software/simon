@@ -69,9 +69,18 @@
     color: #321dd0;
 }
 
+.nc-file-list-dir:hover {
+    background-color: #e6e6e6;
+}
+
 .nc-file-list-file {
     cursor: cell;
 }
+
+.nc-file-list-file:hover {
+    background-color: #e6e6e6;
+}
+
 
 #uploaded-files {
     list-style: none;
