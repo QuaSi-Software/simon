@@ -150,13 +150,33 @@ def save_file_for_run(run_id: str, file: FileStorage) -> str:
 
     return safe_filename
 
+def check_node_and_replace(node, file_index):
+    """Recursively replaces strings in the given JSON-like structure with file name
+    substitutions based on the given file index.
+
+    The substitutions will ignore existing paths of file parameters and replace it with
+    relative paths.
+    """
+    if type(node) == str:
+        for original in file_index["forward"]:
+            if original in node:
+                return "./" + file_index["forward"][original]
+    elif type(node) == dict:
+        for key in node.keys():
+            node[key] = check_node_and_replace(node[key], file_index)
+    elif type(node) == list:
+        for idx, _ in enumerate(node):
+            node[idx] = check_node_and_replace(node[idx], file_index)
+
+    return node
+
 def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
     """Creates an aliased copy of the given config file.
 
-    All references to files that exist in the file index (are uploaded) are replaced by
-    their alias. However this doesn't change the path, which is why only a path of './'
-    or not using a path at all will work. In addition, the output file settings are set
-    to fixed values so that fetching the results knows where to find the files.
+    All references to files that exist in the file index (which are uploaded) are replaced
+    by their alias. However this also changes the path to a relative path of './' followed
+    by the aliased file name. In addition, the output file settings are set to fixed values
+    so that fetching the results knows where to find the files.
     """
     alias_path = Path(APP_ROOT / "runs" / run_id / alias_filename)
     if not alias_path.exists():
@@ -175,16 +195,13 @@ def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
     config["io_settings"]["sankey_plot_file"] = "./output_sankey.html"
     config["io_settings"]["auxiliary_plots_path"] = "./"
 
-    # produce a JSON string from the (potentially modified) config so later filename
-    # aliasing can be performed via simple string replacements to avoid recursive iteration
-    content = json.dumps(config, ensure_ascii=False)
-
-    # dumb filename aliasing via string replacement, does not adjust paths
+    # replace file names with their alias. this will remove any paths, making any
+    # replacements relative to the base path
     file_index = load_file_index(run_id)
-    for original in file_index["forward"]:
-        content = content.replace(original, file_index["forward"][original])
+    config = check_node_and_replace(config, file_index)
 
     aliased_config_path = Path(APP_ROOT / "runs" / run_id / "aliased_config.json")
+    content = json.dumps(config, ensure_ascii=False, indent=4)
     with open(aliased_config_path, "w", encoding="utf-8") as file:
         file.write(content)
 
