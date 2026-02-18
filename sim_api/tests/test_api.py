@@ -96,3 +96,22 @@ def test_endpoint_download_file_good_input(client):
     # put bytestream into string and check
     content = response.data.decode("utf-8")
     assert content == "Lorem ipsum"
+
+def test_endpoint_resie_version(client):
+    """Ensure that the version endpoint reads from the Project.toml file."""
+    response = client.get("/resie_version")
+    assert response.status_code == 200
+    assert "version" in response.json
+
+    # determine expected value by parsing the same file ourselves
+    expected_version = None
+    toml_path = Path(__file__).resolve().parent.parent / "resie" / "Project.toml"
+    with open(toml_path, "r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip().startswith("version"):
+                parts = line.split("=", 1)
+                if len(parts) == 2:
+                    expected_version = parts[1].strip().strip('"').strip("'")
+                    break
+    assert expected_version is not None, "could not locate version in Project.toml"
+    assert response.json["version"] == expected_version

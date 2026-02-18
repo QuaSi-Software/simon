@@ -189,3 +189,24 @@ def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
         file.write(content)
 
     return True, aliased_config_path
+
+def read_resie_version() -> str | None:
+    """Read the version string from the ReSiE Project.toml file.
+
+    Returns the version string on success or `None` if anything goes wrong.
+    """
+    toml_path = APP_ROOT / "resie" / "Project.toml"
+    if not toml_path.exists():
+        return None
+
+    try:
+        with open(toml_path, "r", encoding="utf-8") as fp:
+            for line in fp:
+                stripped = line.strip()
+                if stripped.startswith("version"):
+                    parts = stripped.split("=", 1)
+                    if len(parts) == 2:
+                        return parts[1].strip().strip('"').strip("'")
+    except Exception as exc:
+        return None
+    return None

@@ -12,10 +12,14 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from sim_api.util import create_run_dir, get_run_status, run_dir_exists, \
     validate_run_id, validate_uploaded_filename, save_file_for_run, load_file_index, \
-    alias_config_file, update_run_status, parse_key_from_auth_header
+    alias_config_file, update_run_status, parse_key_from_auth_header, read_resie_version
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "api_config.yml"
+
+# cached value for the ReSiE version. It will be filled on first request defaulting to None
+# indicating we haven't read it yet.
+RESIE_VERSION: str | None = None
 
 RESULTS_FILES = {
     "auxiliary_info.md",
@@ -249,3 +253,22 @@ def simulate(run_id):
 
     update_run_status(run_id, "waiting")
     return jsonify({"message": "Queued run for simulation"}), 200
+
+@app.route('/resie_version', methods=['GET'])
+def resie_version():
+    """Endpoint: GET /resie_version
+
+    Response (JSON):
+        {
+            "version": "0.13.0", # the version of ReSiE being used
+        }
+    """
+    # lazily load and cache the version string
+    global RESIE_VERSION
+    if RESIE_VERSION is None:
+        parsed = read_resie_version()
+        if parsed is None:
+            return jsonify({"error": f"Could not read ReSiE version"}), 500
+        else:
+            RESIE_VERSION = parsed
+    return jsonify({"version": RESIE_VERSION}), 200
