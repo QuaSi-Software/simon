@@ -4,8 +4,6 @@ from __future__ import annotations
 import os
 import stat
 import json
-import subprocess
-import tempfile
 import uuid
 import re
 from datetime import datetime
@@ -14,7 +12,6 @@ from typing import Any, Dict
 from werkzeug.datastructures import FileStorage
 
 APP_ROOT = Path(__file__).resolve().parent.parent
-TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
 
 def parse_key_from_auth_header(header: str) -> str:
     """Parses an API from the given value of the authorization header."""
@@ -25,20 +22,6 @@ def parse_key_from_auth_header(header: str) -> str:
     if parts[0].lower() != "bearer":
         return False
     return parts[1].strip()
-
-def write_temp_json(data: Dict[str, Any]) -> Path:
-    """Write request data to a temp JSON file and return the path."""
-    temp_dir = tempfile.gettempdir()
-    filename = f"sim_input_{uuid.uuid4().hex}.json"
-    file_path = Path(temp_dir) / filename
-    with file_path.open("w", encoding="utf-8") as fp:
-        json.dump(data, fp)
-    return file_path
-
-def run_simulation(input_file: Path) -> subprocess.CompletedProcess[str]:
-    """Run the Julia simulation subprocess and capture output."""
-    cmd = ["julia", "simulate.jl", str(input_file)]
-    return subprocess.run(cmd, capture_output=True, text=True, timeout=TIMEOUT_SECONDS, check=False)
 
 def update_run_status(run_id: str, new_status: str) -> None:
     """Update the status of the given run with the new status."""
