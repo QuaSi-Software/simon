@@ -22,6 +22,10 @@ if os.environ.get("FLASK_ENV") == "development":
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "webapp_config.yml"
 
+# cached value for the ReSiE version. It will be filled on first request defaulting to None
+# indicating we haven't read it yet.
+RESIE_VERSION: str | None = None
+
 # ---------------------------------------------------------------------------
 # App construction
 # ---------------------------------------------------------------------------
@@ -61,8 +65,20 @@ def index():
         session["user_id"] = "__anonymous__"
         session["nextcloud_authorized"] = False
 
+    # lazily load and cache the version string
+    global RESIE_VERSION
+    if RESIE_VERSION is None:
+        response = requests.get(
+            app.config["sim_api"]["endpoint"] + "resie_version",
+            timeout=2, # short timeout because we expect a speedy response and don't want to
+                       # keep the user waiting long
+        )
+        if response.status_code == 200:
+            RESIE_VERSION = response.json()["version"]
+
     api_root = app.config["SIMON_API_ROOT"]
-    return render_template("index.html", session=session, api_root=api_root), 200
+    return render_template("index.html", session=session,
+                           api_root=api_root, resie_version=RESIE_VERSION), 200
 
 @app.route("/nextcloud_login", methods=["GET"])
 def nextcloud_login():
