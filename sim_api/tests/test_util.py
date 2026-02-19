@@ -4,7 +4,7 @@ from pathlib import Path
 from io import BytesIO
 from werkzeug.datastructures import FileStorage
 from sim_api.util import validate_run_id, validate_uploaded_filename, save_file_for_run, \
-    create_run_dir, parse_key_from_auth_header
+    create_run_dir, parse_key_from_auth_header, check_node_and_replace
 
 def test_validate_run_id():
     """Tests for validate_run_id for common good/bad cases."""
@@ -81,3 +81,26 @@ def test_parse_key_from_auth_header():
     assert not parse_key_from_auth_header("")
     assert not parse_key_from_auth_header("82fhj39whf")
     assert not parse_key_from_auth_header("flisdahf isuadfhsadi 92374239")
+
+def test_check_node_and_replace():
+    """Tests for check_node_and_replace"""
+    file_index = {
+        "forward": {
+            "foo.prf": "uasf654",
+            "profile_with_no_ending": "1238hjf"
+        }
+    }
+    # empty input
+    assert check_node_and_replace({}, file_index) == {}
+    assert check_node_and_replace([], file_index) == []
+    # primitive input
+    assert check_node_and_replace("foo", file_index) == "foo"
+    assert check_node_and_replace("foo.prf", file_index) == "./uasf654"
+    assert check_node_and_replace(1, file_index) == 1
+    # nested lists and dicts
+    lst = ["foo.prf", 1, [2, "foo", 3.0]]
+    assert check_node_and_replace(lst, file_index) == ["./uasf654", 1, [2, "foo", 3.0]]
+    dct = {"foo": {"bar": "profile_with_no_ending", "foo": 1}, "a": ["foo.prf", 2], "b": 3.0}
+    assert check_node_and_replace(dct, file_index) == {
+        "foo": {"bar": "./1238hjf", "foo": 1}, "a": ["./uasf654", 2], "b": 3.0
+    }

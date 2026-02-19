@@ -1,6 +1,37 @@
-API_ROOT = "http://localhost:5001/"
+const RESULT_FILES = [
+    {
+        filename: "auxiliary_info.md",
+        tab_name: "aux-tab",
+        element: "p"
+    },
+    {
+        filename: "logfile_balanceWarn.log",
+        tab_name: "ballog-tab",
+        element: "p"
+    },
+    {
+        filename: "logfile_general.log",
+        tab_name: "genlog-tab",
+        element: "p"
+    },
+    {
+        filename: "out.csv",
+        tab_name: "csv-tab",
+        element: "table"
+    },
+    {
+        filename: "output_plot.html",
+        tab_name: "plot-tab",
+        element: "html"
+    },
+    {
+        filename: "output_sankey.html",
+        tab_name: "sankey-tab",
+        element: "html"
+    }
+]
 
-run_status = {}
+var run_status = {}
 
 function by_id(id) {
     return document.getElementById(id)
@@ -61,8 +92,8 @@ function add_to_query_list(query_name, response, result) {
 }
 
 function clear_errors() {
-    by_id("error-list").innerHTML = ""
     by_id("error-list").classList.add("hidden")
+    by_id("error-list").innerHTML = ""
     by_id("error-label").classList.add("hidden")
 }
 
@@ -78,27 +109,105 @@ function add_error(message) {
     by_id("error-label").classList.remove("hidden")
 }
 
+function clear_results() {
+    by_id("results-tabs-control").classList.add("hidden")
+    by_id("results-tabs-container").classList.add("hidden")
+    by_id("genlog-tab").innerHTML = ""
+}
+
+function reset_run() {
+    stop_simulation()
+    clear_results()
+    clear_errors()
+    sessionStorage.removeItem("run_id")
+    sessionStorage.removeItem("run_status")
+    sessionStorage.removeItem("uploaded_files")
+    by_id("uploaded-files").innerHTML = ""
+    by_id("config-file-selection").innerHTML = ""
+    by_id("run-id").innerHTML = "-"
+    by_id("run-status").innerHTML = "-"
+    by_id("reset-run").setAttribute("disabled", "")
+    by_id("fetch-results").setAttribute("disabled", "")
+    run_status = {}
+}
+
+function start_polling() {
+    stop_polling()
+    run_status["interval_id"] = setInterval(check_status, 10 * 1000, run_status["run_id"])
+}
+
+function stop_polling() {
+    if (run_status["interval_id"]) {
+        clearInterval(run_status["interval_id"]);
+    }
+}
+
+function stop_simulation() {
+    stop_polling()
+    by_id("run-status").innerText = "stopped"
+    by_id("submit-simulate").removeAttribute("disabled")
+    by_id("stop-simulation").setAttribute("disabled", "")
+}
+
+async function create_results_element(type, response) {
+    if (type == "img") {
+        let blob = await response.blob();
+        let img = document.createElement('img');
+        img.src = URL.createObjectURL(blob);
+        img.alt = 'Simulation Result';
+        img.width = 900;
+        img.height = 533;
+        return img
+    } else if (type == "p") {
+        let obj = document.createElement('p')
+        obj.innerText = await response.text()
+        return obj
+    } else if (type == "table") {
+        // TODO: render as html table, maybe with bootstrap table tools like sorting
+        let obj = document.createElement('p')
+        obj.innerText = (await response.text()).slice(0,1024*10) // cut off at 10 kB
+        return obj
+    } else if (type == "html") {
+        // TODO: render as i-frame or similar
+        let obj = document.createElement('div')
+        obj.innerHTML = await response.text()
+        return obj
+    } else {
+        let obj = document.createElement('span')
+        obj.innerText = "Could not render unknown file type"
+        return obj
+    }
+}
+
 async function fetch_results(run_id) {
     let element = by_id("config-file-selection")
     let input_file_dir = element.options[element.selectedIndex].dataset.dirname
-    let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {
-        method: 'POST',
-        body: JSON.stringify({"destination_dir": input_file_dir}),
-        headers: {"Content-Type": "application/json"}
-    })
-    let result = response.status >= 400 ? await response.json() : {}
-    add_to_query_list('fetch_results', response, result)
 
-    let blob = await response.blob();
-    let img = document.createElement('img');
-    img.src = URL.createObjectURL(blob);
-    img.alt = 'Simulation Result';
-    img.className = 'simulation-results';
-    img.width = 900;
-    img.height = 533;
-    let results_div = by_id('simulation-results');
-    results_div.innerHTML = '';
-    results_div.appendChild(img);
+    for (const file of RESULT_FILES) {
+        let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {
+            method: 'POST',
+            body: JSON.stringify({
+                "filename": file.filename,
+                "destination_dir": input_file_dir
+            }),
+            headers: {"Content-Type": "application/json"}
+        })
+        let result = response.status >= 400 ? await response.json() : {}
+        add_to_query_list('fetch_results', response, result)
+
+        if (response.status < 400) {
+            let obj = await create_results_element(file.element, response)
+            let results_div = by_id(file.tab_name);
+            results_div.innerHTML = '';
+            results_div.appendChild(obj);
+        }
+    }
+
+    by_id("fetch-results").removeAttribute("disabled")
+    by_id("results-tabs-control").classList.remove("hidden")
+    by_id("results-tabs-container").classList.remove("hidden")
+    by_id("submit-simulate").removeAttribute("disabled")
+    by_id("stop-simulation").setAttribute("disabled", "")
 }
 
 async function check_status(run_id) {
@@ -111,22 +220,29 @@ async function check_status(run_id) {
 
     run_status["status"] = result["code"]
     by_id('run-status').innerText = run_status["status"]
+    sessionStorage.setItem("run_status", run_status["status"])
 
     if (run_status["status"] === "finished") {
-        clearInterval(run_status["interval_id"])
+        stop_polling()
         await fetch_results(run_id)
     }
 }
 
 async function switch_directory(item) {
-    let new_val = item.dataset.dirname
+    set_directory(item.dataset.dirname, true)
+}
+
+async function set_directory(new_dir, relative) {
+    let new_val = new_dir
     if (new_val == "..") {
         new_val = by_id("nc-current-dir").dataset.dirname
         let splitted = new_val.split("/")
+        if (last(splitted) == "") splitted = except_last(splitted)
         new_val = except_last(splitted).join("/")
     }
     by_id("nc-current-dir").setAttribute("data-dirname", new_val)
-    by_id("nc-current-dir").innerText = "/" + format_nc_file_path(new_val, "filename", true)
+    by_id("nc-current-dir").innerText = "/" + format_nc_file_path(new_val, "full", true)
+    sessionStorage.setItem("nc_current_dir", new_val)
     fetch_nc_file_list()
 }
 
@@ -136,7 +252,29 @@ async function get_run_id() {
     )
     let data = await response.json()
     add_to_query_list("get_run_id", response, data)
+    sessionStorage.setItem("run_id", data["run_id"])
+    by_id("reset-run").removeAttribute("disabled")
     return data["run_id"]
+}
+
+function add_file_to_uploaded_files(file) {
+    by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
+        "<li>/" + format_nc_file_path(file, "full", true) + "</li>"
+    by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
+        '<option value="' + format_nc_file_path(file, "filename", false) + '" ' +
+        'data-dirname="'  + format_nc_file_path(file, "dir_path", false) + '">' +
+        format_nc_file_path(file, "filename", true) + "</option>"
+}
+
+function add_uploaded_file_to_session_storage(file) {
+    let file_list = sessionStorage.getItem("uploaded_files")
+    if (file_list === null) {
+        file_list = []
+    } else {
+        file_list = JSON.parse(file_list)
+    }
+    file_list.push(file)
+    sessionStorage.setItem("uploaded_files", JSON.stringify(file_list))
 }
 
 async function upload_file(item) {
@@ -144,6 +282,7 @@ async function upload_file(item) {
         run_status["run_id"] = await get_run_id()
         by_id('run-id').innerText = run_status["run_id"]
         by_id('run-status').innerText = "new"
+        sessionStorage.setItem("run_status", "new")
     }
 
     let response = await fetch(
@@ -159,12 +298,8 @@ async function upload_file(item) {
     add_to_query_list("upload_file_to_sim_run", response, {})
 
     if (response.status < 300) {
-        by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
-            "<li>/" + format_nc_file_path(item.dataset.filename, "full", true) + "</li>"
-        by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
-            '<option value="' + format_nc_file_path(item.dataset.filename, "filename", false) + '" ' +
-            'data-dirname="'  + format_nc_file_path(item.dataset.filename, "dir_path", false) + '">' +
-            format_nc_file_path(item.dataset.filename, "filename", true) + "</option>"
+        add_file_to_uploaded_files(item.dataset.filename)
+        add_uploaded_file_to_session_storage(item.dataset.filename)
     } else {
         let result = await response.json()
         set_errors("File upload failed :" + result["error"])
@@ -194,12 +329,15 @@ async function fetch_nc_file_list() {
         if (a.is_dir !== b.is_dir) return a.is_dir ? -1 : 1
         return a.name.localeCompare(b.name)
     }).forEach(item => {
-        if (item.name != "/" && item.name != curr_dir) {
+        item.name = item.name.startsWith("/") ? except_first(item.name) : item.name
+        item.name = last(item.name) == "/" ? except_last(item.name) : item.name
+        if (item.name != "" && item.name != curr_dir) {
             let prefix = item.is_dir ? "|\>&nbsp;" : "|&nbsp;&nbsp;"
             items.push(
                 "<li "
                 + "class='" + (item.is_dir ? "nc-file-list-dir" : "nc-file-list-file") + "' "
-                + "data-" + (item.is_dir ? "dirname" : "filename") + "='"+ item.name + "' "
+                + "data-" + (item.is_dir ? "dirname" : "filename") + "='"
+                + format_nc_file_path(item.name, "full", false) + "' "
                 + ">"
                 + prefix + format_nc_file_path(item.name, "filename", true)
                 + "</li>"
@@ -236,6 +374,9 @@ async function start_simulation_from_form(form_element) {
         return
     }
 
+    clear_errors()
+    clear_results()
+
     let form_data = new FormData(form_element)
     response = await fetch(API_ROOT + 'start_simulation_from_form/' + run_status["run_id"], {
         method: 'POST',
@@ -243,15 +384,19 @@ async function start_simulation_from_form(form_element) {
     })
     result = await response.json()
     add_to_query_list("start_simulation_from_form", response, result)
+
     if (response.status >= 400) {
         set_errors("Error: " + result["error"])
+        stop_polling()
         return
     }
 
-    if (run_status["interval_id"]) {
-        clearInterval(run_status["interval_id"]);
-    }
-    run_status["interval_id"] = setInterval(check_status, 10 * 1000, run_status["run_id"])
+    start_polling()
+    run_status["status"] = "waiting"
+    sessionStorage.setItem("run_status", "waiting")
+    by_id('run-status').innerText = "waiting"
+    by_id("submit-simulate").setAttribute("disabled", "")
+    by_id("stop-simulation").removeAttribute("disabled")
 }
 
 function main() {
@@ -260,15 +405,56 @@ function main() {
         event.preventDefault()
         start_simulation_from_form(this)
     }
+    document.getElementById("stop-simulation").onclick = async function(event) {
+        stop_simulation()
+    }
+    document.getElementById("fetch-results").onclick = async function(event) {
+        fetch_results(by_id('run-id').innerText)
+    }
+    document.getElementById("reset-run").onclick = async function(event) {
+        reset_run()
+    }
 
     // events to handle when the document is ready
     document.onreadystatechange = async function(event) {
         if (document.readyState == "complete") {
+            // load run ID from session storage
+            let run_id = sessionStorage.getItem("run_id")
+            if (run_id !== null && run_id !== undefined) {
+                run_status["run_id"] = run_id
+                by_id('run-id').innerText = run_id
+
+                // activate reset run and fetch results buttons
+                by_id('reset-run').removeAttribute('disabled')
+                by_id('fetch-results').removeAttribute('disabled')
+            }
+
+            // load run status from session storage
+            let session_run_status = sessionStorage.getItem("run_status")
+            if (session_run_status !== null && session_run_status !== undefined) {
+                run_status["status"] = session_run_status
+                by_id('run-status').innerText = session_run_status
+            }
+
+            // load uploaded file list from session storage
+            let file_list = sessionStorage.getItem("uploaded_files")
+            if (file_list !== null && file_list !== undefined) {
+                file_list = JSON.parse(file_list)
+                file_list.forEach(file => {
+                    add_file_to_uploaded_files(file)
+                })
+            }
+
             // fetch content for the user's NC root dir, but only if the user is logged in.
             // spoofing the login status client-side is not a security concern as the API
-            // checks authentication anyway
+            // checks authentication anyway. if a run exist in session storage, load that
+            // directory instead
             let logged_in = by_id("nc-logged-in-info")
-            if (logged_in) fetch_nc_file_list()
+            if (logged_in) {
+                let dir_name = sessionStorage.getItem("nc_current_dir")
+                dir_name = (dir_name === null || dir_name === undefined) ? "" : dir_name
+                set_directory(dir_name, false)
+            }
         }
     }
 }

@@ -1,3 +1,13 @@
+.btn {
+    --bs-btn-disabled-opacity: 0.3;
+}
+
+/* Overwrite bootstrap standard for disabled button opacity*/
+.btn:disabled,
+.btn.disabled {
+    opacity: var(--bs-btn-disabled-opacity) !important;
+}
+
 .w-25 {
     width: 25%;
 }
@@ -12,6 +22,15 @@
 
 .bold {
     font-weight: bold;
+}
+
+.tab-pane {
+  max-height: 800px;
+  overflow-y: scroll;
+  width: 100%;
+  overflow-x: scroll;
+  background-color: #ececec;
+  padding: 5px;
 }
 
 #nc-file-list {
@@ -50,9 +69,18 @@
     color: #321dd0;
 }
 
+.nc-file-list-dir:hover {
+    background-color: #e6e6e6;
+}
+
 .nc-file-list-file {
     cursor: cell;
 }
+
+.nc-file-list-file:hover {
+    background-color: #e6e6e6;
+}
+
 
 #uploaded-files {
     list-style: none;
@@ -75,12 +103,13 @@ label[for="config-file-selection"] {
 }
 
 #submit-simulate {
-    display: block;
+    display: inline-block;
     margin-top: 15px;
-    padding: 5px 20px;
-    border-radius: 5px;
-    border-color: #6eacfb;
-    background-color: #bce9ff;
+}
+
+#stop-simulation {
+    display: inline-block;
+    margin-top: 15px;
 }
 
 #error-label {

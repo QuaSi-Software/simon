@@ -12,10 +12,23 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from sim_api.util import create_run_dir, get_run_status, run_dir_exists, \
     validate_run_id, validate_uploaded_filename, save_file_for_run, load_file_index, \
-    alias_config_file, update_run_status, parse_key_from_auth_header
+    alias_config_file, update_run_status, parse_key_from_auth_header, read_resie_version
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "api_config.yml"
+
+# cached value for the ReSiE version. It will be filled on first request defaulting to None
+# indicating we haven't read it yet.
+RESIE_VERSION: str | None = None
+
+RESULTS_FILES = {
+    "auxiliary_info.md",
+    "logfile_balanceWarn.log",
+    "logfile_general.log",
+    "out.csv",
+    "output_plot.html",
+    "output_sankey.html"
+}
 
 def api_key_required(function):
     """Decorator for routes that require an API key."""
@@ -171,10 +184,14 @@ def download_file(run_id):
 
     filename = request_data['filename']
     file_index = load_file_index(run_id)
-    if filename not in file_index["forward"]:
+
+    if filename in file_index["forward"]:
+        alias = file_index["forward"][filename]
+    elif filename in RESULTS_FILES:
+        alias = filename
+    else:
         return jsonify({"error": "Cannot find given `filename` in file index"}), 400
 
-    alias = file_index["forward"][filename]
     alias_path = Path(APP_ROOT / "runs" / run_id / alias)
     if not alias_path.exists():
         return jsonify({"error": "Cannot find alias for given `filename`"}), 400
@@ -236,3 +253,22 @@ def simulate(run_id):
 
     update_run_status(run_id, "waiting")
     return jsonify({"message": "Queued run for simulation"}), 200
+
+@app.route('/resie_version', methods=['GET'])
+def resie_version():
+    """Endpoint: GET /resie_version
+
+    Response (JSON):
+        {
+            "version": "0.13.0", # the version of ReSiE being used
+        }
+    """
+    # lazily load and cache the version string
+    global RESIE_VERSION
+    if RESIE_VERSION is None:
+        parsed = read_resie_version()
+        if parsed is None:
+            return jsonify({"error": f"Could not read ReSiE version"}), 500
+        else:
+            RESIE_VERSION = parsed
+    return jsonify({"version": RESIE_VERSION}), 200

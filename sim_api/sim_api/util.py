@@ -4,8 +4,6 @@ from __future__ import annotations
 import os
 import stat
 import json
-import subprocess
-import tempfile
 import uuid
 import re
 from datetime import datetime
@@ -14,7 +12,6 @@ from typing import Any, Dict
 from werkzeug.datastructures import FileStorage
 
 APP_ROOT = Path(__file__).resolve().parent.parent
-TIMEOUT_SECONDS = 300  # Hard stop for long‑running sims
 
 def parse_key_from_auth_header(header: str) -> str:
     """Parses an API from the given value of the authorization header."""
@@ -25,20 +22,6 @@ def parse_key_from_auth_header(header: str) -> str:
     if parts[0].lower() != "bearer":
         return False
     return parts[1].strip()
-
-def write_temp_json(data: Dict[str, Any]) -> Path:
-    """Write request data to a temp JSON file and return the path."""
-    temp_dir = tempfile.gettempdir()
-    filename = f"sim_input_{uuid.uuid4().hex}.json"
-    file_path = Path(temp_dir) / filename
-    with file_path.open("w", encoding="utf-8") as fp:
-        json.dump(data, fp)
-    return file_path
-
-def run_simulation(input_file: Path) -> subprocess.CompletedProcess[str]:
-    """Run the Julia simulation subprocess and capture output."""
-    cmd = ["julia", "simulate.jl", str(input_file)]
-    return subprocess.run(cmd, capture_output=True, text=True, timeout=TIMEOUT_SECONDS, check=False)
 
 def update_run_status(run_id: str, new_status: str) -> None:
     """Update the status of the given run with the new status."""
@@ -150,21 +133,80 @@ def save_file_for_run(run_id: str, file: FileStorage) -> str:
 
     return safe_filename
 
+def check_node_and_replace(node, file_index):
+    """Recursively replaces strings in the given JSON-like structure with file name
+    substitutions based on the given file index.
+
+    The substitutions will ignore existing paths of file parameters and replace it with
+    relative paths.
+    """
+    if type(node) == str:
+        for original in file_index["forward"]:
+            if original in node:
+                return "./" + file_index["forward"][original]
+    elif type(node) == dict:
+        for key in node.keys():
+            node[key] = check_node_and_replace(node[key], file_index)
+    elif type(node) == list:
+        for idx, _ in enumerate(node):
+            node[idx] = check_node_and_replace(node[idx], file_index)
+
+    return node
+
 def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
-    """Creates a copy of the given config file where all references to files are replaced
-    by their alias."""
+    """Creates an aliased copy of the given config file.
+
+    All references to files that exist in the file index (which are uploaded) are replaced
+    by their alias. However this also changes the path to a relative path of './' followed
+    by the aliased file name. In addition, the output file settings are set to fixed values
+    so that fetching the results knows where to find the files.
+    """
     alias_path = Path(APP_ROOT / "runs" / run_id / alias_filename)
     if not alias_path.exists():
         return False, "Could not find alias file"
 
     with open(alias_path, "r", encoding="utf-8") as file:
-        content = file.read()
-        file_index = load_file_index(run_id)
-        for original in file_index["forward"]:
-            content = content.replace(original, file_index["forward"][original])
+        config = json.load(file)
+
+    # set base to the run directory so relative paths point to the correct dir for the run
+    config["io_settings"]["base_path"] = str(Path(APP_ROOT / "runs" / run_id))
+
+    # replace output filenames with fixed values
+    config["io_settings"]["csv_output_file"] = "./out.csv"
+    config["io_settings"]["auxiliary_info_file"] = "./auxiliary_info.md"
+    config["io_settings"]["output_plot_file"] = "./output_plot.html"
+    config["io_settings"]["sankey_plot_file"] = "./output_sankey.html"
+    config["io_settings"]["auxiliary_plots_path"] = "./"
+
+    # replace file names with their alias. this will remove any paths, making any
+    # replacements relative to the base path
+    file_index = load_file_index(run_id)
+    config = check_node_and_replace(config, file_index)
 
     aliased_config_path = Path(APP_ROOT / "runs" / run_id / "aliased_config.json")
+    content = json.dumps(config, ensure_ascii=False, indent=4)
     with open(aliased_config_path, "w", encoding="utf-8") as file:
         file.write(content)
 
     return True, aliased_config_path
+
+def read_resie_version() -> str | None:
+    """Read the version string from the ReSiE Project.toml file.
+
+    Returns the version string on success or `None` if anything goes wrong.
+    """
+    toml_path = APP_ROOT / "resie" / "Project.toml"
+    if not toml_path.exists():
+        return None
+
+    try:
+        with open(toml_path, "r", encoding="utf-8") as fp:
+            for line in fp:
+                stripped = line.strip()
+                if stripped.startswith("version"):
+                    parts = stripped.split("=", 1)
+                    if len(parts) == 2:
+                        return parts[1].strip().strip('"').strip("'")
+    except Exception as exc:
+        return None
+    return None

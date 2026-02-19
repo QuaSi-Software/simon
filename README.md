@@ -1,8 +1,11 @@
 # Simulation Interface and Management Over Network (SIMON)
 
 ## Installation
-1. Prerequisites: Docker
+**Prerequisites: Docker, git**
 1. Get a copy of the source files and `cd` into the directory
+    * The easiest is to use `git clone --recurse-submodules git@github.com:QuaSi-Software/simon.git`
+    * If you use `clone` without `--recurse-submodules` you will need to run `git submodule update --init --recursive` afterwards
+    * If you do not wish to use git to get the source files, you will need to fetch the repository in submodule `sim_api/resie` separately and place its files in there.
 1. `cp sim_api/config_default.env sim_api/config.env` and edit config for your deployment use case
 1. `cp webapp/config_default.env webapp/config.env` and edit config for your deployment use case
 1. `cp sim_api/api_config_default.yml sim_api/api_config.yml` and edit config for your deployment use case

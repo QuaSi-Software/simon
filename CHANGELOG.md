@@ -4,6 +4,17 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
+### Version 0.4.0
+* Full integration of ReSiE replacing the placeholder simulation code
+  * Implement fetching ReSiE results in frontend
+  * Add display of current ReSiE version
+* Implement browser-session-persistency for selected NC directory, run ID, status and uploaded files
+* Implement reset run button in conjuction with the session-persistent run data
+* Implement button to stop polling for simulation results
+* Update endpoint fetch_results so it takes the requested file as argument
+* Make NC file list highlight the file/directory that is hovered over
+* Fix webapp API root not being customizable for installations outside localhost dev installations
+
 ### Version 0.3.3
 * Improve frontend design and element structure
 
@@ -46,6 +57,14 @@ The SIMON webapp provides the user interface for running simulations and uses th
 
 ## Simulation API
 The simulation API is used by the SIMON webapp internally and is not exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package.
+
+### Version 0.3.0
+* Full integration of ReSiE replacing the placeholder simulation code
+  * The current ReSiE version 0.13.7 is used
+  * Add endpoint to get the used ReSiE version
+  * Uploaded input files are aliased both for the file name on disk as well as the config file used for simulation. This prevents a number of security vulnerabilities.
+  * Logging of the simulations is set up to be specific to the run
+* Update download_file endpoint to work with an allowed list of output files
 
 ### Version 0.2.1
 * Switch config file of sim_api from JSON to YAML.

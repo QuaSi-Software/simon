@@ -35,9 +35,17 @@ end
 
 function scan_loop()
     @info "Starting scanner with $(Threads.nthreads()) threads and on #$(Threads.threadid())"
+
+    runs_dir = joinpath(@__DIR__, "runs")
+
+    if !isdir(runs_dir)
+        @info "Creating runs directory as it doesn't exist yet"
+        mkpath(runs_dir)
+    end
+
     while true
         try
-            for dir_path in readdir("./runs", join=true)
+            for dir_path in readdir(runs_dir, join=true)
                 if isdir(dir_path)
                     if get_status(dir_path) == "waiting"
                         set_status(dir_path, "running")
