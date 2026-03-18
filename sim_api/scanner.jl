@@ -36,6 +36,9 @@ end
 function scan_loop()
     @info "Starting scanner with $(Threads.nthreads()) threads and on #$(Threads.threadid())"
 
+    @info "Writing parameter definitions for API"
+    write_parameter_definitions()
+
     runs_dir = joinpath(@__DIR__, "runs")
 
     if !isdir(runs_dir)
@@ -43,6 +46,7 @@ function scan_loop()
         mkpath(runs_dir)
     end
 
+    @info "Starting scanning loop now"
     while true
         try
             for dir_path in readdir(runs_dir, join=true)

@@ -25,3 +25,6 @@ webapp/webapp_config.yml
 
 # session data
 webapp/flask_session
+
+# generated files
+sim_api/*.json

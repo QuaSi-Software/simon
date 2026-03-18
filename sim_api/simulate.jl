@@ -47,3 +47,16 @@ function simulate(working_dir)
         end
     end
 end
+
+function write_parameter_definitions()
+    param_def = Resie.EnergySystems.all_component_parameters()
+
+    output_file = joinpath(@__DIR__, "component_parameters.json")
+    open(output_file, "w") do file
+        # we would like to pretty-print the JSON for the parameters, however due to ReSiE's
+        # dependencies we're stuck with v0.21.4 of the JSON package, which does not support
+        # this. ReSiE itself is stuck at that version due to PlotlyJS's compatabilities
+        # @TODO: check in the future if we can update the dependencies
+        write(file, JSON.json(param_def))
+    end
+end
