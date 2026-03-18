@@ -210,3 +210,29 @@ def read_resie_version() -> str | None:
     except Exception as exc:
         return None
     return None
+
+def read_resie_parameters() -> str | None:
+    """Read parameter definitions for ReSiE from the cached files.
+
+    Returns the parsed dictionary with all groupings. If parsing any grouping fails, that
+    grouping will be empty, but will always return the top-level dictionary.
+    """
+    all_dicts = {}
+    files = {
+        "components": "component_parameters.json"
+    }
+
+    for key, file_name in files.items():
+        json_path = APP_ROOT / file_name
+        if not json_path.exists():
+            continue
+
+        content = {}
+        try:
+            with open(json_path, "r", encoding="utf-8") as fp:
+                content = json.loads(fp.read())
+        except:
+            pass
+        all_dicts[key] = content
+
+    return all_dicts
