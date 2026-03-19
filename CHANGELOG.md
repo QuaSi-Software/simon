@@ -56,7 +56,12 @@ The SIMON webapp provides the user interface for running simulations and uses th
 * First version with simple/empty flask app for providing the webapp as SPA
 
 ## Simulation API
-The simulation API is used by the SIMON webapp internally and is not exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package.
+The simulation API is used by the SIMON webapp internally and is only partially exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package. Changes that only affect the simulation API without changing any of the SIMON webapp code are not marked as changes in the webapp changelog and are listed here.
+
+### Version 0.3.1
+* Update to ReSiE version 0.13.12
+* Add endpoint parameters for getting the parameter definitions of ReSiE
+  * At the moment this includes only the parameters for the component types. The structure for further additions, e.g. the general simulation parameters, are in place to be added once the corresponding ReSiE functionality has been implemented
 
 ### Version 0.3.0
 * Full integration of ReSiE replacing the placeholder simulation code

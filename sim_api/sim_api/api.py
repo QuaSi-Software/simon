@@ -12,7 +12,8 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from sim_api.util import create_run_dir, get_run_status, run_dir_exists, \
     validate_run_id, validate_uploaded_filename, save_file_for_run, load_file_index, \
-    alias_config_file, update_run_status, parse_key_from_auth_header, read_resie_version
+    alias_config_file, update_run_status, parse_key_from_auth_header, read_resie_version, \
+    read_resie_parameters
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 APP_CONFIG_PATH = APP_ROOT / "api_config.yml"
@@ -20,6 +21,13 @@ APP_CONFIG_PATH = APP_ROOT / "api_config.yml"
 # cached value for the ReSiE version. It will be filled on first request defaulting to None
 # indicating we haven't read it yet.
 RESIE_VERSION: str | None = None
+
+# cached value for the ReSiE parameters. it will be filled on first request, defaulting to
+# None indicating we haven't read it yet. The structure contains various parameter dicts
+# each can be nested containing the parameter definitions. the upper-most level contains
+# various parameters groupings, which are hard-coded. all deeper nested dicts are fetched
+# for the current ReSiE version during start-up of the API server
+RESIE_PARAMETERS: dict | None = None
 
 RESULTS_FILES = {
     "auxiliary_info.md",
@@ -272,3 +280,21 @@ def resie_version():
         else:
             RESIE_VERSION = parsed
     return jsonify({"version": RESIE_VERSION}), 200
+
+@app.route('/parameters', methods=['GET'])
+def resie_parameters():
+    """Endpoint: GET /parameters
+
+    Response (JSON): The parameter definitions for various groupings. The upper-most level
+        of the nested structure has the following keys: `components`
+    """
+    # lazily load and cache the parameter definitions.
+    # the lazy-loading also helps with a problem where the definitions are written to file
+    # typically after the flask server is already running, because the scanner is starting
+    # in parallel to the server and is slower. if we read the definitions only on the first
+    # requests, this helps mitigate sync issues (though it can still happen with requests
+    # coming in before the scanner is up)
+    global RESIE_PARAMETERS
+    if RESIE_PARAMETERS is None:
+        RESIE_PARAMETERS = read_resie_parameters()
+    return jsonify(RESIE_PARAMETERS), 200
