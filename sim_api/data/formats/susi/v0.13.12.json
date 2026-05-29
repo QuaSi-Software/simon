@@ -1,0 +1,180 @@
+{
+    "type_categories": [
+        {
+            "name": "Connections",
+            "index": 0
+        },
+        {
+            "name": "General",
+            "index": 1
+        },
+        {
+            "name": "Heat",
+            "index": 2
+        },
+        {
+            "name": "Electricity",
+            "index": 3
+        },
+        {
+            "name": "Other",
+            "index": 4
+        }
+    ],
+    "components": {
+        "Battery": {
+            "display_name": "Battery",
+            "segment": "BAT",
+            "nr_inputs": 1,
+            "nr_outputs": 2,
+            "category": "Electricity"
+        },
+        "BufferTank": {
+            "display_name": "Buffer tank",
+            "segment": "BT",
+            "nr_inputs": 1,
+            "nr_outputs": 1,
+            "category": "Heat"
+        },
+        "Bus": {
+            "display_name": "Bus",
+            "segment": "BUS",
+            "nr_inputs": 1,
+            "nr_outputs": 1,
+            "category": "Connections"
+        },
+        "CHPP": {
+            "display_name": "Combined-Heat-Power plant",
+            "segment": "CHPP",
+            "nr_inputs": 1,
+            "nr_outputs": 2,
+            "category": "Electricity"
+        },
+        "Electrolyser": {
+            "display_name": "Electrolyser",
+            "segment": "ELY",
+            "nr_inputs": 1,
+            "nr_outputs": 4,
+            "category": "Other"
+        },
+        "FixedSink": {
+            "display_name": "Demand",
+            "segment": "DEM",
+            "nr_inputs": 1,
+            "nr_outputs": 0,
+            "category": "General"
+        },
+        "FixedSupply": {
+            "display_name": "Fixed supply",
+            "segment": "SUP",
+            "nr_inputs": 0,
+            "nr_outputs": 1,
+            "category": "General"
+        },
+        "FlexibleSink": {
+            "display_name": "Flexible sink",
+            "segment": "SNK",
+            "nr_inputs": 1,
+            "nr_outputs": 0,
+            "category": "General"
+        },
+        "FlexibleSupply": {
+            "display_name": "Flexible supply",
+            "segment": "SRC",
+            "nr_inputs": 0,
+            "nr_outputs": 1,
+            "category": "General"
+        },
+        "FuelBoiler": {
+            "display_name": "Fuel boiler",
+            "segment": "FB",
+            "nr_inputs": 1,
+            "nr_outputs": 1,
+            "category": "Heat"
+        },
+        "GenericHeatSource": {
+            "display_name": "Generic heat source",
+            "segment": "GHS",
+            "nr_inputs": 0,
+            "nr_outputs": 1,
+            "category": "Heat"
+        },
+        "GeothermalHeatCollector": {
+            "display_name": "Geothermal heat collector",
+            "segment": "GHC",
+            "nr_inputs": 1,
+            "nr_outputs": 1,
+            "category": "Heat"
+        },
+        "GeothermalProbes": {
+            "display_name": "Geothermal probes",
+            "segment": "GTP",
+            "nr_inputs": 1,
+            "nr_outputs": 1,
+            "category": "Heat"
+        },
+        "GridInput": {
+            "display_name": "Grid input",
+            "segment": "GRI",
+            "nr_inputs": 0,
+            "nr_outputs": 1,
+            "category": "Connections"
+        },
+        "GridOutput": {
+            "display_name": "Grid output",
+            "segment": "GRO",
+            "nr_inputs": 1,
+            "nr_outputs": 0,
+            "category": "Connections"
+        },
+        "HeatPump": {
+            "display_name": "Heat pump",
+            "segment": "HP",
+            "nr_inputs": 2,
+            "nr_outputs": 1,
+            "category": "Heat"
+        },
+        "PVPlant": {
+            "display_name": "PV plant",
+            "segment": "PV",
+            "nr_inputs": 0,
+            "nr_outputs": 1,
+            "category": "Electricity"
+        },
+        "SeasonalThermalStorage": {
+            "display_name": "Seasonal thermal storage",
+            "segment": "STS",
+            "nr_inputs": 1,
+            "nr_outputs": 1,
+            "category": "Heat"
+        },
+        "SolarthermalCollector": {
+            "display_name": "Solarthermal collector",
+            "segment": "STC",
+            "nr_inputs": 0,
+            "nr_outputs": 1,
+            "category": "Heat"
+        },
+        "Storage": {
+            "display_name": "Storage",
+            "segment": "ST",
+            "nr_inputs": 1,
+            "nr_outputs": 1,
+            "category": "General"
+        },
+        "ThermalBooster": {
+            "display_name": "Thermal booster",
+            "segment": "TB",
+            "nr_inputs": 2,
+            "nr_outputs": 1,
+            "category": "Heat"
+        },
+        "UTIR": {
+            "display_name": "UTIR",
+            "segment": "UTIR",
+            "nr_inputs": 1,
+            "nr_outputs": 1,
+            "category": "Electricity"
+        }
+    }
+}
