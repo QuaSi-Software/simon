@@ -249,7 +249,7 @@ def set_widget_types(susi_dict: dict) -> dict:
     """
     medium_pattern = re.compile("m_.+_(in|out)")
 
-    for type_dict in susi_dict["components"].values():
+    for type_dict in susi_dict["components"]["types"].values():
         for name, param_dict in type_dict["parameters"].items():
             if "options" in param_dict and param_dict["options"] != []:
                 if isinstance(param_dict["default"], list):
@@ -270,10 +270,7 @@ def set_widget_types(susi_dict: dict) -> dict:
 
 def format_parameters_susi(base_dict: dict) -> dict:
     """Formats the given parameters definition dictionary for the `susi` format."""
-    # move components parameters into sub-dict for each type
-    susi_dict = {"components": {}}
-    for cmp_name, params in base_dict["components"].items():
-        susi_dict["components"][cmp_name] = {"parameters": deepcopy(params)}
+    susi_dict = deepcopy(base_dict)
 
     # determine widget types
     susi_dict = set_widget_types(susi_dict)
@@ -298,7 +295,8 @@ def read_resie_parameters() -> dict:
     all_formats = {}
     base_dict = {}
     files = {
-        "components": "component_parameters.json"
+        "components": "component_parameters.json",
+        "general": "general_parameters.json"
     }
 
     for key, file_name in files.items():

@@ -1,0 +1,1016 @@
+{
+    "components": {
+        "type_categories": [
+            {
+                "name": "Connections",
+                "index": 0
+            },
+            {
+                "name": "General",
+                "index": 1
+            },
+            {
+                "name": "Heat",
+                "index": 2
+            },
+            {
+                "name": "Electricity",
+                "index": 3
+            },
+            {
+                "name": "Other",
+                "index": 4
+            }
+        ],
+        "types": {
+            "Battery": {
+                "display_name": "Battery",
+                "segment": "BAT",
+                "nr_inputs": 1,
+                "nr_outputs": 2,
+                "category": "Electricity",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_el_in",
+                            "m_el_out",
+                            "heat_lt_is_usable",
+                            "m_heat_lt_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "model_type",
+                            "capacity",
+                            "initial_load",
+                            "charge_efficiency",
+                            "discharge_efficiency",
+                            "self_discharge_rate",
+                            "max_charge_C_rate",
+                            "max_discharge_C_rate",
+                            "SOC_min",
+                            "SOC_max"
+                        ]
+                    },
+                    {
+                        "heading": "Detailed model",
+                        "index": 2,
+                        "params": [
+                            "V_n_bat",
+                            "cell_cutoff_current",
+                            "cycles",
+                            "Temp"
+                        ]
+                    },
+                    {
+                        "heading": "Chemistry",
+                        "index": 3,
+                        "params": [
+                            "V_n",
+                            "r_i",
+                            "V_0",
+                            "K",
+                            "A",
+                            "B",
+                            "capacity_cell_Ah",
+                            "m",
+                            "alpha",
+                            "k_qn",
+                            "k_qT",
+                            "k_n",
+                            "k_T",
+                            "I_ref",
+                            "T_ref"
+                        ]
+                    }
+                ]
+            },
+            "BufferTank": {
+                "display_name": "Buffer tank",
+                "segment": "BT",
+                "nr_inputs": 1,
+                "nr_outputs": 1,
+                "category": "Heat",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "medium"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "model_type",
+                            "capacity",
+                            "volume",
+                            "rho_medium",
+                            "cp_medium",
+                            "high_temperature",
+                            "low_temperature",
+                            "initial_load",
+                            "max_load_rate",
+                            "max_unload_rate",
+                            "switch_point"
+                        ]
+                    },
+                    {
+                        "heading": "Losses",
+                        "index": 2,
+                        "params": [
+                            "consider_losses",
+                            "h_to_r",
+                            "thermal_transmission_barrel",
+                            "thermal_transmission_lid",
+                            "thermal_transmission_bottom",
+                            "ground_temperature",
+                            "ambient_temperature_profile_file_path",
+                            "constant_ambient_temperature",
+                            "ambient_temperature_from_global_file"
+                        ]
+                    }
+                ]
+            },
+            "Bus": {
+                "display_name": "Bus",
+                "segment": "BUS",
+                "nr_inputs": 1,
+                "nr_outputs": 1,
+                "category": "Connections",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "medium"
+                        ]
+                    }
+                ]
+            },
+            "CHPP": {
+                "display_name": "Combined-Heat-Power plant",
+                "segment": "CHPP",
+                "nr_inputs": 1,
+                "nr_outputs": 2,
+                "category": "Electricity",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_fuel_in",
+                            "m_el_out",
+                            "m_heat_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "power_el",
+                            "min_power_fraction",
+                            "output_temperature"
+                        ]
+                    },
+                    {
+                        "heading": "Efficiencies",
+                        "index": 2,
+                        "params": [
+                            "efficiency_fuel_in",
+                            "efficiency_el_out",
+                            "efficiency_heat_out",
+                            "linear_interface",
+                            "nr_discretization_steps"
+                        ]
+                    }
+                ]
+            },
+            "Electrolyser": {
+                "display_name": "Electrolyser",
+                "segment": "ELY",
+                "nr_inputs": 1,
+                "nr_outputs": 4,
+                "category": "Other",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_el_in",
+                            "m_h2_out",
+                            "m_o2_out",
+                            "m_heat_ht_out",
+                            "heat_lt_is_usable",
+                            "m_heat_lt_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "power_el",
+                            "min_power_fraction_total",
+                            "output_temperature_ht",
+                            "output_temperature_lt"
+                        ]
+                    },
+                    {
+                        "heading": "Unit dispatch",
+                        "index": 2,
+                        "params": [
+                            "nr_switchable_units",
+                            "dispatch_strategy",
+                            "min_power_fraction",
+                            "optimal_unit_plr"
+                        ]
+                    },
+                    {
+                        "heading": "Efficiencies",
+                        "index": 3,
+                        "params": [
+                            "linear_interface",
+                            "efficiency_el_in",
+                            "efficiency_heat_ht_out",
+                            "efficiency_heat_lt_out",
+                            "efficiency_h2_out",
+                            "efficiency_h2_out_lossless",
+                            "efficiency_o2_out",
+                            "nr_discretization_steps"
+                        ]
+                    }
+                ]
+            },
+            "FixedSink": {
+                "display_name": "Demand",
+                "segment": "DEM",
+                "nr_inputs": 1,
+                "nr_outputs": 0,
+                "category": "General",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "medium"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "energy_profile_file_path",
+                            "constant_demand",
+                            "scale",
+                            "temperature_profile_file_path",
+                            "constant_temperature",
+                            "temperature_from_global_file"
+                        ]
+                    },
+                    {
+                        "heading": "Volume flow",
+                        "index": 2,
+                        "params": [
+                            "treat_profile_as_volume_flow_in_qm_per_hour",
+                            "rho_medium",
+                            "cp_medium"
+                        ]
+                    }
+                ]
+            },
+            "FixedSupply": {
+                "display_name": "Fixed supply",
+                "segment": "SUP",
+                "nr_inputs": 0,
+                "nr_outputs": 1,
+                "category": "General",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "medium"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "energy_profile_file_path",
+                            "constant_supply",
+                            "scale",
+                            "temperature_profile_file_path",
+                            "constant_temperature",
+                            "temperature_from_global_file"
+                        ]
+                    },
+                    {
+                        "heading": "Volume flow",
+                        "index": 2,
+                        "params": [
+                            "treat_profile_as_volume_flow_in_qm_per_hour",
+                            "rho_medium",
+                            "cp_medium"
+                        ]
+                    }
+                ]
+            },
+            "FlexibleSink": {
+                "display_name": "Flexible sink",
+                "segment": "SNK",
+                "nr_inputs": 1,
+                "nr_outputs": 0,
+                "category": "General",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "medium"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "max_power_profile_file_path",
+                            "constant_power",
+                            "scale",
+                            "temperature_profile_file_path",
+                            "constant_temperature",
+                            "temperature_from_global_file"
+                        ]
+                    }
+                ]
+            },
+            "FlexibleSupply": {
+                "display_name": "Flexible supply",
+                "segment": "SRC",
+                "nr_inputs": 0,
+                "nr_outputs": 1,
+                "category": "General",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "medium"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "max_power_profile_file_path",
+                            "constant_power",
+                            "scale",
+                            "temperature_profile_file_path",
+                            "constant_temperature",
+                            "temperature_from_global_file"
+                        ]
+                    }
+                ]
+            },
+            "FuelBoiler": {
+                "display_name": "Fuel boiler",
+                "segment": "FB",
+                "nr_inputs": 1,
+                "nr_outputs": 1,
+                "category": "Heat",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_fuel_in",
+                            "m_el_out",
+                            "m_heat_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "power_th",
+                            "min_power_fraction",
+                            "output_temperature"
+                        ]
+                    },
+                    {
+                        "heading": "Efficiencies",
+                        "index": 2,
+                        "params": [
+                            "linear_interface",
+                            "efficiency_fuel_in",
+                            "efficiency_heat_out",
+                            "nr_discretization_steps"
+                        ]
+                    }
+                ]
+            },
+            "GenericHeatSource": {
+                "display_name": "Generic heat source",
+                "segment": "GHS",
+                "nr_inputs": 0,
+                "nr_outputs": 1,
+                "category": "Heat",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "medium"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "max_power_profile_file_path",
+                            "constant_power",
+                            "scale",
+                            "temperature_profile_file_path",
+                            "constant_temperature",
+                            "temperature_from_global_file"
+                        ]
+                    },
+                    {
+                        "heading": "Temperature reduction",
+                        "index": 2,
+                        "params": [
+                            "temperature_reduction_model",
+                            "min_source_in_temperature",
+                            "max_source_in_temperature",
+                            "minimal_reduction"
+                        ]
+                    }
+                ]
+            },
+            "GeothermalHeatCollector": {
+                "display_name": "Geothermal heat collector",
+                "segment": "GHC",
+                "nr_inputs": 1,
+                "nr_outputs": 1,
+                "category": "Heat",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_heat_in",
+                            "m_heat_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "model_type",
+                            "max_output_power",
+                            "max_input_power",
+                            "accuracy_mode",
+                            "regeneration",
+                            "max_picard_iter",
+                            "picard_tol"
+                        ]
+                    },
+                    {
+                        "heading": "Ambience",
+                        "index": 2,
+                        "params": [
+                            "ambient_temperature_from_global_file",
+                            "ambient_temperature_profile_file_path",
+                            "constant_ambient_temperature",
+                            "global_solar_radiation_from_global_file",
+                            "global_solar_radiation_profile_file_path",
+                            "constant_global_solar_radiation",
+                            "infrared_sky_radiation_from_global_file",
+                            "infrared_sky_radiation_profile_file_path",
+                            "constant_infrared_sky_radiation",
+                            "surface_convective_heat_transfer_coefficient",
+                            "surface_reflection_factor",
+                            "surface_emissivity"
+                        ]
+                    },
+                    {
+                        "heading": "Pipes",
+                        "index": 3,
+                        "params": [
+                            "number_of_pipes",
+                            "pipe_length",
+                            "pipe_spacing",
+                            "pipe_laying_depth",
+                            "pipe_radius_outer",
+                            "fluid_min_output_temperature",
+                            "fluid_max_input_temperature",
+                            "phase_change_upper_boundary_temperature",
+                            "phase_change_lower_boundary_temperature",
+                            "unloading_temperature_spread",
+                            "loading_temperature_spread",
+                            "start_temperature_fluid_and_pipe",
+                            "pipe_soil_thermal_resistance"
+                        ]
+                    },
+                    {
+                        "heading": "Soil",
+                        "index": 4,
+                        "params": [
+                            "considered_soil_depth",
+                            "soil_specific_heat_capacity",
+                            "soil_specific_heat_capacity_frozen",
+                            "soil_density",
+                            "soil_heat_conductivity",
+                            "soil_heat_conductivity_frozen",
+                            "soil_specific_enthalpy_of_fusion",
+                            "undisturbed_ground_temperature"
+                        ]
+                    },
+                    {
+                        "heading": "Detailed model",
+                        "index": 5,
+                        "params": [
+                            "use_dynamic_fluid_properties",
+                            "nusselt_approach",
+                            "pipe_thickness",
+                            "pipe_heat_conductivity",
+                            "fluid_specific_heat_capacity",
+                            "fluid_heat_conductivity",
+                            "fluid_density",
+                            "fluid_kinematic_viscosity",
+                            "fluid_prandtl_number"
+                        ]
+                    }
+                ]
+            },
+            "GeothermalProbes": {
+                "display_name": "Geothermal probes",
+                "segment": "GTP",
+                "nr_inputs": 1,
+                "nr_outputs": 1,
+                "category": "Heat",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_heat_in",
+                            "m_heat_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "model_type",
+                            "max_input_power",
+                            "max_output_power",
+                            "regeneration"
+                        ]
+                    },
+                    {
+                        "heading": "Probe parameters",
+                        "index": 2,
+                        "params": [
+                            "probe_depth",
+                            "max_probe_temperature_loading",
+                            "min_probe_temperature_unloading",
+                            "borehole_diameter",
+                            "loading_temperature",
+                            "loading_temperature_spread",
+                            "unloading_temperature_spread",
+                            "soil_undisturbed_ground_temperature",
+                            "boreholewall_start_temperature",
+                            "limit_max_output_energy_to_avoid_pulsing",
+                            "borehole_thermal_resistance"
+                        ]
+                    },
+                    {
+                        "heading": "G-function",
+                        "index": 3,
+                        "params": [
+                            "probe_field_geometry",
+                            "number_of_probes_x",
+                            "number_of_probes_y",
+                            "probe_field_key_2",
+                            "borehole_spacing",
+                            "soil_density",
+                            "soil_specific_heat_capacity",
+                            "soil_heat_conductivity",
+                            "g_function_file_path"
+                        ]
+                    },
+                    {
+                        "heading": "Detailed model",
+                        "index": 4,
+                        "params": [
+                            "probe_type",
+                            "pipe_diameter_outer",
+                            "pipe_diameter_inner",
+                            "pipe_heat_conductivity",
+                            "shank_spacing",
+                            "fluid_specific_heat_capacity",
+                            "fluid_density",
+                            "fluid_kinematic_viscosity",
+                            "fluid_heat_conductivity",
+                            "fluid_prandtl_number",
+                            "grout_heat_conductivity",
+                            "soil_heat_conductivity"
+                        ]
+                    }
+                ]
+            },
+            "GridInput": {
+                "display_name": "Grid input",
+                "segment": "GRI",
+                "nr_inputs": 0,
+                "nr_outputs": 1,
+                "category": "Connections",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "medium"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "temperature_profile_file_path",
+                            "constant_temperature",
+                            "temperature_from_global_file"
+                        ]
+                    }
+                ]
+            },
+            "GridOutput": {
+                "display_name": "Grid output",
+                "segment": "GRO",
+                "nr_inputs": 1,
+                "nr_outputs": 0,
+                "category": "Connections",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "medium"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "temperature_profile_file_path",
+                            "constant_temperature",
+                            "temperature_from_global_file"
+                        ]
+                    }
+                ]
+            },
+            "HeatPump": {
+                "display_name": "Heat pump",
+                "segment": "HP",
+                "nr_inputs": 2,
+                "nr_outputs": 1,
+                "category": "Heat",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_heat_in",
+                            "m_el_in",
+                            "m_heat_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "model_type",
+                            "power_th",
+                            "cop_function",
+                            "bypass_cop",
+                            "max_power_function",
+                            "min_power_function",
+                            "plf_function",
+                            "min_usage_fraction",
+                            "input_temperature",
+                            "output_temperature"
+                        ]
+                    },
+                    {
+                        "heading": "Losses",
+                        "index": 2,
+                        "params": [
+                            "consider_icing",
+                            "icing_coefficients",
+                            "power_losses_factor",
+                            "heat_losses_factor",
+                            "constant_loss_power"
+                        ]
+                    },
+                    {
+                        "heading": "Losses",
+                        "index": 3,
+                        "params": [
+                            "consider_icing",
+                            "icing_coefficients",
+                            "power_losses_factor",
+                            "heat_losses_factor",
+                            "constant_loss_power"
+                        ]
+                    },
+                    {
+                        "heading": "Optimisation",
+                        "index": 4,
+                        "params": [
+                            "nr_optimisation_passes",
+                            "fudge_factor",
+                            "eval_factor_heat",
+                            "eval_factor_time",
+                            "eval_factor_elec",
+                            "x_abstol",
+                            "f_abstol"
+                        ]
+                    },
+                    {
+                        "heading": "Secondary interface",
+                        "index": 5,
+                        "params": [
+                            "has_secondary_interface",
+                            "primary_el_sources",
+                            "secondary_el_sources"
+                        ]
+                    }
+                ]
+            },
+            "PVPlant": {
+                "display_name": "PV plant",
+                "segment": "PV",
+                "nr_inputs": 0,
+                "nr_outputs": 1,
+                "category": "Electricity",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_el_out"
+                        ]
+                    },
+                    {
+                        "heading": "Profile",
+                        "index": 1,
+                        "params": [
+                            "energy_profile_file_path",
+                            "scale"
+                        ]
+                    }
+                ]
+            },
+            "SeasonalThermalStorage": {
+                "display_name": "Seasonal thermal storage",
+                "segment": "STS",
+                "nr_inputs": 1,
+                "nr_outputs": 1,
+                "category": "Heat",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_heat_in",
+                            "m_heat_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "volume",
+                            "initial_load",
+                            "high_temperature",
+                            "low_temperature",
+                            "reproduce_IEA_ES_Task39"
+                        ]
+                    },
+                    {
+                        "heading": "Ambiance",
+                        "index": 2,
+                        "params": [
+                            "ambient_temperature_profile_file_path",
+                            "constant_ambient_temperature",
+                            "ambient_temperature_from_global_file",
+                            "ground_temperature_profile_file_path",
+                            "constant_ground_temperature"
+                        ]
+                    },
+                    {
+                        "heading": "Geometry and layers",
+                        "index": 3,
+                        "params": [
+                            "ground_model",
+                            "shape",
+                            "hr_ratio",
+                            "sidewall_angle",
+                            "rho_medium",
+                            "cp_medium",
+                            "diffusion_coefficient",
+                            "number_of_layer_total",
+                            "number_of_layer_above_ground",
+                            "output_layer_from_top",
+                            "max_load_rate_energy",
+                            "max_unload_rate_energy",
+                            "max_load_rate_mass",
+                            "max_unload_rate_mass",
+                            "thermal_transmission_lid",
+                            "thermal_transmission_barrel_above_ground",
+                            "thermal_transmission_barrel_below_ground",
+                            "thermal_transmission_bottom"
+                        ]
+                    },
+                    {
+                        "heading": "FVM model",
+                        "index": 4,
+                        "params": [
+                            "ground_domain_radius_factor",
+                            "ground_domain_depth_factor",
+                            "ground_domain_radius",
+                            "ground_domain_depth",
+                            "ground_accuracy_mode",
+                            "ground_layers_depths",
+                            "ground_layers_k",
+                            "ground_layers_rho",
+                            "ground_layers_cp",
+                            "ground_bottom_boundary",
+                            "soil_surface_hconv",
+                            "has_top_insulation_overlap",
+                            "top_insulation_overlap_width",
+                            "thermal_transmission_overlap"
+                        ]
+                    }
+                ]
+            },
+            "SolarthermalCollector": {
+                "display_name": "Solarthermal collector",
+                "segment": "STC",
+                "nr_inputs": 0,
+                "nr_outputs": 1,
+                "category": "Heat",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_heat_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "collector_gross_area",
+                            "tilt_angle",
+                            "azimuth_angle",
+                            "eta_0_b",
+                            "K_b_t_array",
+                            "K_b_l_array",
+                            "K_d",
+                            "a_params",
+                            "vol_heat_capacity",
+                            "wind_speed_reduction",
+                            "delta_T",
+                            "spec_flow_rate",
+                            "spec_flow_rate_min",
+                            "delta_T_min"
+                        ]
+                    },
+                    {
+                        "heading": "Ambiance",
+                        "index": 2,
+                        "params": [
+                            "ground_reflectance",
+                            "ambient_temperature_from_global_file",
+                            "ambient_temperature_profile_file_path",
+                            "constant_ambient_temperature",
+                            "beam_solar_radiation_from_global_file",
+                            "beam_solar_radiation_profile_file_path",
+                            "constant_beam_solar_radiation",
+                            "diffuse_solar_radiation_from_global_file",
+                            "diffuse_solar_radiation_profile_file_path",
+                            "constant_diffuse_solar_radiation",
+                            "infrared_sky_radiation_from_global_file",
+                            "infrared_sky_radiation_profile_file_path",
+                            "constant_infrared_sky_radiation",
+                            "wind_speed_from_global_file",
+                            "wind_speed_file_path",
+                            "constant_wind_speed"
+                        ]
+                    }
+                ]
+            },
+            "Storage": {
+                "display_name": "Storage",
+                "segment": "ST",
+                "nr_inputs": 1,
+                "nr_outputs": 1,
+                "category": "General",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "medium"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "capacity",
+                            "initial_load"
+                        ]
+                    }
+                ]
+            },
+            "ThermalBooster": {
+                "display_name": "Thermal booster",
+                "segment": "TB",
+                "nr_inputs": 2,
+                "nr_outputs": 1,
+                "category": "Heat",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_el_in",
+                            "m_heat_in",
+                            "m_heat_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "power_el",
+                            "allow_boost_solely",
+                            "allow_boost_additional",
+                            "cp_medium_out",
+                            "terminal_dT",
+                            "power_losses_factor",
+                            "heat_losses_factor",
+                            "output_temperature",
+                            "input_temperature",
+                            "demand_input_temperature",
+                            "demand_input_temperature_profile_file_path"
+                        ]
+                    }
+                ]
+            },
+            "UTIR": {
+                "display_name": "UTIR",
+                "segment": "UTIR",
+                "nr_inputs": 1,
+                "nr_outputs": 1,
+                "category": "Electricity",
+                "param_categories": [
+                    {
+                        "heading": "Media",
+                        "index": 0,
+                        "params": [
+                            "m_el_in",
+                            "m_el_out"
+                        ]
+                    },
+                    {
+                        "heading": "General",
+                        "index": 1,
+                        "params": [
+                            "power",
+                            "min_power_fraction"
+                        ]
+                    },
+                    {
+                        "heading": "Efficiencies",
+                        "index": 2,
+                        "params": [
+                            "linear_interface",
+                            "efficiency_el_in",
+                            "efficiency_el_out",
+                            "nr_discretization_steps"
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
