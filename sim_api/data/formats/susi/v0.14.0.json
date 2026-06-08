@@ -1,25 +1,232 @@
 {
+    "general": {
+        "economic_categories": [
+            {
+                "heading": "General",
+                "index": 0,
+                "parameters": [
+                    "calculate_economy",
+                    "repeat_method",
+                    "observation_period_in_years",
+                    "interest_rate",
+                    "labour_costs_per_hour",
+                    "labour_costs_price_change_rate_per_year"
+                ]
+            }
+        ],
+        "emissions_categories": [
+            {
+                "heading": "General",
+                "index": 0,
+                "parameters": [
+                    "calculate_emissions",
+                    "repeat_method",
+                    "observation_period_in_years",
+                    "include_embodied_emissions"
+                ]
+            }
+        ],
+        "io_categories": [
+            {
+                "heading": "General",
+                "index": 0,
+                "parameters": [
+                    "base_path",
+                    "step_info_interval",
+                    "show_detailed_errors",
+                    "fixed_output_precision"
+                ]
+            },
+            {
+                "heading": "CSV",
+                "index": 1,
+                "parameters": [
+                    "csv_output",
+                    "csv_output_keys",
+                    "csv_output_weather",
+                    "csv_output_file",
+                    "csv_time_unit",
+                    "write_csv_continuously"
+                ]
+            },
+            {
+                "heading": "Line plot",
+                "index": 2,
+                "parameters": [
+                    "output_plot",
+                    "output_plot_spec",
+                    "output_plot_file",
+                    "output_plot_time_unit",
+                    "plot_weather_data"
+                ]
+            },
+            {
+                "heading": "Sankey plot",
+                "index": 3,
+                "parameters": [
+                    "sankey_plot",
+                    "sankey_plot_spec",
+                    "sankey_plot_file"
+                ]
+            },
+            {
+                "heading": "Auxiliary info",
+                "index": 4,
+                "parameters": [
+                    "auxiliary_info",
+                    "auxiliary_info_file",
+                    "auxiliary_plots",
+                    "auxiliary_plots_path",
+                    "auxiliary_plots_formats"
+                ]
+            },
+            {
+                "heading": "Economic & emissions",
+                "index": 5,
+                "parameters": [
+                    "plot_price_and_emission_profiles",
+                    "price_and_emission_profile_file_path"
+                ]
+            },
+            {
+                "heading": "Economic",
+                "index": 6,
+                "parameters": [
+                    "plot_economic_cashflows",
+                    "economic_plot_cashflows_file_path",
+                    "plot_economic_present_values",
+                    "economic_plot_present_values_file_path",
+                    "output_economic_CSV",
+                    "economic_CSV_file_path"
+                ]
+            },
+            {
+                "heading": "Emissions",
+                "index": 7,
+                "parameters": [
+                    "plot_emission_results",
+                    "emissions_plot_file_path",
+                    "output_emissions_CSV",
+                    "emissions_CSV_file_path"
+                ]
+            }
+        ],
+        "simulation_categories": [
+            {
+                "heading": "Time range",
+                "index": 0,
+                "parameters": [
+                    "start_end_unit",
+                    "start",
+                    "start_output",
+                    "end",
+                    "time_step_unit",
+                    "time_step",
+                    "time_zone"
+                ]
+            },
+            {
+                "heading": "General",
+                "index": 1,
+                "parameters": [
+                    "force_profiles_to_repeat",
+                    "latitude",
+                    "longitude",
+                    "epsilon"
+                ]
+            },
+            {
+                "heading": "Weather",
+                "index": 1,
+                "parameters": [
+                    "weather_file_path",
+                    "weather_interpolation_type_general",
+                    "weather_interpolation_type_solar"
+                ]
+            }
+        ]
+    },
     "components": {
+        "control_categories": [
+            {
+                "heading": "Aggregation",
+                "index": 0,
+                "types": [
+                    "aggregation_plr_limit",
+                    "aggregation_charge",
+                    "aggregation_discharge",
+                    "aggregation_check_src_to_snk"
+                ]
+            },
+            {
+                "heading": "Interface toggles",
+                "index": 1,
+                "types": [
+                    "consider_m_el_in",
+                    "consider_m_fuel_in",
+                    "consider_m_gas_in",
+                    "consider_m_heat_in",
+                    "consider_m_el_out",
+                    "consider_m_heat_out",
+                    "consider_m_heat_ht_out",
+                    "consider_m_heat_lt_out",
+                    "consider_m_h2_out",
+                    "consider_m_o2_out"
+                ]
+            }
+        ],
         "type_categories": [
             {
-                "name": "Connections",
-                "index": 0
+                "heading": "Connections",
+                "index": 0,
+                "types": [
+                    "Bus",
+                    "GridInput",
+                    "GridOutput"
+                ]
             },
             {
-                "name": "General",
-                "index": 1
+                "heading": "General",
+                "index": 1,
+                "types": [
+                    "FixedSink",
+                    "FixedSupply",
+                    "FlexibleSink",
+                    "FlexibleSupply",
+                    "Storage"
+                ]
             },
             {
-                "name": "Heat",
-                "index": 2
+                "heading": "Heat",
+                "index": 2,
+                "types": [
+                    "BufferTank",
+                    "FuelBoiler",
+                    "GenericHeatSource",
+                    "GeothermalHeatCollector",
+                    "GeothermalProbes",
+                    "HeatPump",
+                    "SeasonalThermalStorage",
+                    "SolarthermalCollector",
+                    "ThermalBooster"
+                ]
             },
             {
-                "name": "Electricity",
-                "index": 3
+                "heading": "Electricity",
+                "index": 3,
+                "types": [
+                    "Battery",
+                    "CHPP",
+                    "PVPlant",
+                    "UTIR"
+                ]
             },
             {
-                "name": "Other",
-                "index": 4
+                "heading": "Other",
+                "index": 4,
+                "types": [
+                    "Electrolyser"
+                ]
             }
         ],
         "types": {
@@ -28,12 +235,11 @@
                 "segment": "BAT",
                 "nr_inputs": 1,
                 "nr_outputs": 2,
-                "category": "Electricity",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_el_in",
                             "m_el_out",
                             "heat_lt_is_usable",
@@ -43,7 +249,7 @@
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "model_type",
                             "capacity",
                             "initial_load",
@@ -59,7 +265,7 @@
                     {
                         "heading": "Detailed model",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "V_n_bat",
                             "cell_cutoff_current",
                             "cycles",
@@ -69,7 +275,7 @@
                     {
                         "heading": "Chemistry",
                         "index": 3,
-                        "params": [
+                        "parameters": [
                             "V_n",
                             "r_i",
                             "V_0",
@@ -94,19 +300,18 @@
                 "segment": "BT",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
-                "category": "Heat",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "medium"
                         ]
                     },
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "model_type",
                             "capacity",
                             "volume",
@@ -123,7 +328,7 @@
                     {
                         "heading": "Losses",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "consider_losses",
                             "h_to_r",
                             "thermal_transmission_barrel",
@@ -142,12 +347,11 @@
                 "segment": "BUS",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
-                "category": "Connections",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "medium"
                         ]
                     }
@@ -158,12 +362,11 @@
                 "segment": "CHPP",
                 "nr_inputs": 1,
                 "nr_outputs": 2,
-                "category": "Electricity",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_fuel_in",
                             "m_el_out",
                             "m_heat_out"
@@ -172,7 +375,7 @@
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "power_el",
                             "min_power_fraction",
                             "output_temperature"
@@ -181,7 +384,7 @@
                     {
                         "heading": "Efficiencies",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "efficiency_fuel_in",
                             "efficiency_el_out",
                             "efficiency_heat_out",
@@ -196,12 +399,11 @@
                 "segment": "ELY",
                 "nr_inputs": 1,
                 "nr_outputs": 4,
-                "category": "Other",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_el_in",
                             "m_h2_out",
                             "m_o2_out",
@@ -213,7 +415,7 @@
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "power_el",
                             "min_power_fraction_total",
                             "output_temperature_ht",
@@ -223,7 +425,7 @@
                     {
                         "heading": "Unit dispatch",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "nr_switchable_units",
                             "dispatch_strategy",
                             "min_power_fraction",
@@ -233,7 +435,7 @@
                     {
                         "heading": "Efficiencies",
                         "index": 3,
-                        "params": [
+                        "parameters": [
                             "linear_interface",
                             "efficiency_el_in",
                             "efficiency_heat_ht_out",
@@ -251,19 +453,18 @@
                 "segment": "DEM",
                 "nr_inputs": 1,
                 "nr_outputs": 0,
-                "category": "General",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "medium"
                         ]
                     },
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "energy_profile_file_path",
                             "constant_demand",
                             "scale",
@@ -275,7 +476,7 @@
                     {
                         "heading": "Volume flow",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "treat_profile_as_volume_flow_in_qm_per_hour",
                             "rho_medium",
                             "cp_medium"
@@ -288,19 +489,18 @@
                 "segment": "SUP",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
-                "category": "General",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "medium"
                         ]
                     },
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "energy_profile_file_path",
                             "constant_supply",
                             "scale",
@@ -312,7 +512,7 @@
                     {
                         "heading": "Volume flow",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "treat_profile_as_volume_flow_in_qm_per_hour",
                             "rho_medium",
                             "cp_medium"
@@ -325,19 +525,18 @@
                 "segment": "SNK",
                 "nr_inputs": 1,
                 "nr_outputs": 0,
-                "category": "General",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "medium"
                         ]
                     },
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "max_power_profile_file_path",
                             "constant_power",
                             "scale",
@@ -353,19 +552,18 @@
                 "segment": "SRC",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
-                "category": "General",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "medium"
                         ]
                     },
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "max_power_profile_file_path",
                             "constant_power",
                             "scale",
@@ -381,12 +579,11 @@
                 "segment": "FB",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
-                "category": "Heat",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_fuel_in",
                             "m_el_out",
                             "m_heat_out"
@@ -395,7 +592,7 @@
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "power_th",
                             "min_power_fraction",
                             "output_temperature"
@@ -404,7 +601,7 @@
                     {
                         "heading": "Efficiencies",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "linear_interface",
                             "efficiency_fuel_in",
                             "efficiency_heat_out",
@@ -418,19 +615,18 @@
                 "segment": "GHS",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
-                "category": "Heat",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "medium"
                         ]
                     },
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "max_power_profile_file_path",
                             "constant_power",
                             "scale",
@@ -442,7 +638,7 @@
                     {
                         "heading": "Temperature reduction",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "temperature_reduction_model",
                             "min_source_in_temperature",
                             "max_source_in_temperature",
@@ -456,12 +652,11 @@
                 "segment": "GHC",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
-                "category": "Heat",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_heat_in",
                             "m_heat_out"
                         ]
@@ -469,7 +664,7 @@
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "model_type",
                             "max_output_power",
                             "max_input_power",
@@ -482,7 +677,7 @@
                     {
                         "heading": "Ambience",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "ambient_temperature_from_global_file",
                             "ambient_temperature_profile_file_path",
                             "constant_ambient_temperature",
@@ -500,7 +695,7 @@
                     {
                         "heading": "Pipes",
                         "index": 3,
-                        "params": [
+                        "parameters": [
                             "number_of_pipes",
                             "pipe_length",
                             "pipe_spacing",
@@ -519,7 +714,7 @@
                     {
                         "heading": "Soil",
                         "index": 4,
-                        "params": [
+                        "parameters": [
                             "considered_soil_depth",
                             "soil_specific_heat_capacity",
                             "soil_specific_heat_capacity_frozen",
@@ -533,7 +728,7 @@
                     {
                         "heading": "Detailed model",
                         "index": 5,
-                        "params": [
+                        "parameters": [
                             "use_dynamic_fluid_properties",
                             "nusselt_approach",
                             "pipe_thickness",
@@ -552,12 +747,11 @@
                 "segment": "GTP",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
-                "category": "Heat",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_heat_in",
                             "m_heat_out"
                         ]
@@ -565,7 +759,7 @@
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "model_type",
                             "max_input_power",
                             "max_output_power",
@@ -575,7 +769,7 @@
                     {
                         "heading": "Probe parameters",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "probe_depth",
                             "max_probe_temperature_loading",
                             "min_probe_temperature_unloading",
@@ -592,7 +786,7 @@
                     {
                         "heading": "G-function",
                         "index": 3,
-                        "params": [
+                        "parameters": [
                             "probe_field_geometry",
                             "number_of_probes_x",
                             "number_of_probes_y",
@@ -607,7 +801,7 @@
                     {
                         "heading": "Detailed model",
                         "index": 4,
-                        "params": [
+                        "parameters": [
                             "probe_type",
                             "pipe_diameter_outer",
                             "pipe_diameter_inner",
@@ -629,19 +823,18 @@
                 "segment": "GRI",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
-                "category": "Connections",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "medium"
                         ]
                     },
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "temperature_profile_file_path",
                             "constant_temperature",
                             "temperature_from_global_file"
@@ -654,19 +847,18 @@
                 "segment": "GRO",
                 "nr_inputs": 1,
                 "nr_outputs": 0,
-                "category": "Connections",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "medium"
                         ]
                     },
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "temperature_profile_file_path",
                             "constant_temperature",
                             "temperature_from_global_file"
@@ -679,12 +871,11 @@
                 "segment": "HP",
                 "nr_inputs": 2,
                 "nr_outputs": 1,
-                "category": "Heat",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_heat_in",
                             "m_el_in",
                             "m_heat_out"
@@ -693,7 +884,7 @@
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "model_type",
                             "power_th",
                             "cop_function",
@@ -709,7 +900,7 @@
                     {
                         "heading": "Losses",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "consider_icing",
                             "icing_coefficients",
                             "power_losses_factor",
@@ -720,7 +911,7 @@
                     {
                         "heading": "Losses",
                         "index": 3,
-                        "params": [
+                        "parameters": [
                             "consider_icing",
                             "icing_coefficients",
                             "power_losses_factor",
@@ -731,7 +922,7 @@
                     {
                         "heading": "Optimisation",
                         "index": 4,
-                        "params": [
+                        "parameters": [
                             "nr_optimisation_passes",
                             "fudge_factor",
                             "eval_factor_heat",
@@ -744,7 +935,7 @@
                     {
                         "heading": "Secondary interface",
                         "index": 5,
-                        "params": [
+                        "parameters": [
                             "has_secondary_interface",
                             "primary_el_sources",
                             "secondary_el_sources"
@@ -757,19 +948,18 @@
                 "segment": "PV",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
-                "category": "Electricity",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_el_out"
                         ]
                     },
                     {
                         "heading": "Profile",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "energy_profile_file_path",
                             "scale"
                         ]
@@ -781,12 +971,11 @@
                 "segment": "STS",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
-                "category": "Heat",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_heat_in",
                             "m_heat_out"
                         ]
@@ -794,7 +983,7 @@
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "volume",
                             "initial_load",
                             "high_temperature",
@@ -805,7 +994,7 @@
                     {
                         "heading": "Ambiance",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "ambient_temperature_profile_file_path",
                             "constant_ambient_temperature",
                             "ambient_temperature_from_global_file",
@@ -816,7 +1005,7 @@
                     {
                         "heading": "Geometry and layers",
                         "index": 3,
-                        "params": [
+                        "parameters": [
                             "ground_model",
                             "shape",
                             "hr_ratio",
@@ -840,7 +1029,7 @@
                     {
                         "heading": "FVM model",
                         "index": 4,
-                        "params": [
+                        "parameters": [
                             "ground_domain_radius_factor",
                             "ground_domain_depth_factor",
                             "ground_domain_radius",
@@ -864,19 +1053,18 @@
                 "segment": "STC",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
-                "category": "Heat",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_heat_out"
                         ]
                     },
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "collector_gross_area",
                             "tilt_angle",
                             "azimuth_angle",
@@ -896,7 +1084,7 @@
                     {
                         "heading": "Ambiance",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "ground_reflectance",
                             "ambient_temperature_from_global_file",
                             "ambient_temperature_profile_file_path",
@@ -922,19 +1110,18 @@
                 "segment": "ST",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
-                "category": "General",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "medium"
                         ]
                     },
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "capacity",
                             "initial_load"
                         ]
@@ -946,12 +1133,11 @@
                 "segment": "TB",
                 "nr_inputs": 2,
                 "nr_outputs": 1,
-                "category": "Heat",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_el_in",
                             "m_heat_in",
                             "m_heat_out"
@@ -960,7 +1146,7 @@
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "power_el",
                             "allow_boost_solely",
                             "allow_boost_additional",
@@ -981,12 +1167,11 @@
                 "segment": "UTIR",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
-                "category": "Electricity",
                 "param_categories": [
                     {
                         "heading": "Media",
                         "index": 0,
-                        "params": [
+                        "parameters": [
                             "m_el_in",
                             "m_el_out"
                         ]
@@ -994,7 +1179,7 @@
                     {
                         "heading": "General",
                         "index": 1,
-                        "params": [
+                        "parameters": [
                             "power",
                             "min_power_fraction"
                         ]
@@ -1002,7 +1187,7 @@
                     {
                         "heading": "Efficiencies",
                         "index": 2,
-                        "params": [
+                        "parameters": [
                             "linear_interface",
                             "efficiency_el_in",
                             "efficiency_el_out",
