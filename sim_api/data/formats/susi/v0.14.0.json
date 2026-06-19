@@ -437,13 +437,13 @@
                         "index": 3,
                         "parameters": [
                             "linear_interface",
+                            "nr_discretization_steps",
                             "efficiency_el_in",
                             "efficiency_heat_ht_out",
                             "efficiency_heat_lt_out",
-                            "efficiency_h2_out",
-                            "efficiency_h2_out_lossless",
                             "efficiency_o2_out",
-                            "nr_discretization_steps"
+                            "efficiency_h2_out",
+                            "efficiency_h2_out_lossless"
                         ]
                     }
                 ]
@@ -585,7 +585,6 @@
                         "index": 0,
                         "parameters": [
                             "m_fuel_in",
-                            "m_el_out",
                             "m_heat_out"
                         ]
                     },
@@ -640,9 +639,9 @@
                         "index": 2,
                         "parameters": [
                             "temperature_reduction_model",
+                            "minimal_reduction",
                             "min_source_in_temperature",
-                            "max_source_in_temperature",
-                            "minimal_reduction"
+                            "max_source_in_temperature"
                         ]
                     }
                 ]
@@ -678,6 +677,9 @@
                         "heading": "Ambience",
                         "index": 2,
                         "parameters": [
+                            "surface_convective_heat_transfer_coefficient",
+                            "surface_reflection_factor",
+                            "surface_emissivity",
                             "ambient_temperature_from_global_file",
                             "ambient_temperature_profile_file_path",
                             "constant_ambient_temperature",
@@ -686,10 +688,7 @@
                             "constant_global_solar_radiation",
                             "infrared_sky_radiation_from_global_file",
                             "infrared_sky_radiation_profile_file_path",
-                            "constant_infrared_sky_radiation",
-                            "surface_convective_heat_transfer_coefficient",
-                            "surface_reflection_factor",
-                            "surface_emissivity"
+                            "constant_infrared_sky_radiation"
                         ]
                     },
                     {
@@ -802,6 +801,7 @@
                         "heading": "Detailed model",
                         "index": 4,
                         "parameters": [
+                            "soil_heat_conductivity",
                             "probe_type",
                             "pipe_diameter_outer",
                             "pipe_diameter_inner",
@@ -812,8 +812,7 @@
                             "fluid_kinematic_viscosity",
                             "fluid_heat_conductivity",
                             "fluid_prandtl_number",
-                            "grout_heat_conductivity",
-                            "soil_heat_conductivity"
+                            "grout_heat_conductivity"
                         ]
                     }
                 ]
@@ -909,19 +908,8 @@
                         ]
                     },
                     {
-                        "heading": "Losses",
-                        "index": 3,
-                        "parameters": [
-                            "consider_icing",
-                            "icing_coefficients",
-                            "power_losses_factor",
-                            "heat_losses_factor",
-                            "constant_loss_power"
-                        ]
-                    },
-                    {
                         "heading": "Optimisation",
-                        "index": 4,
+                        "index": 3,
                         "parameters": [
                             "nr_optimisation_passes",
                             "fudge_factor",
@@ -934,7 +922,7 @@
                     },
                     {
                         "heading": "Secondary interface",
-                        "index": 5,
+                        "index": 4,
                         "parameters": [
                             "has_secondary_interface",
                             "primary_el_sources",
@@ -1099,7 +1087,7 @@
                             "infrared_sky_radiation_profile_file_path",
                             "constant_infrared_sky_radiation",
                             "wind_speed_from_global_file",
-                            "wind_speed_file_path",
+                            "wind_speed_profile_file_path",
                             "constant_wind_speed"
                         ]
                     }
@@ -1156,7 +1144,7 @@
                             "heat_losses_factor",
                             "output_temperature",
                             "input_temperature",
-                            "demand_input_temperature",
+                            "constant_demand_input_temperature",
                             "demand_input_temperature_profile_file_path"
                         ]
                     }
