@@ -31,6 +31,10 @@ DATE_PARAMETERS = {
     "start", "start_output", "end"
 }
 
+OBJECT_PARAMETERS = {
+    "sankey_plot_spec", "output_plot_spec", "csv_output_keys"
+}
+
 def parse_key_from_auth_header(header: str) -> str:
     """Parses an API from the given value of the authorization header."""
     header = re.sub(r"\s+", " ", header.strip()) # compress consecutive whitespaces into a
@@ -247,31 +251,60 @@ def deep_merge_write(a: dict, b: dict) -> dict:
             a[key] = b[key]
     return a
 
+def widget_type_for_param(name: str, param_dict: dict, medium_pattern=None) -> str:
+    """
+    Returns the widget type for the given parameter based several factors.
+    """
+    if medium_pattern is None:
+        medium_pattern = re.compile("m_.+_(in|out)")
+
+    if "options" in param_dict and param_dict["options"] != []:
+        if isinstance(param_dict["default"], list):
+            return "MULTISELECT"
+        else:
+            return "DROPDOWN"
+
+    elif name in DATE_PARAMETERS:
+        return "DATE"
+
+    elif name in OBJECT_PARAMETERS:
+        return "CUSTOM_OBJECT"
+
+    elif medium_pattern.match(name) or name == "medium":
+        return "MEDIUM"
+
+    elif param_dict["type"] in WIDGET_TYPE_MAP:
+        return WIDGET_TYPE_MAP[param_dict["type"]]
+
+    else:
+        return "STRING" # fallback for unknown types
+
 def set_widget_types(susi_dict: dict) -> dict:
-    """Iterates through the given dict for SUSI parameters and sets the widget type for
+    """
+    Iterates through the given dict for SUSI parameters and sets the widget type for
     each parameter. This is based on the type it has as well as its options, if any.
     """
     medium_pattern = re.compile("m_.+_(in|out)")
 
+    # set for component parameters
     for type_dict in susi_dict["components"]["types"].values():
-        for name, param_dict in type_dict["parameters"].items():
-            if "options" in param_dict and param_dict["options"] != []:
-                if isinstance(param_dict["default"], list):
-                    param_dict["widget_type"] = "MULTISELECT"
-                else:
-                    param_dict["widget_type"] = "DROPDOWN"
+        for sub_dict in ["economic", "emissions", "parameters"]:
+            for name, param_dict in type_dict[sub_dict].items():
+                param_dict["widget_type"] = widget_type_for_param(name, param_dict, medium_pattern)
 
-            elif name in DATE_PARAMETERS:
-                param_dict["widget_type"] = "DATE"
+    # set for control parameters
+    for name, param_dict in susi_dict["components"]["control"].items():
+        param_dict["widget_type"] = widget_type_for_param(name, param_dict, medium_pattern)
 
-            elif medium_pattern.match(name) or name == "medium":
-                param_dict["widget_type"] = "MEDIUM"
+    # set for control modules' parameters
+    for module_dict in susi_dict["components"]["control_modules"].values():
+        for name, param_dict in module_dict.items():
+            param_dict["widget_type"] = widget_type_for_param(name, param_dict, medium_pattern)
 
-            elif param_dict["type"] in WIDGET_TYPE_MAP:
-                param_dict["widget_type"] = WIDGET_TYPE_MAP[param_dict["type"]]
-
-            else:
-                param_dict["widget_type"] = "STRING" # fallback for unknown types
+    # set for general parameters
+    for sub_dict in ["economic", "emissions", "io_settings", "simulation"]:
+        for name, param_dict in susi_dict["general"][sub_dict].items():
+            param_dict["widget_type"] = widget_type_for_param(name, param_dict, medium_pattern)
 
     return susi_dict
 
