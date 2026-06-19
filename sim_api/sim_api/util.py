@@ -15,16 +15,20 @@ from werkzeug.datastructures import FileStorage
 APP_ROOT = Path(__file__).resolve().parent.parent
 
 WIDGET_TYPE_MAP = {
-    "Float64": "Float",
-    "Union{Nothing, String}": "String",
-    "Int64": "Int",
-    "Vector{String}": "Vector_String",
-    "Vector{Float64}": "Vector_Float",
-    "Bool": "Boolean",
-    "Vector{Union{Nothing, Float64}}": "Vector_Float",
-    "String": "String",
-    "UInt64": "Int",
-    "Union{Nothing, Float64}": "Float",
+    "Float64": "FLOAT",
+    "Union{Nothing, String}": "STRING",
+    "Int64": "INT",
+    "Vector{String}": "VECTOR_STRING",
+    "Vector{Float64}": "VECTOR_FLOAT",
+    "Bool": "BOOLEAN",
+    "Vector{Union{Nothing, Float64}}": "VECTOR_FLOAT",
+    "String": "STRING",
+    "UInt64": "INT",
+    "Union{Nothing, Float64}": "FLOAT",
+}
+
+DATE_PARAMETERS = {
+    "start", "start_output", "end"
 }
 
 def parse_key_from_auth_header(header: str) -> str:
@@ -253,18 +257,21 @@ def set_widget_types(susi_dict: dict) -> dict:
         for name, param_dict in type_dict["parameters"].items():
             if "options" in param_dict and param_dict["options"] != []:
                 if isinstance(param_dict["default"], list):
-                    param_dict["widget_type"] = "Multiselect"
+                    param_dict["widget_type"] = "MULTISELECT"
                 else:
-                    param_dict["widget_type"] = "Dropdown"
+                    param_dict["widget_type"] = "DROPDOWN"
+
+            elif name in DATE_PARAMETERS:
+                param_dict["widget_type"] = "DATE"
 
             elif medium_pattern.match(name) or name == "medium":
-                param_dict["widget_type"] = "Medium"
+                param_dict["widget_type"] = "MEDIUM"
 
             elif param_dict["type"] in WIDGET_TYPE_MAP:
                 param_dict["widget_type"] = WIDGET_TYPE_MAP[param_dict["type"]]
 
             else:
-                param_dict["widget_type"] = "String" # fallback for unknown types
+                param_dict["widget_type"] = "STRING" # fallback for unknown types
 
     return susi_dict
 
