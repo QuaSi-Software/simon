@@ -275,9 +275,32 @@ def format_parameters_susi(base_dict: dict) -> dict:
     # determine widget types
     susi_dict = set_widget_types(susi_dict)
 
-    # load additional attributes and merge-write them into the copy of the base_dict
-    version = read_resie_version()
-    file_path = APP_ROOT / "data" / "formats" / "susi" / ("v" + version + ".json")
+    # find most recent version of "patch file" with additional attributes
+    version_str = read_resie_version()
+    if not version_str:
+        raise KeyError("Cannot read ReSiE version")
+
+    v_str = version_str.split(".")
+    version = [int(v_str[0]), int(v_str[1]), int(v_str[2])]
+    file_path = None
+    file_found = False
+
+    while not file_found:
+        v_str = f"{version[0]}.{version[1]}.{version[2]}"
+        file_path = APP_ROOT / "data" / "formats" / "susi" / ("v" + v_str + ".json")
+        if Path.is_file(file_path):
+            file_found = True
+            break
+        else:
+            if version[2] > 0:
+                version[2] -= 1
+            elif version[1] > 0:
+                version[1] -= 1
+                version[2] = 99
+            else:
+                raise KeyError(f"Cannot find ReSiE version file for version {version_str} or earlier")
+
+    # merge-write the attributes into the copy of the base_dict
     with open(file_path, "r", encoding="utf-8") as fp:
         content = json.load(fp)
         susi_dict = deep_merge_write(susi_dict, content)
