@@ -281,13 +281,20 @@ def resie_version():
             RESIE_VERSION = parsed
     return jsonify({"version": RESIE_VERSION}), 200
 
-@app.route('/parameters', methods=['GET'])
-def resie_parameters():
+@app.route('/parameters/<format>', methods=['GET'])
+def resie_parameters(format):
     """Endpoint: GET /parameters
+
+    Request arguments:
+        - format -> str: The format in which the parameter definitions are requested.
+            Options are: `susi`, `base`
 
     Response (JSON): The parameter definitions for various groupings. The upper-most level
         of the nested structure has the following keys: `components`
     """
+    if format not in ("susi", "base"):
+        return jsonify({"error": f"Invalid format specified"}), 400
+
     # lazily load and cache the parameter definitions.
     # the lazy-loading also helps with a problem where the definitions are written to file
     # typically after the flask server is already running, because the scanner is starting
@@ -297,4 +304,4 @@ def resie_parameters():
     global RESIE_PARAMETERS
     if RESIE_PARAMETERS is None:
         RESIE_PARAMETERS = read_resie_parameters()
-    return jsonify(RESIE_PARAMETERS), 200
+    return jsonify(RESIE_PARAMETERS[format]), 200

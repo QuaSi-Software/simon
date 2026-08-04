@@ -7,11 +7,33 @@ import json
 import uuid
 import re
 from datetime import datetime
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict
 from werkzeug.datastructures import FileStorage
 
 APP_ROOT = Path(__file__).resolve().parent.parent
+
+WIDGET_TYPE_MAP = {
+    "Float64": "FLOAT",
+    "Union{Nothing, String}": "STRING",
+    "Int64": "INT",
+    "Vector{String}": "VECTOR_STRING",
+    "Vector{Float64}": "VECTOR_FLOAT",
+    "Bool": "BOOLEAN",
+    "Vector{Union{Nothing, Float64}}": "VECTOR_FLOAT",
+    "String": "STRING",
+    "UInt64": "INT",
+    "Union{Nothing, Float64}": "FLOAT",
+}
+
+DATE_PARAMETERS = {
+    "start", "start_output", "end"
+}
+
+OBJECT_PARAMETERS = {
+    "sankey_plot_spec", "output_plot_spec", "csv_output_keys"
+}
 
 def parse_key_from_auth_header(header: str) -> str:
     """Parses an API from the given value of the authorization header."""
@@ -211,15 +233,133 @@ def read_resie_version() -> str | None:
         return None
     return None
 
-def read_resie_parameters() -> str | None:
+def deep_merge_write(a: dict, b: dict) -> dict:
+    """Merge two possibly nested dictionaries by adding and overwriting keys from b into a.
+
+    Source - https://stackoverflow.com/a/7205107
+    Posted by andrew cooke, modified by community. See post 'Timeline' for change history
+    Retrieved 2026-05-28, License - CC BY-SA 4.0
+    Further modified by Etienne Ott
+    """
+    for key in b:
+        if key in a:
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                deep_merge_write(a[key], b[key])
+            else:
+                a[key] = b[key]
+        else:
+            a[key] = b[key]
+    return a
+
+def widget_type_for_param(name: str, param_dict: dict, medium_pattern=None) -> str:
+    """
+    Returns the widget type for the given parameter based several factors.
+    """
+    if medium_pattern is None:
+        medium_pattern = re.compile("m_.+_(in|out)")
+
+    if "options" in param_dict and param_dict["options"] != []:
+        if isinstance(param_dict["default"], list):
+            return "MULTISELECT"
+        else:
+            return "DROPDOWN"
+
+    elif name in DATE_PARAMETERS:
+        return "DATE"
+
+    elif name in OBJECT_PARAMETERS:
+        return "CUSTOM_OBJECT"
+
+    elif medium_pattern.match(name) or name == "medium":
+        return "MEDIUM"
+
+    elif param_dict["type"] in WIDGET_TYPE_MAP:
+        return WIDGET_TYPE_MAP[param_dict["type"]]
+
+    else:
+        return "STRING" # fallback for unknown types
+
+def set_widget_types(susi_dict: dict) -> dict:
+    """
+    Iterates through the given dict for SUSI parameters and sets the widget type for
+    each parameter. This is based on the type it has as well as its options, if any.
+    """
+    medium_pattern = re.compile("m_.+_(in|out)")
+
+    # set for component parameters
+    for type_dict in susi_dict["components"]["types"].values():
+        for sub_dict in ["economic", "emissions", "parameters"]:
+            for name, param_dict in type_dict[sub_dict].items():
+                param_dict["widget_type"] = widget_type_for_param(name, param_dict, medium_pattern)
+
+    # set for control parameters
+    for name, param_dict in susi_dict["components"]["control"].items():
+        param_dict["widget_type"] = widget_type_for_param(name, param_dict, medium_pattern)
+
+    # set for control modules' parameters
+    for module_dict in susi_dict["components"]["control_modules"].values():
+        for name, param_dict in module_dict.items():
+            param_dict["widget_type"] = widget_type_for_param(name, param_dict, medium_pattern)
+
+    # set for general parameters
+    for sub_dict in ["economic", "emissions", "io_settings", "simulation"]:
+        for name, param_dict in susi_dict["general"][sub_dict].items():
+            param_dict["widget_type"] = widget_type_for_param(name, param_dict, medium_pattern)
+
+    return susi_dict
+
+def format_parameters_susi(base_dict: dict) -> dict:
+    """Formats the given parameters definition dictionary for the `susi` format."""
+    susi_dict = deepcopy(base_dict)
+
+    # determine widget types
+    susi_dict = set_widget_types(susi_dict)
+
+    # find most recent version of "patch file" with additional attributes
+    version_str = read_resie_version()
+    if not version_str:
+        raise KeyError("Cannot read ReSiE version")
+
+    v_str = version_str.split(".")
+    version = [int(v_str[0]), int(v_str[1]), int(v_str[2])]
+    file_path = None
+    file_found = False
+
+    while not file_found:
+        v_str = f"{version[0]}.{version[1]}.{version[2]}"
+        file_path = APP_ROOT / "data" / "formats" / "susi" / ("v" + v_str + ".json")
+        if Path.is_file(file_path):
+            file_found = True
+            break
+        else:
+            if version[2] > 0:
+                version[2] -= 1
+            elif version[1] > 0:
+                version[1] -= 1
+                version[2] = 99
+            else:
+                raise KeyError(f"Cannot find ReSiE version file for version {version_str} or earlier")
+
+    # merge-write the attributes into the copy of the base_dict
+    with open(file_path, "r", encoding="utf-8") as fp:
+        content = json.load(fp)
+        susi_dict = deep_merge_write(susi_dict, content)
+
+    return susi_dict
+
+def read_resie_parameters() -> dict:
     """Read parameter definitions for ReSiE from the cached files.
 
     Returns the parsed dictionary with all groupings. If parsing any grouping fails, that
-    grouping will be empty, but will always return the top-level dictionary.
+    grouping will be empty, but will always return the secondmost-top-level dictionary.
+
+    The top-most level of the dictionary is sorted by implemented formats.
     """
-    all_dicts = {}
+    all_formats = {}
+    base_dict = {}
     files = {
-        "components": "component_parameters.json"
+        "components": "component_parameters.json",
+        "general": "general_parameters.json"
     }
 
     for key, file_name in files.items():
@@ -233,6 +373,9 @@ def read_resie_parameters() -> str | None:
                 content = json.loads(fp.read())
         except:
             pass
-        all_dicts[key] = content
+        base_dict[key] = content
 
-    return all_dicts
+    all_formats["base"] = base_dict
+    all_formats["susi"] = format_parameters_susi(base_dict)
+
+    return all_formats
