@@ -58,6 +58,11 @@ The SIMON webapp provides the user interface for running simulations and uses th
 ## Simulation API
 The simulation API is used by the SIMON webapp internally and is only partially exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package. Changes that only affect the simulation API without changing any of the SIMON webapp code are not marked as changes in the webapp changelog and are listed here.
 
+### Version 0.3.2
+* Update to ReSiE version 0.14.5
+* Update parameters endpoint to require a format specifier for a number of implemented formats (currently only SUSI, but will be extended in the future)
+  * The format determines a number of modifications that are done to the raw results of the parameters JSON as it is produced by ReSiE. These modifications are specific to the format and not ReSiE, thus representing a middle layer between an app/GUI making use of the endpoint and the data that ReSiE contains
+
 ### Version 0.3.1
 * Update to ReSiE version 0.13.12
 * Add endpoint parameters for getting the parameter definitions of ReSiE
