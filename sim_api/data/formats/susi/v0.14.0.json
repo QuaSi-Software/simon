@@ -46,7 +46,8 @@
                     "csv_output_weather",
                     "csv_output_file",
                     "csv_time_unit",
-                    "write_csv_continuously"
+                    "write_csv_continuously",
+                    "write_summary_csv"
                 ]
             },
             {
@@ -877,7 +878,8 @@
                         "parameters": [
                             "m_heat_in",
                             "m_el_in",
-                            "m_heat_out"
+                            "m_heat_out",
+                            "m_heat_out_secondary"
                         ]
                     },
                     {
