@@ -4,7 +4,8 @@ using Logging
 include("./resie/src/resie_logger.jl")
 using .Resie_Logger
 
-using Resie
+using ResieQuasi
+using ResieQuasi.EnergySystems: all_component_parameters
 
 include("util.jl")
 
@@ -30,7 +31,7 @@ function simulate(working_dir)
     run_ID = uuid1() # should we rather use the sim API run ID?
     try
         with_logger(logger) do
-            Resie.load_and_run(config_file, run_ID)
+            ResieQuasi.load_and_run(config_file, run_ID)
         end
     catch exc
         io = IOBuffer()
@@ -39,7 +40,7 @@ function simulate(working_dir)
         msg = String(take!(io))
         @error msg
     finally
-        Resie.close_run(run_ID)
+        ResieQuasi.close_run(run_ID)
         with_logger(logger) do
             # the close_logger makes logs itself, which is why we need to use with_logger
             # or else these messages pop up in the global logger
@@ -49,7 +50,7 @@ function simulate(working_dir)
 end
 
 function write_parameter_definitions()
-    param_def = Resie.EnergySystems.all_component_parameters()
+    param_def = all_component_parameters()
     output_file = joinpath(@__DIR__, "component_parameters.json")
     open(output_file, "w") do file
         # we would like to pretty-print the JSON for the parameters, however due to ReSiE's
@@ -59,7 +60,7 @@ function write_parameter_definitions()
         write(file, JSON.json(param_def))
     end
 
-    param_def = Resie.all_general_parameters()
+    param_def = ResieQuasi.all_general_parameters()
     output_file = joinpath(@__DIR__, "general_parameters.json")
     open(output_file, "w") do file
         write(file, JSON.json(param_def))
