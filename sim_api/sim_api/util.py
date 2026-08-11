@@ -25,6 +25,7 @@ WIDGET_TYPE_MAP = {
     "String": "STRING",
     "UInt64": "INT",
     "Union{Nothing, Float64}": "FLOAT",
+    "Integer": "INT",
 }
 
 DATE_PARAMETERS = {
@@ -344,6 +345,9 @@ def format_parameters_susi(base_dict: dict) -> dict:
     with open(file_path, "r", encoding="utf-8") as fp:
         content = json.load(fp)
         susi_dict = deep_merge_write(susi_dict, content)
+
+    # add ReSiE version
+    susi_dict["resie_version"] = version_str
 
     return susi_dict
 
