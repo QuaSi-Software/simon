@@ -346,6 +346,9 @@ def format_parameters_susi(base_dict: dict) -> dict:
         content = json.load(fp)
         susi_dict = deep_merge_write(susi_dict, content)
 
+    # add ReSiE version
+    susi_dict["resie_version"] = version_str
+
     return susi_dict
 
 def read_resie_parameters() -> dict:
