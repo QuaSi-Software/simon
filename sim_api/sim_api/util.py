@@ -25,6 +25,7 @@ WIDGET_TYPE_MAP = {
     "String": "STRING",
     "UInt64": "INT",
     "Union{Nothing, Float64}": "FLOAT",
+    "Integer": "INT",
 }
 
 DATE_PARAMETERS = {
