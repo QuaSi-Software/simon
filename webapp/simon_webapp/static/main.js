@@ -28,6 +28,36 @@ const RESULT_FILES = [
         filename: "output_sankey.html",
         tab_name: "sankey-tab",
         element: "html"
+    },
+    {
+        filename: "economic_results_cashflows.html",
+        tab_name: "ecorescash-tab",
+        element: "html"
+    },
+    {
+        filename: "economic_results_present_values.html",
+        tab_name: "ecorespreval-tab",
+        element: "html"
+    },
+    {
+        filename: "economic_results.csv",
+        tab_name: "ecores-tab",
+        element: "table"
+    },
+    {
+        filename: "emissions_result.html",
+        tab_name: "emsres-tab",
+        element: "html"
+    },
+    {
+        filename: "emissions_results.csv",
+        tab_name: "emsrescsv-tab",
+        element: "table"
+    },
+    {
+        filename: "price_and_emissions_profiles.html",
+        tab_name: "priceemsprof-tab",
+        element: "html"
     }
 ]
 
@@ -306,6 +336,16 @@ async function upload_file(item) {
     }
 }
 
+async function upload_input_files() {
+    let prf_files = by_cl("nc-file-list-file").filter(item =>
+        item.dataset.filename.endsWith(".prf") || item.dataset.filename.endsWith(".json")
+        || item.dataset.filename.endsWith(".epw") || item.dataset.filename.endsWith(".dat")
+    )
+    for (const file of prf_files) {
+        await upload_file(file)
+    }
+}
+
 async function fetch_nc_file_list() {
     by_id("nc-file-list-blocker").classList.remove("hidden")
 
@@ -413,6 +453,9 @@ function main() {
     }
     document.getElementById("reset-run").onclick = async function(event) {
         reset_run()
+    }
+    document.getElementById("upload-input-files").onclick = async function(event) {
+        upload_input_files()
     }
 
     // events to handle when the document is ready

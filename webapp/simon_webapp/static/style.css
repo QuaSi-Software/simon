@@ -81,6 +81,9 @@
     background-color: #e6e6e6;
 }
 
+#upload-input-files {
+    margin-left: 75px;
+}
 
 #uploaded-files {
     list-style: none;

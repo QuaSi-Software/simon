@@ -4,6 +4,11 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
+### Version 0.4.1
+* Fix missing output files for economical and emissions results
+* Add button to upload all input files in current directory
+  * An input file is identified by having a file ending of: .prf, .json, .epw or .dat
+
 ### Version 0.4.0
 * Full integration of ReSiE replacing the placeholder simulation code
   * Implement fetching ReSiE results in frontend
@@ -57,6 +62,9 @@ The SIMON webapp provides the user interface for running simulations and uses th
 
 ## Simulation API
 The simulation API is used by the SIMON webapp internally and is only partially exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package. Changes that only affect the simulation API without changing any of the SIMON webapp code are not marked as changes in the webapp changelog and are listed here.
+
+### Version 0.3.4
+* Fix missing output files for economical and emissions results
 
 ### Version 0.3.3
 * Update to ReSiE version 1.0.0

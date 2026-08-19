@@ -34,6 +34,7 @@
 
           <span>Current dir: </span>
           <span id="nc-current-dir" data-dirname="">/</span>
+          <button id="upload-input-files" type="button" class="btn btn-primary btn-sm">Upload input files</button>
 
           <div id="nc-file-list-items"></div>
         </div>
@@ -98,6 +99,36 @@
                 data-bs-toggle="tab" data-bs-target="#csv-tab" type="button" role="tab"
                 aria-controls="csv-tab" aria-selected="true">CSV</button>
           </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="ecorescash-tab-control"
+                data-bs-toggle="tab" data-bs-target="#ecorescash-tab" type="button" role="tab"
+                aria-controls="ecorescash-tab" aria-selected="true">Cashflows</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="ecorespreval-tab-control"
+                data-bs-toggle="tab" data-bs-target="#ecorespreval-tab" type="button" role="tab"
+                aria-controls="ecorespreval-tab" aria-selected="true">Present values</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="ecores-tab-control"
+                data-bs-toggle="tab" data-bs-target="#ecores-tab" type="button" role="tab"
+                aria-controls="ecores-tab" aria-selected="true">Economics</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="emsres-tab-control"
+                data-bs-toggle="tab" data-bs-target="#emsres-tab" type="button" role="tab"
+                aria-controls="emsres-tab" aria-selected="true">Emissions</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="emsrescsv-tab-control"
+                data-bs-toggle="tab" data-bs-target="#emsrescsv-tab" type="button" role="tab"
+                aria-controls="emsrescsv-tab" aria-selected="true">Emissions CSV</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="priceemsprof-tab-control"
+                data-bs-toggle="tab" data-bs-target="#priceemsprof-tab" type="button" role="tab"
+                aria-controls="priceemsprof-tab" aria-selected="true">Price/emissions profiles</button>
+          </li>
         </ul>
 
         <div class="tab-content hidden" id="results-tabs-container">
@@ -113,6 +144,18 @@
             role="tabpanel" aria-labelledby="sankey-tab-control"></div>
           <div class="tab-pane fade" id="csv-tab"
             role="tabpanel" aria-labelledby="csv-tab-control"></div>
+          <div class="tab-pane fade" id="ecorescash-tab"
+            role="tabpanel" aria-labelledby="ecorescash-tab-control"></div>
+          <div class="tab-pane fade" id="ecorespreval-tab"
+            role="tabpanel" aria-labelledby="ecorespreval-tab-control"></div>
+          <div class="tab-pane fade" id="ecores-tab"
+            role="tabpanel" aria-labelledby="ecores-tab-control"></div>
+          <div class="tab-pane fade" id="emsres-tab"
+            role="tabpanel" aria-labelledby="emsres-tab-control"></div>
+          <div class="tab-pane fade" id="emsrescsv-tab"
+            role="tabpanel" aria-labelledby="emsrescsv-tab-control"></div>
+          <div class="tab-pane fade" id="priceemsprof-tab"
+            role="tabpanel" aria-labelledby="priceemsprof-tab-control"></div>
         </div>
       </p>
 
