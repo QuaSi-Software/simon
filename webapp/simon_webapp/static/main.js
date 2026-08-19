@@ -336,6 +336,16 @@ async function upload_file(item) {
     }
 }
 
+async function upload_input_files() {
+    let prf_files = by_cl("nc-file-list-file").filter(item =>
+        item.dataset.filename.endsWith(".prf") || item.dataset.filename.endsWith(".json")
+        || item.dataset.filename.endsWith(".epw") || item.dataset.filename.endsWith(".dat")
+    )
+    for (const file of prf_files) {
+        await upload_file(file)
+    }
+}
+
 async function fetch_nc_file_list() {
     by_id("nc-file-list-blocker").classList.remove("hidden")
 
@@ -443,6 +453,9 @@ function main() {
     }
     document.getElementById("reset-run").onclick = async function(event) {
         reset_run()
+    }
+    document.getElementById("upload-input-files").onclick = async function(event) {
+        upload_input_files()
     }
 
     // events to handle when the document is ready
