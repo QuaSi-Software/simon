@@ -195,10 +195,18 @@ def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
     config["io_settings"]["base_path"] = str(Path(APP_ROOT / "runs" / run_id))
 
     # replace output filenames with fixed values
-    config["io_settings"]["csv_output_file"] = "./out.csv"
-    config["io_settings"]["auxiliary_info_file"] = "./auxiliary_info.md"
-    config["io_settings"]["output_plot_file"] = "./output_plot.html"
-    config["io_settings"]["sankey_plot_file"] = "./output_sankey.html"
+    config["io_settings"]["csv_output_file_path"] = "./out.csv"
+    config["io_settings"]["auxiliary_info_file_path"] = "./auxiliary_info.md"
+    config["io_settings"]["output_plot_file_path"] = "./output_plot.html"
+    config["io_settings"]["sankey_plot_file_path"] = "./output_sankey.html"
+    config["io_settings"]["economic_plot_cashflows_file_path"] = "./economic_results_cashflows.html"
+    config["io_settings"]["economic_plot_present_values_file_path"] = "./economic_results_present_values.html"
+    config["io_settings"]["economic_csv_file_path"] = "./economic_results.csv"
+    config["io_settings"]["emissions_plot_file_path"] = "./emissions_result.html"
+    config["io_settings"]["emissions_csv_file_path"] = "./emissions_results.csv"
+    config["io_settings"]["price_and_emission_profile_file_path"] = "./price_and_emissions_profiles.html"
+    config["io_settings"]["parameter_study_csv_path"] = "./"
+    config["io_settings"]["parameter_study_plots_path"] = "./"
     config["io_settings"]["auxiliary_plots_path"] = "./"
 
     # replace file names with their alias. this will remove any paths, making any

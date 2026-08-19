@@ -35,7 +35,13 @@ RESULTS_FILES = {
     "logfile_general.log",
     "out.csv",
     "output_plot.html",
-    "output_sankey.html"
+    "output_sankey.html",
+    "economic_results_cashflows.html",
+    "economic_results_present_values.html",
+    "economic_results.csv",
+    "emissions_result.html",
+    "emissions_results.csv",
+    "price_and_emissions_profiles.html",
 }
 
 def api_key_required(function):

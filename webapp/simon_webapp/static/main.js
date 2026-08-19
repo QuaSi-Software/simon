@@ -28,6 +28,36 @@ const RESULT_FILES = [
         filename: "output_sankey.html",
         tab_name: "sankey-tab",
         element: "html"
+    },
+    {
+        filename: "economic_results_cashflows.html",
+        tab_name: "ecorescash-tab",
+        element: "html"
+    },
+    {
+        filename: "economic_results_present_values.html",
+        tab_name: "ecorespreval-tab",
+        element: "html"
+    },
+    {
+        filename: "economic_results.csv",
+        tab_name: "ecores-tab",
+        element: "table"
+    },
+    {
+        filename: "emissions_result.html",
+        tab_name: "emsres-tab",
+        element: "html"
+    },
+    {
+        filename: "emissions_results.csv",
+        tab_name: "emsrescsv-tab",
+        element: "table"
+    },
+    {
+        filename: "price_and_emissions_profiles.html",
+        tab_name: "priceemsprof-tab",
+        element: "html"
     }
 ]
 
