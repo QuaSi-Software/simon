@@ -237,6 +237,7 @@
                 "segment": "BAT",
                 "nr_inputs": 1,
                 "nr_outputs": 2,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#battery",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -302,6 +303,7 @@
                 "segment": "BT",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#buffer-tank",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -349,6 +351,7 @@
                 "segment": "BUS",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#bus",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -364,6 +367,7 @@
                 "segment": "CHPP",
                 "nr_inputs": 1,
                 "nr_outputs": 2,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#combined-heat-and-power-plant",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -401,6 +405,7 @@
                 "segment": "ELY",
                 "nr_inputs": 1,
                 "nr_outputs": 4,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#electrolyser",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -455,6 +460,7 @@
                 "segment": "DEM",
                 "nr_inputs": 1,
                 "nr_outputs": 0,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#general-fixed-sink",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -491,6 +497,7 @@
                 "segment": "SUP",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#general-fixed-supply",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -527,6 +534,7 @@
                 "segment": "SNK",
                 "nr_inputs": 1,
                 "nr_outputs": 0,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#general-flexible-sink",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -554,6 +562,7 @@
                 "segment": "SRC",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#general-flexible-supply",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -581,6 +590,7 @@
                 "segment": "FB",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#fuel-boiler",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -616,6 +626,7 @@
                 "segment": "GHS",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#generic-heat-source",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -653,6 +664,7 @@
                 "segment": "GHC",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#geothermal-collector",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -748,6 +760,7 @@
                 "segment": "GTP",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#geothermal-probes",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -824,6 +837,7 @@
                 "segment": "GRI",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#grid-supply",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -848,6 +862,7 @@
                 "segment": "GRO",
                 "nr_inputs": 1,
                 "nr_outputs": 0,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#grid-sink",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -872,6 +887,7 @@
                 "segment": "HP",
                 "nr_inputs": 2,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#heat-pump",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -939,6 +955,7 @@
                 "segment": "PV",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#photovoltaic-plant",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -962,6 +979,7 @@
                 "segment": "STS",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#seasonal-thermal-storage-universal-stratified-ground-coupled-thermal-storage",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -1044,6 +1062,7 @@
                 "segment": "STC",
                 "nr_inputs": 0,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#solarthermal-collector",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -1101,6 +1120,7 @@
                 "segment": "ST",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#general-storage",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -1124,6 +1144,7 @@
                 "segment": "TB",
                 "nr_inputs": 2,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#thermal-booster-tb",
                 "param_categories": [
                     {
                         "heading": "Media",
@@ -1158,6 +1179,7 @@
                 "segment": "UTIR",
                 "nr_inputs": 1,
                 "nr_outputs": 1,
+                "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#unified-electric-transformer-inverter-and-rectifier-utir",
                 "param_categories": [
                     {
                         "heading": "Media",
