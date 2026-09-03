@@ -63,6 +63,13 @@ The SIMON webapp provides the user interface for running simulations and uses th
 ## Simulation API
 The simulation API is used by the SIMON webapp internally and is only partially exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package. Changes that only affect the simulation API without changing any of the SIMON webapp code are not marked as changes in the webapp changelog and are listed here.
 
+### Version 0.3.5
+* Changes to parameters API, applying to ReSiE v1.0.0 and upward
+  * Add documentation links for all components
+  * Fix detection of DATE widget type parameters being overly broad and catching other parameters
+  * Add widget type UAC and UACS for parameters referencing components via UAC
+  * Add parameter study category to IO settings
+
 ### Version 0.3.4
 * Fix missing output files for economical and emissions results
 
