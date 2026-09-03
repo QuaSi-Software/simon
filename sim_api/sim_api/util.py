@@ -273,7 +273,7 @@ def widget_type_for_param(name: str, param_dict: dict, medium_pattern=None) -> s
         else:
             return "DROPDOWN"
 
-    elif name in DATE_PARAMETERS:
+    elif name in DATE_PARAMETERS and "string" in param_dict["type"].lower():
         return "DATE"
 
     elif name in OBJECT_PARAMETERS:
