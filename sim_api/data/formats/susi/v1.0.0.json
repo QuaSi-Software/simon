@@ -33,7 +33,6 @@
                 "parameters": [
                     "base_path",
                     "step_info_interval",
-                    "disable_all_simulation_outputs",
                     "show_detailed_errors",
                     "fixed_output_precision"
                 ]
@@ -110,6 +109,17 @@
                     "emissions_plot_file_path",
                     "output_emissions_csv",
                     "emissions_csv_file_path"
+                ]
+            },
+            {
+                "heading": "Parameter study",
+                "index": 8,
+                "parameters": [
+                    "output_parameter_study_plots",
+                    "parameter_study_plots_path",
+                    "output_parameter_study_csv",
+                    "parameter_study_csv_path",
+                    "write_parameter_study_csv_continuously"
                 ]
             }
         ],
