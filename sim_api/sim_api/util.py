@@ -28,6 +28,14 @@ WIDGET_TYPE_MAP = {
     "Integer": "INT",
 }
 
+SINGLE_UAC_PARAMETERS = {
+    "snk_uac", "src_uac", "target_uac", "storage_uac"
+}
+
+MULTI_UAC_PARAMETERS = {
+    "primary_el_sources", "secondary_el_sources"
+}
+
 DATE_PARAMETERS = {
     "start", "start_output", "end"
 }
@@ -281,6 +289,12 @@ def widget_type_for_param(name: str, param_dict: dict, medium_pattern=None) -> s
 
     elif medium_pattern.match(name) or name == "medium":
         return "MEDIUM"
+
+    elif name in SINGLE_UAC_PARAMETERS:
+        return "UAC"
+
+    elif name in MULTI_UAC_PARAMETERS:
+        return "UACS"
 
     elif param_dict["type"] in WIDGET_TYPE_MAP:
         return WIDGET_TYPE_MAP[param_dict["type"]]
