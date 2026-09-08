@@ -204,7 +204,7 @@ def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
 
     # replace output filenames with fixed values
     config["io_settings"]["csv_output_file_path"] = "./out.csv"
-    config["io_settings"]["auxiliary_info_file_path"] = "./auxiliary_info.md"
+    config["io_settings"]["auxiliary_info_file"] = "./auxiliary_info.md"
     config["io_settings"]["output_plot_file_path"] = "./output_plot.html"
     config["io_settings"]["sankey_plot_file_path"] = "./output_sankey.html"
     config["io_settings"]["economic_plot_cashflows_file_path"] = "./economic_results_cashflows.html"
