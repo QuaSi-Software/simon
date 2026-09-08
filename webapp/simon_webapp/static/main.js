@@ -288,25 +288,39 @@ async function get_run_id() {
 }
 
 function add_file_to_uploaded_files(file) {
-    by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
-        "<li>/" + format_nc_file_path(file, "full", true) + "</li>"
+    let normalized_file = file.trim()
+    let already_uploaded = by_cl("uploaded-file").some(item =>
+        item.dataset.filename === normalized_file
+    )
+    if (already_uploaded) return
 
-    if (file.trim().toLowerCase().endsWith(".json")) {
+    by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
+        "<li class=\"uploaded-file\" data-filename=\"" + normalized_file + "\">/" +
+        format_nc_file_path(normalized_file, "full", true) + "</li>"
+
+    if (normalized_file.toLowerCase().endsWith(".json")) {
         by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
-            '<option value="' + format_nc_file_path(file, "filename", false) + '" ' +
-            'data-dirname="'  + format_nc_file_path(file, "dir_path", false) + '">' +
-            format_nc_file_path(file, "filename", true) + "</option>"
+            '<option value="' + format_nc_file_path(normalized_file, "filename", false) + '" ' +
+            'data-filename="' + normalized_file + '" ' +
+            'data-dirname="'  + format_nc_file_path(normalized_file, "dir_path", false) + '">' +
+            format_nc_file_path(normalized_file, "filename", true) + "</option>"
     }
 }
 
 function add_uploaded_file_to_session_storage(file) {
+    let normalized_file = file.trim()
     let file_list = sessionStorage.getItem("uploaded_files")
     if (file_list === null) {
         file_list = []
     } else {
         file_list = JSON.parse(file_list)
     }
-    file_list.push(file)
+    file_list = file_list.filter((uploaded_file, index, files) =>
+        files.findIndex(candidate => candidate.trim() === uploaded_file.trim()) === index
+    )
+    if (!file_list.some(uploaded_file => uploaded_file.trim() === normalized_file)) {
+        file_list.push(normalized_file)
+    }
     sessionStorage.setItem("uploaded_files", JSON.stringify(file_list))
 }
 
