@@ -290,10 +290,13 @@ async function get_run_id() {
 function add_file_to_uploaded_files(file) {
     by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
         "<li>/" + format_nc_file_path(file, "full", true) + "</li>"
-    by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
-        '<option value="' + format_nc_file_path(file, "filename", false) + '" ' +
-        'data-dirname="'  + format_nc_file_path(file, "dir_path", false) + '">' +
-        format_nc_file_path(file, "filename", true) + "</option>"
+
+    if (file.trim().toLowerCase().endsWith(".json")) {
+        by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
+            '<option value="' + format_nc_file_path(file, "filename", false) + '" ' +
+            'data-dirname="'  + format_nc_file_path(file, "dir_path", false) + '">' +
+            format_nc_file_path(file, "filename", true) + "</option>"
+    }
 }
 
 function add_uploaded_file_to_session_storage(file) {
