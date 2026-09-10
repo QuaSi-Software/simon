@@ -204,10 +204,13 @@ async function create_results_element(type, response) {
         let results = Papa.parse(csv, CSV_CONFIG)
         return create_csv_table(results)
     } else if (type == "html") {
-        // TODO: render as i-frame or similar
-        let obj = document.createElement('div')
-        obj.innerHTML = await response.text()
-        return obj
+        let iframe = document.createElement('iframe')
+        iframe.className = 'w-100 border-0'
+        iframe.title = 'Simulation result'
+        iframe.setAttribute('sandbox', 'allow-scripts allow-forms')
+        iframe.style.height = '800px'
+        iframe.srcdoc = await response.text()
+        return iframe
     } else {
         let obj = document.createElement('span')
         obj.innerText = "Could not render unknown file type"
