@@ -10,6 +10,7 @@ from datetime import datetime
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict
+from urllib.parse import unquote_plus
 from werkzeug.datastructures import FileStorage
 
 APP_ROOT = Path(__file__).resolve().parent.parent
@@ -147,13 +148,14 @@ def write_file_index(run_id: str, file_index: dict) -> None:
 def save_file_for_run(run_id: str, file: FileStorage) -> str:
     """Saves the given file in the given run in a safe manner by renaming it"""
     file_index = load_file_index(run_id)
+    file_name = unquote_plus(file.filename if file.filename is not None else "")
 
-    if file.filename in file_index["forward"]:
-        safe_filename = file_index["forward"][file.filename]
+    if file_name in file_index["forward"]:
+        safe_filename = file_index["forward"][file_name]
     else:
         safe_filename = uuid.uuid4().hex
-        file_index["forward"][file.filename] = safe_filename
-        file_index["reverse"][safe_filename] = file.filename
+        file_index["forward"][file_name] = safe_filename
+        file_index["reverse"][safe_filename] = file_name
 
     write_file_index(run_id, file_index)
 
