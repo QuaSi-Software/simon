@@ -61,6 +61,13 @@ const RESULT_FILES = [
     }
 ]
 
+const CSV_CONFIG = {
+    delimiter: ";",
+    header: true,
+    dynamicTyping: true
+}
+const MAX_CSV_ROWS = 1000
+
 var run_status = {}
 
 function by_id(id) {
@@ -193,10 +200,9 @@ async function create_results_element(type, response) {
         obj.innerText = await response.text()
         return obj
     } else if (type == "table") {
-        // TODO: render as html table, maybe with bootstrap table tools like sorting
-        let obj = document.createElement('p')
-        obj.innerText = (await response.text()).slice(0,1024*10) // cut off at 10 kB
-        return obj
+        let csv = await response.text()
+        let results = Papa.parse(csv, CSV_CONFIG)
+        return create_csv_table(results)
     } else if (type == "html") {
         // TODO: render as i-frame or similar
         let obj = document.createElement('div')
@@ -207,6 +213,73 @@ async function create_results_element(type, response) {
         obj.innerText = "Could not render unknown file type"
         return obj
     }
+}
+
+function create_csv_table(results) {
+    let rows = results.data.slice(0, MAX_CSV_ROWS)
+    let columns = results.meta.fields || (rows.length > 0 ? Object.keys(rows[0]) : [])
+    let container = document.createElement('div')
+    container.className = 'table-responsive'
+
+    let table = document.createElement('table')
+    table.className = 'table table-striped table-hover table-sm align-middle'
+    let head = document.createElement('thead')
+    let body = document.createElement('tbody')
+    table.appendChild(head)
+    table.appendChild(body)
+    container.appendChild(table)
+
+    if (columns.length === 0) return container
+
+    let header_row = document.createElement('tr')
+    let sort_directions = Array(columns.length).fill(1)
+    columns.forEach((column_name, column) => {
+        let header = document.createElement('th')
+        header.scope = 'col'
+        let sort_button = document.createElement('button')
+        sort_button.type = 'button'
+        sort_button.className = 'btn btn-link link-dark text-start text-decoration-none p-0'
+        sort_button.innerText = column_name
+        sort_button.title = 'Sort by this column'
+        sort_button.onclick = function() {
+            let direction = sort_directions[column]
+            let sorted_rows = rows.slice().sort((left, right) =>
+                compare_csv_values(left[column_name], right[column_name]) * direction
+            )
+            sort_directions[column] *= -1
+            render_csv_rows(body, sorted_rows, columns)
+        }
+        header.appendChild(sort_button)
+        header_row.appendChild(header)
+    })
+    head.appendChild(header_row)
+    render_csv_rows(body, rows, columns)
+    return container
+}
+
+function render_csv_rows(body, rows, columns) {
+    body.innerHTML = ''
+    rows.forEach(row => {
+        let table_row = document.createElement('tr')
+        columns.forEach(column_name => {
+            let cell = document.createElement('td')
+            cell.innerText = row[column_name] ?? ''
+            table_row.appendChild(cell)
+        })
+        body.appendChild(table_row)
+    })
+}
+
+function compare_csv_values(left, right) {
+    let left_text = left == null ? '' : String(left)
+    let right_text = right == null ? '' : String(right)
+    let left_number = Number(left_text)
+    let right_number = Number(right_text)
+    if (left_text.trim() !== '' && right_text.trim() !== '' &&
+        Number.isFinite(left_number) && Number.isFinite(right_number)) {
+        return left_number - right_number
+    }
+    return left_text.localeCompare(right_text, undefined, {numeric: true, sensitivity: 'base'})
 }
 
 async function fetch_results(run_id) {
