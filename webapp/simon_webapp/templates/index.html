@@ -19,151 +19,161 @@
         </p>
       </div>
 
+      <div class="row">
       {% if session['nextcloud_authorized'] %}
         <span id="nc-logged-in-info">Logged in with NextCloud as {{session['user_id']}}</span>
         <a href="{{ url_for('nextcloud_logout') }}">Log out of NextCloud</a>
       {% else %}
         <a href="{{ url_for('nextcloud_login') }}">Login with NextCloud</a>
       {% endif %}
+      </div>
 
-      <p class="element-group">
-        <h4>NextCloud files</h4>
+      <div class="row">
+        <div class="col-lg-6 element-group">
+          <h4>NextCloud files</h4>
 
-        <div id="nc-file-list">
-          <div id="nc-file-list-blocker" class="hidden"></div>
+          <div id="nc-file-list">
+            <div id="nc-file-list-blocker" class="hidden"></div>
 
-          <span>Current dir: </span>
-          <span id="nc-current-dir" data-dirname="">/</span>
-          <button id="upload-input-files" type="button" class="btn btn-primary btn-sm">Upload input files</button>
+            <span>Current dir: </span>
+            <span id="nc-current-dir" data-dirname="">/</span>
+            <button id="upload-input-files" type="button" class="btn btn-primary btn-sm">Upload input files</button>
 
-          <div id="nc-file-list-items"></div>
-        </div>
-      </p>
-
-      <h4>Configure simulation</h4>
-      <span class="bold">ReSiE version: {{resie_version}}</span>
-      <p class="element-group">
-        <button id="reset-run" type="button" class="btn btn-warning" disabled>Reset run</button>
-        <span class="bold">Run ID:</span> <span id="run-id">-</span>
-        <span class="bold">Run status:</span> <span id="run-status">-</span>
-        <div>
-          <span class="bold">Uploaded files:</span>
-          <ul id="uploaded-files"></ul>
-        </div>
-
-        <form id="parameters-form" action="" method="POST" enctype="multipart/form-data">
-          <div class="form-group">
-            <label for="config-file-selection" class="bold">Input file</label>
-            <select id="config-file-selection" name="config_file_selection" class="form-control w-25"></select>
-            <br/>
-            <input id="submit-simulate" class="btn btn-primary" type="submit" value="Simulate">
-            <button id="stop-simulation" class="btn btn-warning" disabled>Stop</button>
+            <div id="nc-file-list-items"></div>
           </div>
-        </form>
-      </p>
-
-      <h4>Simulation results</h4>
-      <button id="fetch-results" type="button" class="btn btn-secondary" disabled>Fetch results</button>
-      <p class="element-group">
-        <span id="error-label" class="hidden">Errors</span>
-        <ul id="error-list" class="hidden"></ul>
-
-        <ul class="nav nav-tabs hidden" id="results-tabs-control" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="genlog-tab-control"
-                data-bs-toggle="tab" data-bs-target="#genlog-tab" type="button" role="tab"
-                aria-controls="genlog-tab" aria-selected="true">General log</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="ballog-tab-control"
-                data-bs-toggle="tab" data-bs-target="#ballog-tab" type="button" role="tab"
-                aria-controls="ballog-tab" aria-selected="true">Balance log</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="aux-tab-control"
-                data-bs-toggle="tab" data-bs-target="#aux-tab" type="button" role="tab"
-                aria-controls="aux-tab" aria-selected="true">Aux. info</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="plot-tab-control"
-                data-bs-toggle="tab" data-bs-target="#plot-tab" type="button" role="tab"
-                aria-controls="plot-tab" aria-selected="true">Line plot</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="sankey-tab-control"
-                data-bs-toggle="tab" data-bs-target="#sankey-tab" type="button" role="tab"
-                aria-controls="sankey-tab" aria-selected="true">Sankey plot</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="csv-tab-control"
-                data-bs-toggle="tab" data-bs-target="#csv-tab" type="button" role="tab"
-                aria-controls="csv-tab" aria-selected="true">CSV</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="ecorescash-tab-control"
-                data-bs-toggle="tab" data-bs-target="#ecorescash-tab" type="button" role="tab"
-                aria-controls="ecorescash-tab" aria-selected="true">Cashflows</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="ecorespreval-tab-control"
-                data-bs-toggle="tab" data-bs-target="#ecorespreval-tab" type="button" role="tab"
-                aria-controls="ecorespreval-tab" aria-selected="true">Present values</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="ecores-tab-control"
-                data-bs-toggle="tab" data-bs-target="#ecores-tab" type="button" role="tab"
-                aria-controls="ecores-tab" aria-selected="true">Economics</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="emsres-tab-control"
-                data-bs-toggle="tab" data-bs-target="#emsres-tab" type="button" role="tab"
-                aria-controls="emsres-tab" aria-selected="true">Emissions</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="emsrescsv-tab-control"
-                data-bs-toggle="tab" data-bs-target="#emsrescsv-tab" type="button" role="tab"
-                aria-controls="emsrescsv-tab" aria-selected="true">Emissions CSV</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="priceemsprof-tab-control"
-                data-bs-toggle="tab" data-bs-target="#priceemsprof-tab" type="button" role="tab"
-                aria-controls="priceemsprof-tab" aria-selected="true">Price/emissions profiles</button>
-          </li>
-        </ul>
-
-        <div class="tab-content hidden" id="results-tabs-container">
-          <div class="tab-pane fade show active" id="genlog-tab"
-            role="tabpanel" aria-labelledby="genlog-tab-control"></div>
-          <div class="tab-pane fade" id="ballog-tab"
-            role="tabpanel" aria-labelledby="ballog-tab-control"></div>
-          <div class="tab-pane fade" id="aux-tab"
-            role="tabpanel" aria-labelledby="aux-tab-control"></div>
-          <div class="tab-pane fade" id="plot-tab"
-            role="tabpanel" aria-labelledby="plot-tab-control"></div>
-          <div class="tab-pane fade" id="sankey-tab"
-            role="tabpanel" aria-labelledby="sankey-tab-control"></div>
-          <div class="tab-pane fade" id="csv-tab"
-            role="tabpanel" aria-labelledby="csv-tab-control"></div>
-          <div class="tab-pane fade" id="ecorescash-tab"
-            role="tabpanel" aria-labelledby="ecorescash-tab-control"></div>
-          <div class="tab-pane fade" id="ecorespreval-tab"
-            role="tabpanel" aria-labelledby="ecorespreval-tab-control"></div>
-          <div class="tab-pane fade" id="ecores-tab"
-            role="tabpanel" aria-labelledby="ecores-tab-control"></div>
-          <div class="tab-pane fade" id="emsres-tab"
-            role="tabpanel" aria-labelledby="emsres-tab-control"></div>
-          <div class="tab-pane fade" id="emsrescsv-tab"
-            role="tabpanel" aria-labelledby="emsrescsv-tab-control"></div>
-          <div class="tab-pane fade" id="priceemsprof-tab"
-            role="tabpanel" aria-labelledby="priceemsprof-tab-control"></div>
         </div>
-      </p>
 
-      <h4>Debug output</h4>
-      <p class="element-group">
-        <span class="bold">Query list</span>
-        <div id="query-list"></div>
-      </p>
+        <div class="col-lg-6">
+          <h4>Configure simulation</h4>
+          <span class="bold">ReSiE version: {{resie_version}}</span>
+          <p class="element-group">
+            <button id="reset-run" type="button" class="btn btn-warning" disabled>Reset run</button>
+            <span class="bold">Run ID:</span> <span id="run-id">-</span>
+            <span class="bold">Run status:</span> <span id="run-status">-</span>
+            <div>
+              <span class="bold">Uploaded files:</span>
+              <ul id="uploaded-files"></ul>
+            </div>
+
+            <form id="parameters-form" action="" method="POST" enctype="multipart/form-data">
+              <div class="form-group">
+                <label for="config-file-selection" class="bold">Input file</label>
+                <select id="config-file-selection" name="config_file_selection" class="form-control w-25"></select>
+                <br/>
+                <input id="submit-simulate" class="btn btn-primary" type="submit" value="Simulate">
+                <button id="stop-simulation" class="btn btn-warning" disabled>Stop</button>
+              </div>
+            </form>
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <h4>Simulation results</h4>
+        <button id="fetch-results" type="button" class="btn btn-secondary" disabled>Fetch results</button>
+        <p class="element-group">
+          <span id="error-label" class="hidden">Errors</span>
+          <ul id="error-list" class="hidden"></ul>
+
+          <ul class="nav nav-tabs hidden" id="results-tabs-control" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="genlog-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#genlog-tab" type="button" role="tab"
+                  aria-controls="genlog-tab" aria-selected="true">General log</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="ballog-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#ballog-tab" type="button" role="tab"
+                  aria-controls="ballog-tab" aria-selected="true">Balance log</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="aux-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#aux-tab" type="button" role="tab"
+                  aria-controls="aux-tab" aria-selected="true">Aux. info</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="plot-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#plot-tab" type="button" role="tab"
+                  aria-controls="plot-tab" aria-selected="true">Line plot</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="sankey-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#sankey-tab" type="button" role="tab"
+                  aria-controls="sankey-tab" aria-selected="true">Sankey plot</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="csv-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#csv-tab" type="button" role="tab"
+                  aria-controls="csv-tab" aria-selected="true">CSV</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="ecorescash-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#ecorescash-tab" type="button" role="tab"
+                  aria-controls="ecorescash-tab" aria-selected="true">Cashflows</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="ecorespreval-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#ecorespreval-tab" type="button" role="tab"
+                  aria-controls="ecorespreval-tab" aria-selected="true">Present values</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="ecores-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#ecores-tab" type="button" role="tab"
+                  aria-controls="ecores-tab" aria-selected="true">Economics</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="emsres-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#emsres-tab" type="button" role="tab"
+                  aria-controls="emsres-tab" aria-selected="true">Emissions</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="emsrescsv-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#emsrescsv-tab" type="button" role="tab"
+                  aria-controls="emsrescsv-tab" aria-selected="true">Emissions CSV</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="priceemsprof-tab-control"
+                  data-bs-toggle="tab" data-bs-target="#priceemsprof-tab" type="button" role="tab"
+                  aria-controls="priceemsprof-tab" aria-selected="true">Price/emissions profiles</button>
+            </li>
+          </ul>
+
+          <div class="tab-content hidden" id="results-tabs-container">
+            <div class="tab-pane fade show active" id="genlog-tab"
+              role="tabpanel" aria-labelledby="genlog-tab-control"></div>
+            <div class="tab-pane fade" id="ballog-tab"
+              role="tabpanel" aria-labelledby="ballog-tab-control"></div>
+            <div class="tab-pane fade" id="aux-tab"
+              role="tabpanel" aria-labelledby="aux-tab-control"></div>
+            <div class="tab-pane fade" id="plot-tab"
+              role="tabpanel" aria-labelledby="plot-tab-control"></div>
+            <div class="tab-pane fade" id="sankey-tab"
+              role="tabpanel" aria-labelledby="sankey-tab-control"></div>
+            <div class="tab-pane fade" id="csv-tab"
+              role="tabpanel" aria-labelledby="csv-tab-control"></div>
+            <div class="tab-pane fade" id="ecorescash-tab"
+              role="tabpanel" aria-labelledby="ecorescash-tab-control"></div>
+            <div class="tab-pane fade" id="ecorespreval-tab"
+              role="tabpanel" aria-labelledby="ecorespreval-tab-control"></div>
+            <div class="tab-pane fade" id="ecores-tab"
+              role="tabpanel" aria-labelledby="ecores-tab-control"></div>
+            <div class="tab-pane fade" id="emsres-tab"
+              role="tabpanel" aria-labelledby="emsres-tab-control"></div>
+            <div class="tab-pane fade" id="emsrescsv-tab"
+              role="tabpanel" aria-labelledby="emsrescsv-tab-control"></div>
+            <div class="tab-pane fade" id="priceemsprof-tab"
+              role="tabpanel" aria-labelledby="priceemsprof-tab-control"></div>
+          </div>
+        </p>
+      </div>
+
+      <div class="row">
+        <h4>Debug output</h4>
+        <p class="element-group">
+          <span class="bold">Query list</span>
+          <div id="query-list"></div>
+        </p>
+      </div>
 
       <footer class="my-5 pt-5 text-muted text-center text-small">
         <p class="mb-1">&copy; 2025 Etienne Ott</p>

@@ -24,6 +24,10 @@
     font-weight: bold;
 }
 
+.row {
+    margin-top: 1rem;
+}
+
 .tab-pane {
   max-height: 800px;
   overflow-y: scroll;
@@ -36,7 +40,6 @@
 #nc-file-list {
     border: 1px solid #494949;
     border-radius: 10px;
-    max-width: 50%;
     min-height: 50px;
     position: relative;
     background: white;
@@ -113,6 +116,10 @@ label[for="config-file-selection"] {
 #stop-simulation {
     display: inline-block;
     margin-top: 15px;
+}
+
+#fetch-results {
+    width: 150px;
 }
 
 #error-label {
