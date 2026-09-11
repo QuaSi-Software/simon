@@ -10,7 +10,7 @@ def test_validate_run_id():
     """Tests for validate_run_id for common good/bad cases."""
     assert not validate_run_id("not an ID")
     assert not validate_run_id("")
-    assert not validate_run_id(42)
+    assert not validate_run_id(42) # type: ignore
     assert validate_run_id("1a2b3c4e5f1a2b3c4e5f1a2b3c4e5f1a")
     # weird, but valid IDs
     assert validate_run_id("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
@@ -20,36 +20,36 @@ def test_validate_uploaded_filename():
     """Tests for validate_uploaded_filename without client"""
     # filename is empty
     file = FileStorage(filename="")
-    success, msg = validate_uploaded_filename(file.filename)
+    success, msg = validate_uploaded_filename(file.filename) # type: ignore
     assert not success
     assert "No filename provided" in msg
 
     # filename contains forbidden characters
     file = FileStorage(filename="a\"/2:")
-    success, msg = validate_uploaded_filename(file.filename)
+    success, msg = validate_uploaded_filename(file.filename) # type: ignore
     assert not success
     assert "Filename must contain only" in msg
 
     # filename collapses to empty string
     file = FileStorage(filename=" \n\t \r")
-    success, msg = validate_uploaded_filename(file.filename)
+    success, msg = validate_uploaded_filename(file.filename) # type: ignore
     assert not success
     assert "Filename collapses" in msg
 
     # filename attempts path traversal "hidden" by whitespace
     file = FileStorage(filename="\t..important config")
-    success, msg = validate_uploaded_filename(file.filename)
+    success, msg = validate_uploaded_filename(file.filename) # type: ignore
     assert not success
     assert "Filename must not start with period" in msg
 
     # normal filenames
     file = FileStorage(filename="ideal_filename.json")
-    success, msg = validate_uploaded_filename(file.filename)
+    success, msg = validate_uploaded_filename(file.filename) # type: ignore
     assert success
     assert "Filename appears valid" in msg
 
     file = FileStorage(filename="  with §3,14 oddities \t+(500$) but valid.old.json")
-    success, msg = validate_uploaded_filename(file.filename)
+    success, msg = validate_uploaded_filename(file.filename) # type: ignore
     assert success
     assert "Filename appears valid" in msg
 

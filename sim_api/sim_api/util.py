@@ -45,7 +45,7 @@ OBJECT_PARAMETERS = {
     "sankey_plot_spec", "output_plot_spec", "csv_output_keys"
 }
 
-def parse_key_from_auth_header(header: str) -> str:
+def parse_key_from_auth_header(header: str) -> str | bool:
     """Parses an API from the given value of the authorization header."""
     header = re.sub(r"\s+", " ", header.strip()) # compress consecutive whitespaces into a
     parts = header.split(" ")                    # single space character, so we can split
@@ -229,7 +229,7 @@ def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
     with open(aliased_config_path, "w", encoding="utf-8") as file:
         file.write(content)
 
-    return True, aliased_config_path
+    return True, str(aliased_config_path)
 
 def read_resie_version() -> str | None:
     """Read the version string from the ReSiE Project.toml file.
@@ -364,6 +364,9 @@ def format_parameters_susi(base_dict: dict) -> dict:
                 version[2] = 99
             else:
                 raise KeyError(f"Cannot find ReSiE version file for version {version_str} or earlier")
+
+    if file_path is None:
+        return susi_dict
 
     # merge-write the attributes into the copy of the base_dict
     with open(file_path, "r", encoding="utf-8") as fp:

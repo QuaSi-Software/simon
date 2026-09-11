@@ -321,7 +321,7 @@ def fetch_results(run_id):
         + "/" + encode_nc_path(destination)
     nc_response = ensure_request(url, app, method="PUT", data=sim_response.content)
 
-    if not nc_response.ok:
+    if nc_response is None or not nc_response.ok:
         msg = f"Could not upload result file {request.json["filename"]} to NextCloud"
         return jsonify({"error": msg}), 500
 
@@ -385,9 +385,11 @@ def upload_file_to_sim_run(run_id):
         + "/" + file_path
     response = ensure_request(url, app, method="GET")
 
-    if not response.ok:
+    if response is not None and not response.ok:
         return jsonify({"error": "Could not fetch file from NextCloud: "
                        + f"{response.status_code} {response.reason}"}), 404
+    elif response is None:
+        return jsonify({"error": "No connection to NextCloud"}), 404
 
     file_obj = io.BytesIO(response.content)
     response = requests.post(

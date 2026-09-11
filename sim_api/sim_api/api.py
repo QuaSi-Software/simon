@@ -159,6 +159,8 @@ def upload_file(run_id):
         return jsonify({"error": "No file part in the request"}), 400
 
     file = request.files['file']
+    if file is None or file.filename is None:
+        return jsonify({"error": "Filename is empty"}), 400
     is_valid, msg = validate_uploaded_filename(file.filename)
     if not is_valid:
         return jsonify({"error": f"Filename of uploaded file is not valid: {msg}"}), 400

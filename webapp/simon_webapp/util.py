@@ -55,6 +55,8 @@ def parse_webdav_files_response(content: str, username: str) -> tuple[bool,list]
                 continue
 
             prop = propstat.find("d:prop", namespaces)
+            if prop is None:
+                continue
             content_type = prop.findtext("d:getcontenttype", "", namespaces)
             resource_type = prop.find("d:resourcetype", namespaces)
             if (
