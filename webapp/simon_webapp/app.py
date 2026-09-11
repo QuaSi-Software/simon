@@ -14,7 +14,8 @@ import debugpy
 from flask import Flask, render_template, jsonify, request, session, url_for, redirect
 from flask_session import Session
 from .nc_requests import ensure_request, fetch_access_token, WEBDAV_REQUEST_PROPFIND_DATA
-from .util import parse_webdav_files_response, filename_from_nc_path, encode_nc_path
+from .util import parse_webdav_files_response, filename_from_nc_path, encode_nc_path, \
+    RESULT_FILES
 
 if os.environ.get("FLASK_ENV") == "development":
     debugpy.listen(("0.0.0.0", 5002))
@@ -78,7 +79,8 @@ def index():
 
     api_root = app.config["SIMON_API_ROOT"]
     return render_template("index.html", session=session,
-                           api_root=api_root, resie_version=RESIE_VERSION), 200
+                           api_root=api_root, resie_version=RESIE_VERSION,
+                           result_files=RESULT_FILES), 200
 
 @app.route("/nextcloud_login", methods=["GET"])
 def nextcloud_login():
