@@ -330,6 +330,21 @@ def fetch_results(run_id):
     # return results so the frontend can display them too
     return sim_response.content, 200
 
+@app.route('/results_file_list/<run_id>', methods=['GET'])
+def results_file_list(run_id):
+    """Endpoint: POST /fetch_results/<str:run_id>
+
+    Request arguments (route):
+        - run_id -> str: The ID of the run for which to get a results file list
+
+    Response (ByteStream): The results file list
+    """
+    # TODO: make this dynamic by requesting an actual file list from the sim API instead of
+    # just listing all possible files
+
+    # return results so the frontend can display them too
+    return jsonify(RESULT_FILES), 200
+
 @app.route('/get_files', methods=['POST'])
 def get_files(dir_path=""):
     """Endpoint: POST /get_files

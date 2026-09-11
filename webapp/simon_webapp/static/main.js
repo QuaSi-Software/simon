@@ -1,66 +1,3 @@
-const RESULT_FILES = [
-    {
-        filename: "auxiliary_info.md",
-        tab_name: "aux-tab",
-        element: "p"
-    },
-    {
-        filename: "logfile_balanceWarn.log",
-        tab_name: "ballog-tab",
-        element: "p"
-    },
-    {
-        filename: "logfile_general.log",
-        tab_name: "genlog-tab",
-        element: "p"
-    },
-    {
-        filename: "out.csv",
-        tab_name: "csv-tab",
-        element: "table"
-    },
-    {
-        filename: "output_plot.html",
-        tab_name: "plot-tab",
-        element: "html"
-    },
-    {
-        filename: "output_sankey.html",
-        tab_name: "sankey-tab",
-        element: "html"
-    },
-    {
-        filename: "economic_results_cashflows.html",
-        tab_name: "ecorescash-tab",
-        element: "html"
-    },
-    {
-        filename: "economic_results_present_values.html",
-        tab_name: "ecorespreval-tab",
-        element: "html"
-    },
-    {
-        filename: "economic_results.csv",
-        tab_name: "ecores-tab",
-        element: "table"
-    },
-    {
-        filename: "emissions_result.html",
-        tab_name: "emsres-tab",
-        element: "html"
-    },
-    {
-        filename: "emissions_results.csv",
-        tab_name: "emsrescsv-tab",
-        element: "table"
-    },
-    {
-        filename: "price_and_emissions_profiles.html",
-        tab_name: "priceemsprof-tab",
-        element: "html"
-    }
-]
-
 const CSV_CONFIG = {
     delimiter: ";",
     header: true,
@@ -289,7 +226,10 @@ async function fetch_results(run_id) {
     let element = by_id("config-file-selection")
     let input_file_dir = element.options[element.selectedIndex].dataset.dirname
 
-    for (const file of RESULT_FILES) {
+    let response = await fetch(API_ROOT + 'results_file_list/' + run_id)
+    let file_list = await response.json()
+
+    for (const file of file_list) {
         let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {
             method: 'POST',
             body: JSON.stringify({
