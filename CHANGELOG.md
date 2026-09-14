@@ -63,6 +63,16 @@ The SIMON webapp provides the user interface for running simulations and uses th
 ## Simulation API
 The simulation API is used by the SIMON webapp internally and is only partially exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package. Changes that only affect the simulation API without changing any of the SIMON webapp code are not marked as changes in the webapp changelog and are listed here.
 
+### Version 0.4.0
+* Add endpoint for getting a list of existing output files for a run
+* Add outputs for parameter study, sensitivity and optimisation
+* Fix files with names containing spaces or other URL-encoded characters causing simulations to fail
+  * The problem was that the encoding caused the file index to not work properly, in turn causing the substituted input file to contain the wrong file names
+* Update to ReSiE v1.0.1
+* Changes to parameters API
+  * Update segments for components flexible/fixed supply/sink
+  * Fix wrong IO setting name for auxiliary info file
+
 ### Version 0.3.5
 * Changes to parameters API, applying to ReSiE v1.0.0 and upward
   * Add documentation links for all components
