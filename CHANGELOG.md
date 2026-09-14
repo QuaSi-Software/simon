@@ -4,6 +4,17 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
+### Version 0.5.0
+* Add outputs for parameter study, sensibilits and optimisation to output handling
+* Improvements to the frontend and UX:
+  * Make entries in the uploaded files list flash when uploaded
+  * Hide results tabs that don't have output for a given simulation run
+  * Disable fetch results button when the simulation isn't in a state to fetch results
+  * Restructure layout to make better use of space and be more modular
+  * Implement showing CSV and HTML results as tables / iframes within the webapp
+  * Fix duplicates showing up in the uploaded files list and the input selection
+  * Change input file selection to only accept JSON files
+
 ### Version 0.4.1
 * Fix missing output files for economical and emissions results
 * Add button to upload all input files in current directory
