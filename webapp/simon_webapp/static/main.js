@@ -223,6 +223,8 @@ function compare_csv_values(left, right) {
 }
 
 async function fetch_results(run_id) {
+    by_id("fetch-results").setAttribute("disabled", "")
+
     let element = by_id("config-file-selection")
     let input_file_dir = element.options[element.selectedIndex].dataset.dirname
 
@@ -254,6 +256,7 @@ async function fetch_results(run_id) {
     by_id("results-tabs-container").classList.remove("hidden")
     by_id("submit-simulate").removeAttribute("disabled")
     by_id("stop-simulation").setAttribute("disabled", "")
+    by_id("fetch-results").removeAttribute("disabled")
 }
 
 async function check_status(run_id) {
@@ -449,6 +452,7 @@ async function start_simulation_from_form(form_element) {
 
     clear_errors()
     clear_results()
+    by_id("fetch-results").setAttribute("disabled", "")
 
     let form_data = new FormData(form_element)
     response = await fetch(API_ROOT + 'start_simulation_from_form/' + run_status["run_id"], {
