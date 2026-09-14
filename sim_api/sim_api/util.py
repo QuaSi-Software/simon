@@ -10,6 +10,7 @@ from datetime import datetime
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict
+from urllib.parse import unquote_plus
 from werkzeug.datastructures import FileStorage
 
 APP_ROOT = Path(__file__).resolve().parent.parent
@@ -44,7 +45,7 @@ OBJECT_PARAMETERS = {
     "sankey_plot_spec", "output_plot_spec", "csv_output_keys"
 }
 
-def parse_key_from_auth_header(header: str) -> str:
+def parse_key_from_auth_header(header: str) -> str | bool:
     """Parses an API from the given value of the authorization header."""
     header = re.sub(r"\s+", " ", header.strip()) # compress consecutive whitespaces into a
     parts = header.split(" ")                    # single space character, so we can split
@@ -147,13 +148,14 @@ def write_file_index(run_id: str, file_index: dict) -> None:
 def save_file_for_run(run_id: str, file: FileStorage) -> str:
     """Saves the given file in the given run in a safe manner by renaming it"""
     file_index = load_file_index(run_id)
+    file_name = unquote_plus(file.filename if file.filename is not None else "")
 
-    if file.filename in file_index["forward"]:
-        safe_filename = file_index["forward"][file.filename]
+    if file_name in file_index["forward"]:
+        safe_filename = file_index["forward"][file_name]
     else:
         safe_filename = uuid.uuid4().hex
-        file_index["forward"][file.filename] = safe_filename
-        file_index["reverse"][safe_filename] = file.filename
+        file_index["forward"][file_name] = safe_filename
+        file_index["reverse"][safe_filename] = file_name
 
     write_file_index(run_id, file_index)
 
@@ -204,7 +206,7 @@ def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
 
     # replace output filenames with fixed values
     config["io_settings"]["csv_output_file_path"] = "./out.csv"
-    config["io_settings"]["auxiliary_info_file_path"] = "./auxiliary_info.md"
+    config["io_settings"]["auxiliary_info_file"] = "./auxiliary_info.md"
     config["io_settings"]["output_plot_file_path"] = "./output_plot.html"
     config["io_settings"]["sankey_plot_file_path"] = "./output_sankey.html"
     config["io_settings"]["economic_plot_cashflows_file_path"] = "./economic_results_cashflows.html"
@@ -213,8 +215,8 @@ def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
     config["io_settings"]["emissions_plot_file_path"] = "./emissions_result.html"
     config["io_settings"]["emissions_csv_file_path"] = "./emissions_results.csv"
     config["io_settings"]["price_and_emission_profile_file_path"] = "./price_and_emissions_profiles.html"
-    config["io_settings"]["parameter_study_csv_path"] = "./"
-    config["io_settings"]["parameter_study_plots_path"] = "./"
+    config["io_settings"]["parameter_study_csv_path"] = "./parameter_study"
+    config["io_settings"]["parameter_study_plots_path"] = "./parameter_study_plots"
     config["io_settings"]["auxiliary_plots_path"] = "./"
 
     # replace file names with their alias. this will remove any paths, making any
@@ -227,7 +229,7 @@ def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
     with open(aliased_config_path, "w", encoding="utf-8") as file:
         file.write(content)
 
-    return True, aliased_config_path
+    return True, str(aliased_config_path)
 
 def read_resie_version() -> str | None:
     """Read the version string from the ReSiE Project.toml file.
@@ -362,6 +364,9 @@ def format_parameters_susi(base_dict: dict) -> dict:
                 version[2] = 99
             else:
                 raise KeyError(f"Cannot find ReSiE version file for version {version_str} or earlier")
+
+    if file_path is None:
+        return susi_dict
 
     # merge-write the attributes into the copy of the base_dict
     with open(file_path, "r", encoding="utf-8") as fp:

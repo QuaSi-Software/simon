@@ -14,7 +14,8 @@ import debugpy
 from flask import Flask, render_template, jsonify, request, session, url_for, redirect
 from flask_session import Session
 from .nc_requests import ensure_request, fetch_access_token, WEBDAV_REQUEST_PROPFIND_DATA
-from .util import parse_webdav_files_response, filename_from_nc_path, encode_nc_path
+from .util import parse_webdav_files_response, filename_from_nc_path, encode_nc_path, \
+    RESULT_FILES
 
 if os.environ.get("FLASK_ENV") == "development":
     debugpy.listen(("0.0.0.0", 5002))
@@ -78,7 +79,8 @@ def index():
 
     api_root = app.config["SIMON_API_ROOT"]
     return render_template("index.html", session=session,
-                           api_root=api_root, resie_version=RESIE_VERSION), 200
+                           api_root=api_root, resie_version=RESIE_VERSION,
+                           result_files=RESULT_FILES), 200
 
 @app.route("/nextcloud_login", methods=["GET"])
 def nextcloud_login():
@@ -321,12 +323,38 @@ def fetch_results(run_id):
         + "/" + encode_nc_path(destination)
     nc_response = ensure_request(url, app, method="PUT", data=sim_response.content)
 
-    if not nc_response.ok:
+    if nc_response is None or not nc_response.ok:
         msg = f"Could not upload result file {request.json["filename"]} to NextCloud"
         return jsonify({"error": msg}), 500
 
     # return results so the frontend can display them too
     return sim_response.content, 200
+
+@app.route('/results_file_list/<run_id>', methods=['GET'])
+def results_file_list(run_id):
+    """Endpoint: POST /fetch_results/<str:run_id>
+
+    Request arguments (route):
+        - run_id -> str: The ID of the run for which to get a results file list
+
+    Response (ByteStream): The results file list
+    """
+    # fetch file list from sim API
+    sim_response = requests.get(
+        app.config["sim_api"]["endpoint"] + "list_results_files/" + run_id,
+        timeout=app.config["sim_api"]["timeout"],
+        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
+    )
+
+    if not sim_response.ok:
+        # fallback is listing all results, the download_file API endpoint will fail
+        # gracefully if a file doesn't exist
+        return jsonify(RESULT_FILES), 200
+
+    # filter all results files for those actually present
+    sim_files = sim_response.json()
+    files = [f for f in RESULT_FILES if f["filename"] in sim_files["results_files"]]
+    return jsonify(files), 200
 
 @app.route('/get_files', methods=['POST'])
 def get_files(dir_path=""):
@@ -385,9 +413,11 @@ def upload_file_to_sim_run(run_id):
         + "/" + file_path
     response = ensure_request(url, app, method="GET")
 
-    if not response.ok:
+    if response is not None and not response.ok:
         return jsonify({"error": "Could not fetch file from NextCloud: "
                        + f"{response.status_code} {response.reason}"}), 404
+    elif response is None:
+        return jsonify({"error": "No connection to NextCloud"}), 404
 
     file_obj = io.BytesIO(response.content)
     response = requests.post(

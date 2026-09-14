@@ -1,65 +1,9 @@
-const RESULT_FILES = [
-    {
-        filename: "auxiliary_info.md",
-        tab_name: "aux-tab",
-        element: "p"
-    },
-    {
-        filename: "logfile_balanceWarn.log",
-        tab_name: "ballog-tab",
-        element: "p"
-    },
-    {
-        filename: "logfile_general.log",
-        tab_name: "genlog-tab",
-        element: "p"
-    },
-    {
-        filename: "out.csv",
-        tab_name: "csv-tab",
-        element: "table"
-    },
-    {
-        filename: "output_plot.html",
-        tab_name: "plot-tab",
-        element: "html"
-    },
-    {
-        filename: "output_sankey.html",
-        tab_name: "sankey-tab",
-        element: "html"
-    },
-    {
-        filename: "economic_results_cashflows.html",
-        tab_name: "ecorescash-tab",
-        element: "html"
-    },
-    {
-        filename: "economic_results_present_values.html",
-        tab_name: "ecorespreval-tab",
-        element: "html"
-    },
-    {
-        filename: "economic_results.csv",
-        tab_name: "ecores-tab",
-        element: "table"
-    },
-    {
-        filename: "emissions_result.html",
-        tab_name: "emsres-tab",
-        element: "html"
-    },
-    {
-        filename: "emissions_results.csv",
-        tab_name: "emsrescsv-tab",
-        element: "table"
-    },
-    {
-        filename: "price_and_emissions_profiles.html",
-        tab_name: "priceemsprof-tab",
-        element: "html"
-    }
-]
+const CSV_CONFIG = {
+    delimiter: ";",
+    header: true,
+    dynamicTyping: true
+}
+const MAX_CSV_ROWS = 1000
 
 var run_status = {}
 
@@ -193,15 +137,17 @@ async function create_results_element(type, response) {
         obj.innerText = await response.text()
         return obj
     } else if (type == "table") {
-        // TODO: render as html table, maybe with bootstrap table tools like sorting
-        let obj = document.createElement('p')
-        obj.innerText = (await response.text()).slice(0,1024*10) // cut off at 10 kB
-        return obj
+        let csv = await response.text()
+        let results = Papa.parse(csv, CSV_CONFIG)
+        return create_csv_table(results)
     } else if (type == "html") {
-        // TODO: render as i-frame or similar
-        let obj = document.createElement('div')
-        obj.innerHTML = await response.text()
-        return obj
+        let iframe = document.createElement('iframe')
+        iframe.className = 'w-100 border-0'
+        iframe.title = 'Simulation result'
+        iframe.setAttribute('sandbox', 'allow-scripts allow-forms')
+        iframe.style.height = '800px'
+        iframe.srcdoc = await response.text()
+        return iframe
     } else {
         let obj = document.createElement('span')
         obj.innerText = "Could not render unknown file type"
@@ -209,11 +155,83 @@ async function create_results_element(type, response) {
     }
 }
 
+function create_csv_table(results) {
+    let rows = results.data.slice(0, MAX_CSV_ROWS)
+    let columns = results.meta.fields || (rows.length > 0 ? Object.keys(rows[0]) : [])
+    let container = document.createElement('div')
+    container.className = 'table-responsive'
+
+    let table = document.createElement('table')
+    table.className = 'table table-striped table-hover table-sm align-middle'
+    let head = document.createElement('thead')
+    let body = document.createElement('tbody')
+    table.appendChild(head)
+    table.appendChild(body)
+    container.appendChild(table)
+
+    if (columns.length === 0) return container
+
+    let header_row = document.createElement('tr')
+    let sort_directions = Array(columns.length).fill(1)
+    columns.forEach((column_name, column) => {
+        let header = document.createElement('th')
+        header.scope = 'col'
+        let sort_button = document.createElement('button')
+        sort_button.type = 'button'
+        sort_button.className = 'btn btn-link link-dark text-start text-decoration-none p-0'
+        sort_button.innerText = column_name
+        sort_button.title = 'Sort by this column'
+        sort_button.onclick = function() {
+            let direction = sort_directions[column]
+            let sorted_rows = rows.slice().sort((left, right) =>
+                compare_csv_values(left[column_name], right[column_name]) * direction
+            )
+            sort_directions[column] *= -1
+            render_csv_rows(body, sorted_rows, columns)
+        }
+        header.appendChild(sort_button)
+        header_row.appendChild(header)
+    })
+    head.appendChild(header_row)
+    render_csv_rows(body, rows, columns)
+    return container
+}
+
+function render_csv_rows(body, rows, columns) {
+    body.innerHTML = ''
+    rows.forEach(row => {
+        let table_row = document.createElement('tr')
+        columns.forEach(column_name => {
+            let cell = document.createElement('td')
+            cell.innerText = row[column_name] ?? ''
+            table_row.appendChild(cell)
+        })
+        body.appendChild(table_row)
+    })
+}
+
+function compare_csv_values(left, right) {
+    let left_text = left == null ? '' : String(left)
+    let right_text = right == null ? '' : String(right)
+    let left_number = Number(left_text)
+    let right_number = Number(right_text)
+    if (left_text.trim() !== '' && right_text.trim() !== '' &&
+        Number.isFinite(left_number) && Number.isFinite(right_number)) {
+        return left_number - right_number
+    }
+    return left_text.localeCompare(right_text, undefined, {numeric: true, sensitivity: 'base'})
+}
+
 async function fetch_results(run_id) {
+    by_id("fetch-results").setAttribute("disabled", "")
+
     let element = by_id("config-file-selection")
     let input_file_dir = element.options[element.selectedIndex].dataset.dirname
 
-    for (const file of RESULT_FILES) {
+    let response = await fetch(API_ROOT + 'results_file_list/' + run_id)
+    let file_list = await response.json()
+
+    for (const file of file_list) {
         let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {
             method: 'POST',
             body: JSON.stringify({
@@ -230,6 +248,9 @@ async function fetch_results(run_id) {
             let results_div = by_id(file.tab_name);
             results_div.innerHTML = '';
             results_div.appendChild(obj);
+            results_div.classList.remove("hidden")
+            let results_button = by_id(file.tab_name + "-control")
+            results_button.parentElement.classList.remove("hidden")
         }
     }
 
@@ -238,6 +259,7 @@ async function fetch_results(run_id) {
     by_id("results-tabs-container").classList.remove("hidden")
     by_id("submit-simulate").removeAttribute("disabled")
     by_id("stop-simulation").setAttribute("disabled", "")
+    by_id("fetch-results").removeAttribute("disabled")
 }
 
 async function check_status(run_id) {
@@ -288,22 +310,62 @@ async function get_run_id() {
 }
 
 function add_file_to_uploaded_files(file) {
-    by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
-        "<li>/" + format_nc_file_path(file, "full", true) + "</li>"
-    by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
-        '<option value="' + format_nc_file_path(file, "filename", false) + '" ' +
-        'data-dirname="'  + format_nc_file_path(file, "dir_path", false) + '">' +
-        format_nc_file_path(file, "filename", true) + "</option>"
+    let normalized_file = file.trim()
+    let already_uploaded = by_cl("uploaded-file").some(item =>
+        item.dataset.filename === normalized_file
+    )
+
+    if (already_uploaded) {
+        // Find the existing element and make it flash
+        let existing_element = by_cl("uploaded-file").find(item =>
+            item.dataset.filename === normalized_file
+        )
+        if (existing_element) {
+            existing_element.classList.add("uploaded-file-flash")
+            setTimeout(() => {
+                existing_element.classList.remove("uploaded-file-flash")
+            }, 1000)
+        }
+        return
+    }
+
+    // add newly uploaded file to file list
+    let new_element = document.createElement("li")
+    new_element.className = "uploaded-file"
+    new_element.dataset.filename = normalized_file
+    new_element.innerHTML = "/" + format_nc_file_path(normalized_file, "full", true)
+    new_element.classList.add("uploaded-file-flash")
+
+    by_id("uploaded-files").appendChild(new_element)
+
+    setTimeout(() => {
+        new_element.classList.remove("uploaded-file-flash")
+    }, 1000)
+
+    // for possible input files (JSON), add to the input file selection
+    if (normalized_file.toLowerCase().endsWith(".json")) {
+        by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
+            '<option value="' + format_nc_file_path(normalized_file, "filename", false) + '" ' +
+            'data-filename="' + normalized_file + '" ' +
+            'data-dirname="'  + format_nc_file_path(normalized_file, "dir_path", false) + '">' +
+            format_nc_file_path(normalized_file, "filename", true) + "</option>"
+    }
 }
 
 function add_uploaded_file_to_session_storage(file) {
+    let normalized_file = file.trim()
     let file_list = sessionStorage.getItem("uploaded_files")
     if (file_list === null) {
         file_list = []
     } else {
         file_list = JSON.parse(file_list)
     }
-    file_list.push(file)
+    file_list = file_list.filter((uploaded_file, index, files) =>
+        files.findIndex(candidate => candidate.trim() === uploaded_file.trim()) === index
+    )
+    if (!file_list.some(uploaded_file => uploaded_file.trim() === normalized_file)) {
+        file_list.push(normalized_file)
+    }
     sessionStorage.setItem("uploaded_files", JSON.stringify(file_list))
 }
 
@@ -416,6 +478,7 @@ async function start_simulation_from_form(form_element) {
 
     clear_errors()
     clear_results()
+    by_id("fetch-results").setAttribute("disabled", "")
 
     let form_data = new FormData(form_element)
     response = await fetch(API_ROOT + 'start_simulation_from_form/' + run_status["run_id"], {
