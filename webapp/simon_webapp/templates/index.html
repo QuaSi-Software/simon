@@ -77,7 +77,7 @@
 
           <ul class="nav nav-tabs hidden" id="results-tabs-control" role="tablist">
             {% for res in result_files %}
-            <li class="nav-item" role="presentation">
+            <li class="nav-item hidden" role="presentation">
               <button class="nav-link {% if loop.first %}active{% endif %}" id="{{res.tab_name}}-control"
                   data-bs-toggle="tab" data-bs-target="#{{res.tab_name}}" type="button" role="tab"
                   aria-controls="{{res.tab_name}}" aria-selected="false">{{res.tab_name_full}}</button>
@@ -87,8 +87,9 @@
 
           <div class="tab-content hidden" id="results-tabs-container">
             {% for res in result_files %}
-            <div class="tab-pane fade show {% if loop.first %}active{% endif %}" id="{{res.tab_name}}"
-              role="tabpanel" aria-labelledby="{{res.tab_name}}-control"></div>
+            <div class="tab-pane fade hidden show {% if loop.first %}active{% endif %}"
+              id="{{res.tab_name}}" role="tabpanel" aria-labelledby="{{res.tab_name}}-control">
+            </div>
             {% endfor %}
           </div>
         </p>

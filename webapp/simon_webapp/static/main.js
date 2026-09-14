@@ -248,6 +248,9 @@ async function fetch_results(run_id) {
             let results_div = by_id(file.tab_name);
             results_div.innerHTML = '';
             results_div.appendChild(obj);
+            results_div.classList.remove("hidden")
+            let results_button = by_id(file.tab_name + "-control")
+            results_button.parentElement.classList.remove("hidden")
         }
     }
 
