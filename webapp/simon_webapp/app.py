@@ -339,11 +339,22 @@ def results_file_list(run_id):
 
     Response (ByteStream): The results file list
     """
-    # TODO: make this dynamic by requesting an actual file list from the sim API instead of
-    # just listing all possible files
+    # fetch file list from sim API
+    sim_response = requests.get(
+        app.config["sim_api"]["endpoint"] + "list_results_files/" + run_id,
+        timeout=app.config["sim_api"]["timeout"],
+        headers={"Authorization": "Bearer " + app.config["sim_api"]["api_key"]}
+    )
 
-    # return results so the frontend can display them too
-    return jsonify(RESULT_FILES), 200
+    if not sim_response.ok:
+        # fallback is listing all results, the download_file API endpoint will fail
+        # gracefully if a file doesn't exist
+        return jsonify(RESULT_FILES), 200
+
+    # filter all results files for those actually present
+    sim_files = sim_response.json()
+    files = [f for f in RESULT_FILES if f["filename"] in sim_files["results_files"]]
+    return jsonify(files), 200
 
 @app.route('/get_files', methods=['POST'])
 def get_files(dir_path=""):
