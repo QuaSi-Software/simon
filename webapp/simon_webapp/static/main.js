@@ -314,12 +314,35 @@ function add_file_to_uploaded_files(file) {
     let already_uploaded = by_cl("uploaded-file").some(item =>
         item.dataset.filename === normalized_file
     )
-    if (already_uploaded) return
 
-    by_id("uploaded-files").innerHTML = by_id("uploaded-files").innerHTML +
-        "<li class=\"uploaded-file\" data-filename=\"" + normalized_file + "\">/" +
-        format_nc_file_path(normalized_file, "full", true) + "</li>"
+    if (already_uploaded) {
+        // Find the existing element and make it flash
+        let existing_element = by_cl("uploaded-file").find(item =>
+            item.dataset.filename === normalized_file
+        )
+        if (existing_element) {
+            existing_element.classList.add("uploaded-file-flash")
+            setTimeout(() => {
+                existing_element.classList.remove("uploaded-file-flash")
+            }, 1000)
+        }
+        return
+    }
 
+    // add newly uploaded file to file list
+    let new_element = document.createElement("li")
+    new_element.className = "uploaded-file"
+    new_element.dataset.filename = normalized_file
+    new_element.innerHTML = "/" + format_nc_file_path(normalized_file, "full", true)
+    new_element.classList.add("uploaded-file-flash")
+
+    by_id("uploaded-files").appendChild(new_element)
+
+    setTimeout(() => {
+        new_element.classList.remove("uploaded-file-flash")
+    }, 1000)
+
+    // for possible input files (JSON), add to the input file selection
     if (normalized_file.toLowerCase().endsWith(".json")) {
         by_id("config-file-selection").innerHTML = by_id("config-file-selection").innerHTML +
             '<option value="' + format_nc_file_path(normalized_file, "filename", false) + '" ' +
