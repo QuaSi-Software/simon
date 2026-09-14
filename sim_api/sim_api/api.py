@@ -281,6 +281,32 @@ def simulate(run_id):
     update_run_status(run_id, "waiting")
     return jsonify({"message": "Queued run for simulation"}), 200
 
+@app.route("/list_results_files/<run_id>", methods=["GET"])
+@api_key_required
+def list_results_files(run_id):
+    """Endpoint: GET /list_results_files
+
+    List the results files of a run.
+
+    Request arguments:
+            - run_id -> str: The ID of the run for which files are listed
+
+    Response (JSON):
+        "results_files": [
+            "file_1.csv",
+            ...
+        ]
+    """
+    if not validate_run_id(run_id):
+        return jsonify({"error": "run_id is not valid"}), 400
+    if not run_dir_exists(run_id):
+        return jsonify({"error": "run_id does not exist"}), 404
+    run_dir = Path(APP_ROOT / "runs" / run_id)
+    results_files = [
+        file.name for file in run_dir.iterdir() if file.is_file() and file.name in RESULTS_FILES
+    ]
+    return jsonify({"results_files": results_files}), 200
+
 @app.route('/resie_version', methods=['GET'])
 def resie_version():
     """Endpoint: GET /resie_version
@@ -324,3 +350,4 @@ def resie_parameters(format):
     if RESIE_PARAMETERS is None:
         RESIE_PARAMETERS = read_resie_parameters()
     return jsonify(RESIE_PARAMETERS[format]), 200
+
