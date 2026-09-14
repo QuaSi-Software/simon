@@ -42,6 +42,17 @@ RESULTS_FILES = {
     "emissions_result.html",
     "emissions_results.csv",
     "price_and_emissions_profiles.html",
+    "parameter_study_all_results.csv",
+    "parameter_study_global_sensitivity.csv",
+    "parameter_study_local_sensitivity.csv",
+    "parameter_study_plots_convergence.html",
+    "parameter_study_plots_global_sensitivity.html",
+    "parameter_study_plots_interactive_3d.html",
+    "parameter_study_plots_local_sensitivity_response_overview.html",
+    "parameter_study_plots_local_sensitivity_response_trends.html",
+    "parameter_study_plots_matrix_plot.html",
+    "parameter_study_plots_objective_parameter_explorer.html",
+    "parameter_study_plots_parallel_coordinates.html",
 }
 
 def api_key_required(function):

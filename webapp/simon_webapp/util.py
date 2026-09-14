@@ -76,6 +76,72 @@ RESULT_FILES = [
         "tab_name": "priceemsprof-tab",
         "tab_name_full": "Price/emissions profiles",
         "element": "html"
+    },
+    {
+        "filename": "parameter_study_all_results.csv",
+        "tab_name": "ps-all-tab",
+        "tab_name_full": "PS All",
+        "element": "table"
+    },
+    {
+        "filename": "parameter_study_global_sensitivity.csv",
+        "tab_name": "ps-glob-sens-csv-tab",
+        "tab_name_full": "Glob. Sens. CSV",
+        "element": "table"
+    },
+    {
+        "filename": "parameter_study_local_sensitivity.csv",
+        "tab_name": "ps-loc-sens-csv-tab",
+        "tab_name_full": "Local Sens. CSV",
+        "element": "table"
+    },
+    {
+        "filename": "parameter_study_plots_convergence.html",
+        "tab_name": "ps-conv-tab",
+        "tab_name_full": "PS Convergence",
+        "element": "html"
+    },
+    {
+        "filename": "parameter_study_plots_global_sensitivity.html",
+        "tab_name": "ps-glob-sens-plot-tab",
+        "tab_name_full": "Glob. Sens. Plot",
+        "element": "html"
+    },
+    {
+        "filename": "parameter_study_plots_interactive_3d.html",
+        "tab_name": "ps-inter-3d-tab",
+        "tab_name_full": "PS Interactive 3D",
+        "element": "html"
+    },
+    {
+        "filename": "parameter_study_plots_local_sensitivity_response_overview.html",
+        "tab_name": "ps-loc-sens-overview-tab",
+        "tab_name_full": "Local Sens. Overv.",
+        "element": "html"
+    },
+    {
+        "filename": "parameter_study_plots_local_sensitivity_response_trends.html",
+        "tab_name": "ps-loc-sens-trends-tab",
+        "tab_name_full": "Local Sens. Trends",
+        "element": "html"
+    },
+    {
+        "filename": "parameter_study_plots_matrix_plot.html",
+        "tab_name": "ps-matrix-tab",
+        "tab_name_full": "PS Matrix Plot",
+        "element": "html"
+    },
+    {
+        "filename": "parameter_study_plots_objective_parameter_explorer.html",
+        "tab_name": "ps-param-explorer-tab",
+        "tab_name_full": "PS Param. Explorer",
+        "element": "html"
+    },
+    {
+        "filename": "parameter_study_plots_parallel_coordinates.html",
+        "tab_name": "ps-parallel-coords-tab",
+        "tab_name_full": "PS Para. Coord.",
+        "element": "html"
     }
 ]
 

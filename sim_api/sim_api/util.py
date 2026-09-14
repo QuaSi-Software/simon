@@ -215,8 +215,8 @@ def alias_config_file(run_id: str, alias_filename) -> tuple[bool,str]:
     config["io_settings"]["emissions_plot_file_path"] = "./emissions_result.html"
     config["io_settings"]["emissions_csv_file_path"] = "./emissions_results.csv"
     config["io_settings"]["price_and_emission_profile_file_path"] = "./price_and_emissions_profiles.html"
-    config["io_settings"]["parameter_study_csv_path"] = "./"
-    config["io_settings"]["parameter_study_plots_path"] = "./"
+    config["io_settings"]["parameter_study_csv_path"] = "./parameter_study"
+    config["io_settings"]["parameter_study_plots_path"] = "./parameter_study_plots"
     config["io_settings"]["auxiliary_plots_path"] = "./"
 
     # replace file names with their alias. this will remove any paths, making any
