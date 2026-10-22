@@ -260,16 +260,6 @@
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#battery",
                 "param_categories": [
                     {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_el_in",
-                            "m_el_out",
-                            "heat_lt_is_usable",
-                            "m_heat_lt_out"
-                        ]
-                    },
-                    {
                         "heading": "General",
                         "index": 1,
                         "parameters": [
@@ -315,6 +305,16 @@
                             "I_ref",
                             "T_ref"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 4,
+                        "parameters": [
+                            "m_el_in",
+                            "m_el_out",
+                            "heat_lt_is_usable",
+                            "m_heat_lt_out"
+                        ]
                     }
                 ]
             },
@@ -325,13 +325,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#buffer-tank",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "medium"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -363,6 +356,13 @@
                             "constant_ambient_temperature",
                             "use_ambient_temperature_from_weather_file"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
+                        "parameters": [
+                            "medium"
+                        ]
                     }
                 ]
             },
@@ -390,15 +390,6 @@
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#combined-heat-and-power-plant",
                 "param_categories": [
                     {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_fuel_in",
-                            "m_el_out",
-                            "m_heat_out"
-                        ]
-                    },
-                    {
                         "heading": "General",
                         "index": 1,
                         "parameters": [
@@ -417,6 +408,15 @@
                             "linear_interface",
                             "nr_discretization_steps"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
+                        "parameters": [
+                            "m_fuel_in",
+                            "m_el_out",
+                            "m_heat_out"
+                        ]
                     }
                 ]
             },
@@ -427,18 +427,6 @@
                 "nr_outputs": 4,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#electrolyser",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_el_in",
-                            "m_h2_out",
-                            "m_o2_out",
-                            "m_heat_ht_out",
-                            "heat_lt_is_usable",
-                            "m_heat_lt_out"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -472,6 +460,18 @@
                             "efficiency_h2_out",
                             "efficiency_h2_out_lossless"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 4,
+                        "parameters": [
+                            "m_el_in",
+                            "m_h2_out",
+                            "m_o2_out",
+                            "m_heat_ht_out",
+                            "heat_lt_is_usable",
+                            "m_heat_lt_out"
+                        ]
                     }
                 ]
             },
@@ -482,13 +482,6 @@
                 "nr_outputs": 0,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#general-fixed-sink",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "medium"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -509,6 +502,13 @@
                             "rho_medium",
                             "cp_medium"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
+                        "parameters": [
+                            "medium"
+                        ]
                     }
                 ]
             },
@@ -519,13 +519,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#general-fixed-supply",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "medium"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -546,6 +539,13 @@
                             "rho_medium",
                             "cp_medium"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
+                        "parameters": [
+                            "medium"
+                        ]
                     }
                 ]
             },
@@ -557,13 +557,6 @@
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#general-flexible-sink",
                 "param_categories": [
                     {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "medium"
-                        ]
-                    },
-                    {
                         "heading": "General",
                         "index": 1,
                         "parameters": [
@@ -573,6 +566,13 @@
                             "temperature_profile_file_path",
                             "constant_temperature",
                             "use_ambient_temperature_from_weather_file"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
+                        "parameters": [
+                            "medium"
                         ]
                     }
                 ]
@@ -585,13 +585,6 @@
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#general-flexible-supply",
                 "param_categories": [
                     {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "medium"
-                        ]
-                    },
-                    {
                         "heading": "General",
                         "index": 1,
                         "parameters": [
@@ -601,6 +594,13 @@
                             "temperature_profile_file_path",
                             "constant_temperature",
                             "use_ambient_temperature_from_weather_file"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
+                        "parameters": [
+                            "medium"
                         ]
                     }
                 ]
@@ -612,14 +612,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#fuel-boiler",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_fuel_in",
-                            "m_heat_out"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -638,6 +630,14 @@
                             "efficiency_heat_out",
                             "nr_discretization_steps"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
+                        "parameters": [
+                            "m_fuel_in",
+                            "m_heat_out"
+                        ]
                     }
                 ]
             },
@@ -648,13 +648,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#generic-heat-source",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "medium"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -676,6 +669,13 @@
                             "min_source_in_temperature",
                             "max_source_in_temperature"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
+                        "parameters": [
+                            "medium"
+                        ]
                     }
                 ]
             },
@@ -686,14 +686,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#geothermal-collector",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_heat_in",
-                            "m_heat_out"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -772,6 +764,14 @@
                             "fluid_kinematic_viscosity",
                             "fluid_prandtl_number"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 6,
+                        "parameters": [
+                            "m_heat_in",
+                            "m_heat_out"
+                        ]
                     }
                 ]
             },
@@ -782,14 +782,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#geothermal-probes",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_heat_in",
-                            "m_heat_out"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -851,6 +843,14 @@
                             "fluid_prandtl_number",
                             "grout_heat_conductivity"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 5,
+                        "parameters": [
+                            "m_heat_in",
+                            "m_heat_out"
+                        ]
                     }
                 ]
             },
@@ -862,19 +862,19 @@
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#grid-supply",
                 "param_categories": [
                     {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "medium"
-                        ]
-                    },
-                    {
                         "heading": "General",
                         "index": 1,
                         "parameters": [
                             "temperature_profile_file_path",
                             "constant_temperature",
                             "use_ambient_temperature_from_weather_file"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 2,
+                        "parameters": [
+                            "medium"
                         ]
                     }
                 ]
@@ -887,19 +887,19 @@
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#grid-sink",
                 "param_categories": [
                     {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "medium"
-                        ]
-                    },
-                    {
                         "heading": "General",
                         "index": 1,
                         "parameters": [
                             "temperature_profile_file_path",
                             "constant_temperature",
                             "use_ambient_temperature_from_weather_file"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 2,
+                        "parameters": [
+                            "medium"
                         ]
                     }
                 ]
@@ -911,16 +911,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#heat-pump",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_heat_in",
-                            "m_el_in",
-                            "m_heat_out",
-                            "m_heat_out_secondary"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -969,6 +959,16 @@
                             "primary_el_sources",
                             "secondary_el_sources"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 5,
+                        "parameters": [
+                            "m_heat_in",
+                            "m_el_in",
+                            "m_heat_out",
+                            "m_heat_out_secondary"
+                        ]
                     }
                 ]
             },
@@ -980,18 +980,18 @@
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#photovoltaic-plant",
                 "param_categories": [
                     {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_el_out"
-                        ]
-                    },
-                    {
                         "heading": "Profile",
                         "index": 1,
                         "parameters": [
                             "energy_profile_file_path",
                             "scale"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 2,
+                        "parameters": [
+                            "m_el_out"
                         ]
                     }
                 ]
@@ -1003,14 +1003,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#seasonal-thermal-storage-universal-stratified-ground-coupled-thermal-storage",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_heat_in",
-                            "m_heat_out"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -1076,6 +1068,14 @@
                             "top_insulation_overlap_width",
                             "thermal_transmission_overlap"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 5,
+                        "parameters": [
+                            "m_heat_in",
+                            "m_heat_out"
+                        ]
                     }
                 ]
             },
@@ -1086,13 +1086,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#solarthermal-collector",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_heat_out"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -1134,6 +1127,13 @@
                             "wind_speed_profile_file_path",
                             "constant_wind_speed"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
+                        "parameters": [
+                            "m_heat_out"
+                        ]
                     }
                 ]
             },
@@ -1145,18 +1145,18 @@
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#general-storage",
                 "param_categories": [
                     {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "medium"
-                        ]
-                    },
-                    {
                         "heading": "General",
                         "index": 1,
                         "parameters": [
                             "capacity",
                             "initial_load"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 2,
+                        "parameters": [
+                            "medium"
                         ]
                     }
                 ]
@@ -1168,15 +1168,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#thermal-booster-tb",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_el_in",
-                            "m_heat_in",
-                            "m_heat_out"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -1193,6 +1184,15 @@
                             "constant_demand_input_temperature",
                             "demand_input_temperature_profile_file_path"
                         ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 2,
+                        "parameters": [
+                            "m_el_in",
+                            "m_heat_in",
+                            "m_heat_out"
+                        ]
                     }
                 ]
             },
@@ -1203,14 +1203,6 @@
                 "nr_outputs": 1,
                 "documentation_link": "https://quasi-software.readthedocs.io/en/latest/resie_component_parameters/#unified-electric-transformer-inverter-and-rectifier-utir",
                 "param_categories": [
-                    {
-                        "heading": "Media",
-                        "index": 0,
-                        "parameters": [
-                            "m_el_in",
-                            "m_el_out"
-                        ]
-                    },
                     {
                         "heading": "General",
                         "index": 1,
@@ -1227,6 +1219,14 @@
                             "efficiency_el_in",
                             "efficiency_el_out",
                             "nr_discretization_steps"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
+                        "parameters": [
+                            "m_el_in",
+                            "m_el_out"
                         ]
                     }
                 ]
