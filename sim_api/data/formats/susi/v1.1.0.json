@@ -32,9 +32,6 @@
                 "index": 0,
                 "parameters": [
                     "base_path",
-                    "step_info_interval",
-                    "show_detailed_errors",
-                    "fixed_output_precision",
                     "general_logfile_file_path",
                     "balance_warn_logfile_file_path"
                 ]
@@ -122,6 +119,17 @@
                     "output_parameter_study_csv",
                     "parameter_study_csv_path_prefix",
                     "write_parameter_study_csv_continuously"
+                ]
+            },
+            {
+                "heading": "Advanced",
+                "index": 9,
+                "parameters": [
+                    "step_info_interval",
+                    "show_detailed_errors",
+                    "fixed_output_precision",
+                    "enable_plot_downsampling",
+                    "plot_downsampling_max_number_values"
                 ]
             }
         ],
