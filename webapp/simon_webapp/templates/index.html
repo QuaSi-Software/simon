@@ -37,7 +37,6 @@
 
             <span>Current dir: </span>
             <span id="nc-current-dir" data-dirname="">/</span>
-            <button id="upload-input-files" type="button" class="btn btn-primary btn-sm">Upload input files</button>
 
             <div id="nc-file-list-items"></div>
           </div>
@@ -49,9 +48,10 @@
           <p class="element-group">
             <button id="reset-run" type="button" class="btn btn-warning" disabled>Reset run</button>
             <span class="bold">Run ID:</span> <span id="run-id">-</span>
-            <span class="bold">Run status:</span> <span id="run-status">-</span>
             <div>
               <span class="bold">Uploaded files:</span>
+              <br/>
+              <button id="upload-input-files" type="button" class="btn btn-primary btn-sm">Upload all input files</button>
               <ul id="uploaded-files"></ul>
             </div>
 
@@ -59,6 +59,8 @@
               <div class="form-group">
                 <label for="config-file-selection" class="bold">Input file</label>
                 <select id="config-file-selection" name="config_file_selection" class="form-control w-25"></select>
+                <br/>
+                <span class="bold">Run status:</span> <span id="run-status">-</span>
                 <br/>
                 <input id="submit-simulate" class="btn btn-primary" type="submit" value="Simulate">
                 <button id="stop-simulation" class="btn btn-warning" disabled>Stop</button>
