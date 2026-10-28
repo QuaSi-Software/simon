@@ -55,16 +55,6 @@ function format_nc_file_path(file_path, selector, decode) {
     return decode ? decodeURI(path) : path
 }
 
-function add_to_query_list(query_name, response, result) {
-    let item = '<div class="query-result card"><div class="card-body">'
-            + '<span>Request: ' + query_name + '</span><br/>'
-            + '<span>Code: ' + (response.status ? response.status : 'Error') + '</span><br/>'
-            + '<span>Message: ' + (result["message"] ? result["message"] : '') + '</span><br/>'
-            + '<span>Error: ' + (result["error"] ? result["error"] : '') + '</span>'
-            + '</div></div>'
-    by_id('query-list').innerHTML = item + by_id('query-list').innerHTML
-}
-
 function clear_errors() {
     by_id("error-list").classList.add("hidden")
     by_id("error-list").innerHTML = ""
@@ -242,7 +232,6 @@ async function fetch_results(run_id) {
             headers: {"Content-Type": "application/json"}
         })
         let result = response.status >= 400 ? await response.json() : {}
-        add_to_query_list('fetch_results', response, result)
 
         if (response.status < 400) {
             let obj = await create_results_element(file.element, response)
@@ -269,7 +258,6 @@ async function check_status(run_id) {
         {method: 'GET'}
     )
     let result = await response.json()
-    add_to_query_list('run_status', response, result)
 
     let old_status = sessionStorage.getItem("run_status")
     let new_status = result["code"]
@@ -317,7 +305,6 @@ async function get_run_id() {
         API_ROOT + "get_run_id"
     )
     let data = await response.json()
-    add_to_query_list("get_run_id", response, data)
     sessionStorage.setItem("run_id", data["run_id"])
     by_id("reset-run").removeAttribute("disabled")
     return data["run_id"]
@@ -406,7 +393,6 @@ async function upload_file(item) {
             }
         }
     )
-    add_to_query_list("upload_file_to_sim_run", response, {})
 
     if (response.status < 300) {
         add_file_to_uploaded_files(item.dataset.filename)
@@ -443,7 +429,6 @@ async function fetch_nc_file_list() {
         }
     )
     let files = await response.json()
-    add_to_query_list("get_files", response, files)
 
     let items = []
     files.sort((a, b) => {
@@ -505,7 +490,6 @@ async function start_simulation_from_form(form_element) {
         body: form_data
     })
     result = await response.json()
-    add_to_query_list("start_simulation_from_form", response, result)
 
     if (response.status >= 400) {
         set_errors("Error: " + result["error"])
