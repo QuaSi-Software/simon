@@ -107,7 +107,7 @@ function reset_run() {
 
 function start_polling() {
     stop_polling()
-    run_status["interval_id"] = setInterval(check_status, 10 * 1000, run_status["run_id"])
+    run_status["interval_id"] = setInterval(check_status, 3 * 1000, run_status["run_id"])
 }
 
 function stop_polling() {
@@ -118,7 +118,8 @@ function stop_polling() {
 
 function stop_simulation() {
     stop_polling()
-    by_id("run-status").innerText = "stopped"
+    by_id("run-status").innerText = "🛑 stopped"
+    flash_highlight_element(by_id("run-status"))
     by_id("submit-simulate").removeAttribute("disabled")
     by_id("stop-simulation").setAttribute("disabled", "")
 }
@@ -270,14 +271,27 @@ async function check_status(run_id) {
     let result = await response.json()
     add_to_query_list('run_status', response, result)
 
-    run_status["status"] = result["code"]
-    by_id('run-status').innerText = run_status["status"]
-    sessionStorage.setItem("run_status", run_status["status"])
+    let old_status = sessionStorage.getItem("run_status")
+    let new_status = result["code"]
+    let status_element = by_id('run-status')
 
-    if (run_status["status"] === "finished") {
+    if (old_status != "running" && new_status === "running") {
+        status_element.innerText = "🏃 running"
+        flash_highlight_element(status_element)
+    } else if (new_status === "finished") {
         stop_polling()
+        status_element.innerText = "📑 fetching results"
+        flash_highlight_element(status_element)
         await fetch_results(run_id)
+        status_element.innerText = "🏁 finished"
+        flash_highlight_element(status_element)
+    } else if (new_status != "running") {
+        status_element.innerText = new_status
+        flash_highlight_element(status_element)
     }
+
+    run_status["status"] = new_status
+    sessionStorage.setItem("run_status", new_status)
 }
 
 async function switch_directory(item) {
@@ -309,6 +323,13 @@ async function get_run_id() {
     return data["run_id"]
 }
 
+function flash_highlight_element(element) {
+    element.classList.add("uploaded-file-flash")
+    setTimeout(() => {
+        element.classList.remove("uploaded-file-flash")
+    }, 1000)
+}
+
 function add_file_to_uploaded_files(file) {
     let normalized_file = file.trim()
     let already_uploaded = by_cl("uploaded-file").some(item =>
@@ -321,10 +342,7 @@ function add_file_to_uploaded_files(file) {
             item.dataset.filename === normalized_file
         )
         if (existing_element) {
-            existing_element.classList.add("uploaded-file-flash")
-            setTimeout(() => {
-                existing_element.classList.remove("uploaded-file-flash")
-            }, 1000)
+            flash_highlight_element(existing_element)
         }
         return
     }
@@ -373,7 +391,8 @@ async function upload_file(item) {
     if (run_status["run_id"] === undefined) {
         run_status["run_id"] = await get_run_id()
         by_id('run-id').innerText = run_status["run_id"]
-        by_id('run-status').innerText = "new"
+        by_id('run-status').innerText = "🆕 new"
+        flash_highlight_element(by_id("run-status"))
         sessionStorage.setItem("run_status", "new")
     }
 
@@ -497,7 +516,8 @@ async function start_simulation_from_form(form_element) {
     start_polling()
     run_status["status"] = "waiting"
     sessionStorage.setItem("run_status", "waiting")
-    by_id('run-status').innerText = "waiting"
+    by_id('run-status').innerText = "⌛ waiting"
+    flash_highlight_element(by_id("run-status"))
     by_id("submit-simulate").setAttribute("disabled", "")
     by_id("stop-simulation").removeAttribute("disabled")
 }
