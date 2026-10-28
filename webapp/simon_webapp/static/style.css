@@ -20,6 +20,10 @@
     visibility: hidden;
 }
 
+.auto-width {
+    width: auto;
+}
+
 .bold {
     font-weight: bold;
 }
