@@ -371,21 +371,37 @@ function add_file_to_uploaded_files(file) {
         )
         if (existing_element) {
             flash_highlight_element(existing_element)
+            existing_element.parentElement.childNodes[0].dataset.ref_time = Date.now()
         }
         return
     }
 
     // add newly uploaded file to file list
-    let new_element = document.createElement("li")
-    new_element.className = "uploaded-file"
-    new_element.dataset.filename = normalized_file
-    new_element.innerHTML = "/" + format_nc_file_path(normalized_file, "full", true)
-    new_element.classList.add("uploaded-file-flash")
+    let list_element = document.createElement("li")
+    list_element.classList.add("uploaded-file-flash")
 
-    by_id("uploaded-files").appendChild(new_element)
+    let timer = document.createElement("span")
+    timer.dataset.ref_time = Date.now()
+    timer.classList.add("passed-timer")
+    timer.classList.add("uploaded-file-timer")
+
+    let spacer = document.createElement("span")
+    spacer.innerText = "-"
+    spacer.classList.add("uploaded-file-spacer")
+
+    let text_element = document.createElement("span")
+    text_element.className = "uploaded-file"
+    text_element.dataset.filename = normalized_file
+    text_element.innerHTML = "/" + format_nc_file_path(normalized_file, "full", true)
+
+    list_element.appendChild(timer)
+    list_element.appendChild(spacer)
+    list_element.appendChild(text_element)
+
+    by_id("uploaded-files").appendChild(list_element)
 
     setTimeout(() => {
-        new_element.classList.remove("uploaded-file-flash")
+        list_element.classList.remove("uploaded-file-flash")
     }, 1000)
 
     // for possible input files (JSON), add to the input file selection

@@ -107,6 +107,26 @@
     list-style: square;
 }
 
+.uploaded-file-timer {
+    width: 85px;
+    display: inline-block;
+}
+
+.uploaded-file-spacer {
+    width: 10px;
+    margin-right: 10px;
+    text-align: center;
+    display: inline-block;
+}
+
+.uploaded-file {
+    display: inline-block;
+}
+
+.uploaded-file-flash {
+    animation: flash 1s ease-in-out;
+}
+
 #run-status {
     margin-right: 20px;
 }
@@ -116,9 +136,6 @@
     50% { background-color: #ffff99; }
 }
 
-.uploaded-file-flash {
-    animation: flash 1s ease-in-out;
-}
 
 label[for="config-file-selection"] {
     display: inline;
