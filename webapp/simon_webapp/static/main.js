@@ -15,6 +15,26 @@ function by_cl(class_name) {
     return Array.from(document.getElementsByClassName(class_name))
 }
 
+function update_passed_timers() {
+    let now = Date.now()
+    by_cl("passed-timer").forEach(element => {
+        let ref_time = Number(element.dataset.ref_time)
+        if (Number.isFinite(ref_time) && element.dataset.ref_time !== "") {
+            let seconds = Math.floor((now - ref_time) / 1000)
+            if (seconds >= 300) {
+                let minutes = Math.floor(seconds / 60)
+                if (minutes >= 60) {
+                    element.textContent = "> 1h ago"
+                } else {
+                    element.textContent = minutes + " min ago"
+                }
+            } else {
+                element.textContent = seconds + " s ago"
+            }
+        }
+    })
+}
+
 function last(array) {
     return array[array.length-1]
 }
@@ -451,6 +471,9 @@ async function fetch_nc_file_list() {
     )
     let files = await response.json()
 
+    by_id('nc-last-fetched').dataset.ref_time = Date.now()
+    update_passed_timers()
+
     let items = []
     files.sort((a, b) => {
         if (a.is_dir !== b.is_dir) return a.is_dir ? -1 : 1
@@ -528,6 +551,8 @@ async function start_simulation_from_form(form_element) {
 }
 
 function main() {
+    setInterval(update_passed_timers, 1000)
+
     // attaching listeners to elements that exist when the JS is being executed
     document.getElementById('parameters-form').onsubmit = async function(event) {
         event.preventDefault()
@@ -535,6 +560,9 @@ function main() {
     }
     document.getElementById("stop-simulation").onclick = async function(event) {
         stop_simulation()
+    }
+    document.getElementById("nc-fetch-file-list").onclick = async function(event) {
+        fetch_nc_file_list()
     }
     document.getElementById("fetch-results").onclick = async function(event) {
         fetch_results(by_id('run-id').innerText)
