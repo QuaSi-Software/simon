@@ -8,6 +8,10 @@
     opacity: var(--bs-btn-disabled-opacity) !important;
 }
 
+.nav-link {
+    border-color: #00000017 !important;
+}
+
 .w-25 {
     width: 25%;
 }
@@ -17,6 +21,10 @@
 }
 
 .hidden {
+    display: none;
+}
+
+.hidden-keep-spacing {
     visibility: hidden;
 }
 
@@ -33,12 +41,12 @@
 }
 
 .tab-pane {
-  max-height: 800px;
-  overflow-y: scroll;
-  width: 100%;
-  overflow-x: scroll;
-  background-color: #ececec;
-  padding: 5px;
+    max-height: 800px;
+    overflow-y: scroll;
+    width: 100%;
+    overflow-x: scroll;
+    background-color: #ececec;
+    padding: 5px;
 }
 
 #nc-file-list {
@@ -89,7 +97,7 @@
 }
 
 #uploaded-files {
-    list-style: none;
+    list-style: square;
 }
 
 #run-status {
@@ -107,7 +115,7 @@
 
 label[for="config-file-selection"] {
     display: inline;
-    margin: 0.375rem 0.75rem;
+    margin: 0.375rem 0.75rem 0.375rem 0;
     font-size: 1rem;
     line-height: 1.5;
 }
@@ -128,7 +136,8 @@ label[for="config-file-selection"] {
 }
 
 #fetch-results {
-    width: 150px;
+    width: 200px;
+    margin-left: calc(var(--bs-gutter-x) * .5); /* from bootstrap, is overriden by .btn */
 }
 
 #error-label {
@@ -139,4 +148,8 @@ label[for="config-file-selection"] {
 #error-list {
     color: red;
     font-weight: bold;
+}
+
+#results-tabs-control {
+    padding-left: calc(var(--bs-gutter-x) * .5); /* from bootstrap, is overridden by .nav */
 }

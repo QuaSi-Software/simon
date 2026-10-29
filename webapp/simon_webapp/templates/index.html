@@ -58,7 +58,7 @@
             <form id="parameters-form" action="" method="POST" enctype="multipart/form-data">
               <div class="form-group">
                 <label for="config-file-selection" class="bold">Input file</label>
-                <select id="config-file-selection" name="config_file_selection" class="form-control w-25"></select>
+                <select id="config-file-selection" name="config_file_selection" class="form-control form-select w-75"></select>
                 <br/>
                 <span class="bold">Run status:</span> <span id="run-status">-</span>
                 <br/>
@@ -72,7 +72,7 @@
 
       <div class="row">
         <h4>Simulation results</h4>
-        <button id="fetch-results" type="button" class="btn btn-secondary" disabled>Fetch results</button>
+        <button id="fetch-results" type="button" class="btn btn-secondary" disabled>Load existing results</button>
         <p class="element-group">
           <span id="error-label" class="hidden">Errors</span>
           <ul id="error-list" class="hidden"></ul>
