@@ -153,3 +153,10 @@ label[for="config-file-selection"] {
 #results-tabs-control {
     padding-left: calc(var(--bs-gutter-x) * .5); /* from bootstrap, is overridden by .nav */
 }
+
+.results-open-in-new-tab {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #dfdfdf;
+}

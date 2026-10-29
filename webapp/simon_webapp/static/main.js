@@ -118,31 +118,44 @@ async function create_results_element(type, response) {
     if (type == "img") {
         let blob = await response.blob();
         let img = document.createElement('img');
-        img.src = URL.createObjectURL(blob);
+        let url = URL.createObjectURL(blob);
+        img.src = url
         img.alt = 'Simulation Result';
         img.width = 900;
         img.height = 533;
-        return img
+        return [img, url]
+
     } else if (type == "p") {
+        let text = await response.text()
         let obj = document.createElement('p')
-        obj.innerText = await response.text()
-        return obj
+        obj.innerText = text
+        let blob = new Blob([text], {type: 'text/plain'});
+        let url = URL.createObjectURL(blob);
+        return [obj, url]
+
     } else if (type == "table") {
         let csv = await response.text()
         let results = Papa.parse(csv, CSV_CONFIG)
-        return create_csv_table(results)
+        let blob = new Blob([csv], {type: 'text/csv'})
+        let url = URL.createObjectURL(blob)
+        return [create_csv_table(results), url]
+
     } else if (type == "html") {
+        let text = await response.text()
         let iframe = document.createElement('iframe')
         iframe.className = 'w-100 border-0'
         iframe.title = 'Simulation result'
         iframe.setAttribute('sandbox', 'allow-scripts allow-forms')
         iframe.style.height = '800px'
-        iframe.srcdoc = await response.text()
-        return iframe
+        iframe.srcdoc = text
+        let blob = new Blob([text], {type: 'text/html'})
+        let url = URL.createObjectURL(blob)
+        return [iframe, url]
+
     } else {
         let obj = document.createElement('span')
         obj.innerText = "Could not render unknown file type"
-        return obj
+        return [obj, ""]
     }
 }
 
@@ -234,9 +247,17 @@ async function fetch_results(run_id) {
         let result = response.status >= 400 ? await response.json() : {}
 
         if (response.status < 400) {
-            let obj = await create_results_element(file.element, response)
+            let [obj, url] = await create_results_element(file.element, response)
+
+            let link_obj = document.createElement('a')
+            link_obj.href = url
+            link_obj.target = "_blank"
+            link_obj.innerText = "Open file in new tab"
+            link_obj.classList.add("results-open-in-new-tab")
+
             let results_div = by_id(file.tab_name);
             results_div.innerHTML = '';
+            results_div.appendChild(link_obj);
             results_div.appendChild(obj);
             results_div.classList.remove("hidden")
             let results_button = by_id(file.tab_name + "-control")
