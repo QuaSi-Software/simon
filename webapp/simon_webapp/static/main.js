@@ -124,12 +124,18 @@ function reset_run() {
 
 function start_polling() {
     stop_polling()
-    run_status["interval_id"] = setInterval(check_status, 3 * 1000, run_status["run_id"])
+    // set callbacks with intervals that do not coincide (often), because of a weird
+    // heisenbug that seems to occur when two intervals are executed at the same time
+    run_status["check_interval_id"] = setInterval(check_status, 3.193 * 1000, run_status["run_id"])
+    run_status["log_interval_id"] = setInterval(fetch_general_log, 9.753 * 1000, run_status["run_id"])
 }
 
 function stop_polling() {
-    if (run_status["interval_id"]) {
-        clearInterval(run_status["interval_id"]);
+    if (run_status["check_interval_id"]) {
+        clearInterval(run_status["check_interval_id"]);
+    }
+    if (run_status["log_interval_id"]) {
+        clearInterval(run_status["log_interval_id"]);
     }
 }
 
@@ -253,25 +259,20 @@ function compare_csv_values(left, right) {
     return left_text.localeCompare(right_text, undefined, {numeric: true, sensitivity: 'base'})
 }
 
-async function fetch_results(run_id) {
-    by_id("fetch-results").setAttribute("disabled", "")
-
+async function fetch_results(run_id, file_list, sync_to_nc) {
     let element = by_id("config-file-selection")
     let input_file_dir = element.options[element.selectedIndex].dataset.dirname
-
-    let response = await fetch(API_ROOT + 'results_file_list/' + run_id)
-    let file_list = await response.json()
 
     for (const file of file_list) {
         let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {
             method: 'POST',
             body: JSON.stringify({
                 "filename": file.filename,
-                "destination_dir": input_file_dir
+                "destination_dir": input_file_dir,
+                "sync_to_nc": sync_to_nc
             }),
             headers: {"Content-Type": "application/json"}
         })
-        let result = response.status >= 400 ? await response.json() : {}
 
         if (response.status < 400) {
             let [obj, url] = await create_results_element(file.element, response)
@@ -291,13 +292,42 @@ async function fetch_results(run_id) {
             results_button.parentElement.classList.remove("hidden")
         }
     }
+}
+
+async function fetch_all_results(run_id) {
+    by_id("fetch-results").setAttribute("disabled", "")
+
+    let response = await fetch(API_ROOT + 'results_file_list/' + run_id)
+    let file_list = await response.json()
+    let results = await fetch_results(run_id, file_list, true)
 
     by_id("fetch-results").removeAttribute("disabled")
     by_id("results-tabs-control").classList.remove("hidden")
     by_id("results-tabs-container").classList.remove("hidden")
     by_id("submit-simulate").removeAttribute("disabled")
     by_id("stop-simulation").setAttribute("disabled", "")
-    by_id("fetch-results").removeAttribute("disabled")
+    by_id("genlog-tab").classList.remove("hidden")
+    by_id("genlog-tab").classList.add("show")
+    by_id("genlog-tab").classList.add("active")
+
+    return results
+}
+
+async function fetch_general_log(run_id) {
+    let file_list = [{
+        "filename": "logfile_general.log",
+        "tab_name": "genlog-tab",
+        "tab_name_full": "General log",
+        "element": "p"
+    }]
+    let results = await fetch_results(run_id, file_list, false)
+
+    by_id("results-tabs-control").classList.remove("hidden")
+    by_id("results-tabs-container").classList.remove("hidden")
+    by_id("genlog-tab").classList.add("active")
+    by_id("genlog-tab").classList.add("show")
+
+    return results
 }
 
 async function check_status(run_id) {
@@ -318,7 +348,7 @@ async function check_status(run_id) {
         stop_polling()
         status_element.innerText = "📑 fetching results"
         flash_highlight_element(status_element)
-        await fetch_results(run_id)
+        await fetch_all_results(run_id)
         status_element.innerText = "🏁 finished"
         flash_highlight_element(status_element)
     } else if (new_status != "running") {
@@ -617,7 +647,7 @@ function main() {
         fetch_nc_file_list()
     }
     document.getElementById("fetch-results").onclick = async function(event) {
-        fetch_results(by_id('run-id').innerText)
+        fetch_all_results(by_id('run-id').innerText)
     }
     document.getElementById("reset-run").onclick = async function(event) {
         reset_run()
