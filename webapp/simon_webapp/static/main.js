@@ -497,6 +497,7 @@ async function fetch_nc_file_list() {
     }).forEach(item => {
         item.name = item.name.startsWith("/") ? except_first(item.name) : item.name
         item.name = last(item.name) == "/" ? except_last(item.name) : item.name
+        item.modified = item.modified ? item.modified * 1000 : "" // timestamp in ms
         if (item.name != "" && item.name != curr_dir) {
             let prefix = item.is_dir ? "|\>&nbsp;" : "|&nbsp;&nbsp;"
             items.push(
@@ -504,8 +505,10 @@ async function fetch_nc_file_list() {
                 + "class='" + (item.is_dir ? "nc-file-list-dir" : "nc-file-list-file") + "' "
                 + "data-" + (item.is_dir ? "dirname" : "filename") + "='"
                 + format_nc_file_path(item.name, "full", false) + "' "
-                + ">"
-                + prefix + format_nc_file_path(item.name, "filename", true)
+                + ">" + prefix
+                + "<span class='passed-timer' data-ref_time='" + item.modified
+                + "'></span>&nbsp;&nbsp;|&nbsp;&nbsp;"
+                + format_nc_file_path(item.name, "filename", true)
                 + "</li>"
             )
         }
