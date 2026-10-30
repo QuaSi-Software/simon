@@ -96,7 +96,14 @@ function add_error(message) {
 function clear_results() {
     by_id("results-tabs-control").classList.add("hidden")
     by_id("results-tabs-container").classList.add("hidden")
-    by_id("genlog-tab").innerHTML = ""
+    by_cl("tab-pane").forEach(tab => {
+        tab.innerHTML = ""
+        tab.classList.remove("active")
+        tab.classList.remove("show")
+    })
+    by_cl("nav-item").forEach(item => {
+        item.classList.add("hidden")
+    })
 }
 
 function reset_run() {

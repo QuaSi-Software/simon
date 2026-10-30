@@ -93,7 +93,7 @@
 
           <div class="tab-content hidden" id="results-tabs-container">
             {% for res in result_files %}
-            <div class="tab-pane fade hidden show {% if loop.first %}active{% endif %}"
+            <div class="tab-pane fade hidden {% if loop.first %}active{% endif %}"
               id="{{res.tab_name}}" role="tabpanel" aria-labelledby="{{res.tab_name}}-control">
             </div>
             {% endfor %}
