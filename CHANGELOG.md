@@ -4,8 +4,24 @@ Lists changes to the code by version.
 ## SIMON Webapp
 The SIMON webapp provides the user interface for running simulations and uses the simulation API in the background.
 
+### Version 0.5.1
+* Add date of last modification to result of NC file list endpoint
+* Make syncing to NextCloud in endpoint fetch_results optional.
+* Improvements to the frontend and UX:
+  * Reduce width of NextCloud login and logout buttons to actual length of text, making it less likely to be clicked by accident
+  * Move button for uploading input files to list of uploaded files
+  * Improve display of run status, move it to simulation control buttons and make changes flash the display briefly for better visibility
+  * Remove debug query list output as it is redundant with browser developer tools
+  * Improve styling of form elements to be more easily recognised and used
+  * Align elements better
+  * Add 'open in new tab' button to top of results tabs
+  * Add fetch button to NC file list and add timer when list was last fetched
+  * Add display of how long ago a file in the NC file list was last modified
+  * Add indicator to uploaded file list if the upload is newer than the last modification of the corresponding file in the NC file list
+  * Implement intermediary fetching of the general log file while the simulation is still running
+
 ### Version 0.5.0
-* Add outputs for parameter study, sensibilits and optimisation to output handling
+* Add outputs for parameter study, sensibility and optimisation to output handling
 * Improvements to the frontend and UX:
   * Make entries in the uploaded files list flash when uploaded
   * Hide results tabs that don't have output for a given simulation run
@@ -73,6 +89,11 @@ The SIMON webapp provides the user interface for running simulations and uses th
 
 ## Simulation API
 The simulation API is used by the SIMON webapp internally and is only partially exposed outside of it. As its code is in the same repo it has its own changelog and versions for the python package. Changes that only affect the simulation API without changing any of the SIMON webapp code are not marked as changes in the webapp changelog and are listed here.
+
+### Version 0.4.1
+* Update to ReSiE v1.1.0
+* Make exceptions uncaught by ReSiE appear in the error log of a run
+  * Previously these only appeared in the global log, which is not visible to the user, making debugging a failed simulation much harder
 
 ### Version 0.4.0
 * Add endpoint for getting a list of existing output files for a run
