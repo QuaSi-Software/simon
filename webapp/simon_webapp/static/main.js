@@ -380,22 +380,17 @@ function add_file_to_uploaded_files(file) {
     let list_element = document.createElement("li")
     list_element.classList.add("uploaded-file-flash")
 
-    let timer = document.createElement("span")
-    timer.dataset.ref_time = Date.now()
-    timer.classList.add("passed-timer")
-    timer.classList.add("uploaded-file-timer")
-
-    let spacer = document.createElement("span")
-    spacer.innerText = "-"
-    spacer.classList.add("uploaded-file-spacer")
+    let indicator = document.createElement("span")
+    indicator.dataset.ref_time = Date.now()
+    indicator.classList.add("uploaded-file-indicator")
+    indicator.innerText = "⌛"
 
     let text_element = document.createElement("span")
     text_element.className = "uploaded-file"
     text_element.dataset.filename = normalized_file
     text_element.innerHTML = "/" + format_nc_file_path(normalized_file, "full", true)
 
-    list_element.appendChild(timer)
-    list_element.appendChild(spacer)
+    list_element.appendChild(indicator)
     list_element.appendChild(text_element)
 
     by_id("uploaded-files").appendChild(list_element)
@@ -454,6 +449,7 @@ async function upload_file(item) {
     if (response.status < 300) {
         add_file_to_uploaded_files(item.dataset.filename)
         add_uploaded_file_to_session_storage(item.dataset.filename)
+        update_uploaded_files_indicators()
     } else {
         let result = await response.json()
         set_errors("File upload failed :" + result["error"])
@@ -468,6 +464,35 @@ async function upload_input_files() {
     for (const file of prf_files) {
         await upload_file(file)
     }
+}
+
+function update_uploaded_files_indicators() {
+    by_cl("uploaded-file").forEach(item => {
+        let indicator = item.parentElement.children[0]
+        let symbol = "⌛"
+        let nc_file = null
+        by_cl("nc-file-list-file").forEach(nc_item => {
+            if (nc_item.dataset.filename == item.dataset.filename) {
+                nc_file = nc_item
+            }
+        })
+        if (nc_file != null) {
+            let timer = null
+            for (const child of nc_file.children) {
+                if (child.classList.contains("passed-timer")) {
+                    timer = child
+                }
+            }
+            if (timer != null) {
+                if (timer.dataset.ref_time >= indicator.dataset.ref_time) {
+                    symbol = "🔄️"
+                } else {
+                    symbol = "✅"
+                }
+            }
+        }
+        indicator.innerText = symbol
+    })
 }
 
 async function fetch_nc_file_list() {
@@ -534,6 +559,7 @@ async function fetch_nc_file_list() {
         }
     })
 
+    update_uploaded_files_indicators()
     by_id("nc-file-list-blocker").classList.add("hidden")
 }
 
@@ -621,6 +647,7 @@ function main() {
                 file_list.forEach(file => {
                     add_file_to_uploaded_files(file)
                 })
+                update_uploaded_files_indicators()
             }
 
             // fetch content for the user's NC root dir, but only if the user is logged in.

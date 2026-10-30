@@ -103,15 +103,8 @@
     list-style: square;
 }
 
-.uploaded-file-timer {
-    width: 85px;
-    display: inline-block;
-}
-
-.uploaded-file-spacer {
-    width: 10px;
-    margin-right: 10px;
-    text-align: center;
+.uploaded-file-indicator {
+    width: 30px;
     display: inline-block;
 }
 
