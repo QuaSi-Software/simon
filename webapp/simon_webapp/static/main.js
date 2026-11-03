@@ -675,6 +675,7 @@ function main() {
             if (session_run_status !== null && session_run_status !== undefined) {
                 run_status["status"] = session_run_status
                 by_id('run-status').innerText = session_run_status
+                start_polling()
             }
 
             // load uploaded file list from session storage
