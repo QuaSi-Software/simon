@@ -342,7 +342,10 @@ async function check_status(run_id) {
     let status_element = by_id('run-status')
 
     if (old_status != "running" && new_status === "running") {
-        status_element.innerText = "🏃 running"
+        status_element,innerText = ''
+        status_element.innerHTML = '<div class="spinner-border" role="status">'
+            + '<span class="sr-only"></span></div>'
+            + '<span class="bigger-font">&nbsp;running</span>'
         flash_highlight_element(status_element)
     } else if (new_status === "finished") {
         stop_polling()

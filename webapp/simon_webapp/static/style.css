@@ -36,6 +36,10 @@
     font-weight: bold;
 }
 
+.bigger-font {
+    font-size: 20px;
+}
+
 .row {
     margin-top: 1rem;
 }
@@ -117,7 +121,7 @@
 }
 
 #run-status {
-    margin-right: 20px;
+    display: inline;
 }
 
 @keyframes flash {
