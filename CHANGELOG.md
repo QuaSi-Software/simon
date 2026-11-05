@@ -16,6 +16,7 @@ The SIMON webapp provides the user interface for running simulations and uses th
   * Align elements better
   * Add 'open in new tab' button to top of results tabs
   * Add fetch button to NC file list and add timer when list was last fetched
+  * Implement automatic update of NC file list while the user is active on the tab
   * Add display of how long ago a file in the NC file list was last modified
   * Add indicator to uploaded file list if the upload is newer than the last modification of the corresponding file in the NC file list
   * Implement intermediary fetching of the general log file while the simulation is still running
