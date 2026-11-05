@@ -307,8 +307,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 3,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 4,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 5,
                         "parameters": [
                             "m_el_in",
                             "m_el_out",
@@ -358,8 +385,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 2,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 3,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 4,
                         "parameters": [
                             "medium"
                         ]
@@ -410,8 +464,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 2,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 3,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 4,
                         "parameters": [
                             "m_fuel_in",
                             "m_el_out",
@@ -462,8 +543,41 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 3,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "water_demand_ratio",
+                            "water_price",
+                            "water_price_change_rate_per_year",
+                            "oxygen_production_ratio",
+                            "oxygen_price",
+                            "oxygen_price_change_rate_per_year",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 4,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 5,
                         "parameters": [
                             "m_el_in",
                             "m_h2_out",
@@ -504,8 +618,49 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 2,
+                        "parameters": [
+                            "constant_energy_price",
+                            "energy_price_profile_file_path",
+                            "energy_price_profile_scale",
+                            "energy_price_change_rate_per_year",
+                            "constant_unmet_energy_price",
+                            "unmet_energy_price_profile_file_path",
+                            "unmet_energy_price_profile_scale",
+                            "unmet_energy_price_change_rate_per_year",
+                            "base_cost_per_year",
+                            "base_cost_change_rate_per_year",
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 3,
+                        "parameters": [
+                            "constant_energy_emissions_credits",
+                            "energy_emissions_credits_profile_file_path",
+                            "energy_emissions_credits_profile_scale",
+                            "energy_emissions_credits_change_rate_per_year",
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 4,
                         "parameters": [
                             "medium"
                         ]
@@ -541,8 +696,49 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 2,
+                        "parameters": [
+                            "constant_energy_price",
+                            "energy_price_profile_file_path",
+                            "energy_price_profile_scale",
+                            "energy_price_change_rate_per_year",
+                            "constant_unmet_energy_price",
+                            "unmet_energy_price_profile_file_path",
+                            "unmet_energy_price_profile_scale",
+                            "unmet_energy_price_change_rate_per_year",
+                            "base_cost_per_year",
+                            "base_cost_change_rate_per_year",
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 3,
+                        "parameters": [
+                            "constant_energy_emissions",
+                            "energy_emissions_profile_file_path",
+                            "energy_emissions_profile_scale",
+                            "energy_emissions_change_rate_per_year",
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 4,
                         "parameters": [
                             "medium"
                         ]
@@ -569,8 +765,45 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
+                        "index": 1,
+                        "parameters": [
+                            "constant_energy_price",
+                            "energy_price_profile_file_path",
+                            "energy_price_profile_scale",
+                            "energy_price_change_rate_per_year",
+                            "base_cost_per_year",
+                            "base_cost_change_rate_per_year",
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
                         "index": 2,
+                        "parameters": [
+                            "constant_energy_emissions_credits",
+                            "energy_emissions_credits_profile_file_path",
+                            "energy_emissions_credits_profile_scale",
+                            "energy_emissions_credits_change_rate_per_year",
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
                         "parameters": [
                             "medium"
                         ]
@@ -597,8 +830,45 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
+                        "index": 1,
+                        "parameters": [
+                            "constant_energy_price",
+                            "energy_price_profile_file_path",
+                            "energy_price_profile_scale",
+                            "energy_price_change_rate_per_year",
+                            "base_cost_per_year",
+                            "base_cost_change_rate_per_year",
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
                         "index": 2,
+                        "parameters": [
+                            "constant_energy_emissions",
+                            "energy_emissions_profile_file_path",
+                            "energy_emissions_profile_scale",
+                            "energy_emissions_change_rate_per_year",
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
                         "parameters": [
                             "medium"
                         ]
@@ -632,8 +902,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 2,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 3,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 4,
                         "parameters": [
                             "m_fuel_in",
                             "m_heat_out"
@@ -671,8 +968,45 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 2,
+                        "parameters": [
+                            "constant_energy_price",
+                            "energy_price_profile_file_path",
+                            "energy_price_profile_scale",
+                            "energy_price_change_rate_per_year",
+                            "base_cost_per_year",
+                            "base_cost_change_rate_per_year",
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 3,
+                        "parameters": [
+                            "constant_energy_emissions",
+                            "energy_emissions_profile_file_path",
+                            "energy_emissions_profile_scale",
+                            "energy_emissions_change_rate_per_year",
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 4,
                         "parameters": [
                             "medium"
                         ]
@@ -766,8 +1100,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 5,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 6,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 7,
                         "parameters": [
                             "m_heat_in",
                             "m_heat_out"
@@ -845,8 +1206,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 4,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 5,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 6,
                         "parameters": [
                             "m_heat_in",
                             "m_heat_out"
@@ -871,8 +1259,45 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 1,
+                        "parameters": [
+                            "constant_energy_price",
+                            "energy_price_profile_file_path",
+                            "energy_price_profile_scale",
+                            "energy_price_change_rate_per_year",
+                            "base_cost_per_year",
+                            "base_cost_change_rate_per_year",
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 2,
+                        "parameters": [
+                            "constant_energy_emissions",
+                            "energy_emissions_profile_file_path",
+                            "energy_emissions_profile_scale",
+                            "energy_emissions_change_rate_per_year",
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
                         "parameters": [
                             "medium"
                         ]
@@ -896,8 +1321,45 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 1,
+                        "parameters": [
+                            "constant_energy_price",
+                            "energy_price_profile_file_path",
+                            "energy_price_profile_scale",
+                            "energy_price_change_rate_per_year",
+                            "base_cost_per_year",
+                            "base_cost_change_rate_per_year",
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 2,
+                        "parameters": [
+                            "constant_energy_emissions_credits",
+                            "energy_emissions_credits_profile_file_path",
+                            "energy_emissions_credits_profile_scale",
+                            "energy_emissions_credits_change_rate_per_year",
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
                         "parameters": [
                             "medium"
                         ]
@@ -961,8 +1423,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 4,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 5,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 6,
                         "parameters": [
                             "m_heat_in",
                             "m_el_in",
@@ -988,8 +1477,49 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 1,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "constant_energy_price",
+                            "energy_price_profile_file_path",
+                            "energy_price_profile_scale",
+                            "energy_price_change_rate_per_year",
+                            "constant_unmet_energy_price",
+                            "unmet_energy_price_profile_file_path",
+                            "unmet_energy_price_profile_scale",
+                            "unmet_energy_price_change_rate_per_year",
+                            "base_cost_per_year",
+                            "base_cost_change_rate_per_year",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 2,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years",
+                            "constant_energy_emissions",
+                            "energy_emissions_profile_file_path",
+                            "energy_emissions_profile_scale",
+                            "energy_emissions_change_rate_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
                         "parameters": [
                             "m_el_out"
                         ]
@@ -1070,8 +1600,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 4,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 5,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 6,
                         "parameters": [
                             "m_heat_in",
                             "m_heat_out"
@@ -1129,8 +1686,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 2,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 3,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 4,
                         "parameters": [
                             "m_heat_out"
                         ]
@@ -1153,8 +1737,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 1,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 2,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
                         "parameters": [
                             "medium"
                         ]
@@ -1186,8 +1797,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 1,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 2,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 3,
                         "parameters": [
                             "m_el_in",
                             "m_heat_in",
@@ -1222,8 +1860,35 @@
                         ]
                     },
                     {
-                        "heading": "Media",
+                        "heading": "Economic",
                         "index": 2,
+                        "parameters": [
+                            "capex_specific",
+                            "capex_specific_scale",
+                            "capex_price_change_rate_per_year",
+                            "lifetime_years",
+                            "subsidy_rate_of_capex",
+                            "subsidy_max",
+                            "maintenance_inspection_rate_per_year",
+                            "maintenance_inspection_price_change_rate_per_year",
+                            "repair_rate_per_year",
+                            "repair_price_change_rate_per_year",
+                            "operational_labour_hours_per_year"
+                        ]
+                    },
+                    {
+                        "heading": "Emissions",
+                        "index": 3,
+                        "parameters": [
+                            "embodied_emissions_specific",
+                            "embodied_emissions_specific_scale",
+                            "embodied_emissions_change_rate_per_year",
+                            "lifetime_years"
+                        ]
+                    },
+                    {
+                        "heading": "Media",
+                        "index": 4,
                         "parameters": [
                             "m_el_in",
                             "m_el_out"
