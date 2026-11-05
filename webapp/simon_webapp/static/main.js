@@ -110,6 +110,9 @@ function clear_results() {
 
 function reset_run() {
     stop_simulation()
+    if (run_status["nc_polling_interval"]) {
+        clearInterval(run_status["nc_polling_interval"])
+    }
     clear_results()
     clear_errors()
     sessionStorage.removeItem("run_id")
@@ -121,7 +124,9 @@ function reset_run() {
     by_id("run-status").innerHTML = "-"
     by_id("reset-run").setAttribute("disabled", "")
     by_id("fetch-results").setAttribute("disabled", "")
-    run_status = {}
+    run_status = {
+        "nc_polling_interval": -1
+    }
 }
 
 function start_polling() {
