@@ -5,7 +5,9 @@ const CSV_CONFIG = {
 }
 const MAX_CSV_ROWS = 1000
 
-var run_status = {}
+var run_status = {
+    "nc_polling_interval": -1
+}
 
 function by_id(id) {
     return document.getElementById(id)
@@ -378,7 +380,7 @@ async function set_directory(new_dir, relative) {
     by_id("nc-current-dir").setAttribute("data-dirname", new_val)
     by_id("nc-current-dir").innerText = "/" + format_nc_file_path(new_val, "full", true)
     sessionStorage.setItem("nc_current_dir", new_val)
-    fetch_nc_file_list()
+    fetch_nc_file_list(true)
 }
 
 async function get_run_id() {
@@ -535,8 +537,17 @@ function update_uploaded_files_indicators() {
     })
 }
 
-async function fetch_nc_file_list() {
-    by_id("nc-file-list-blocker").classList.remove("hidden")
+async function fetch_nc_file_list(is_blocking) {
+    if (Date.now() - run_status["last_user_interaction"] > 60 * 1000) {
+        if (run_status["nc_polling_interval"] >= 0) {
+            clearInterval(run_status["nc_polling_interval"])
+            run_status["nc_polling_interval"] = -1
+        }
+    }
+
+    if (is_blocking) {
+        by_id("nc-file-list-blocker").classList.remove("hidden")
+    }
 
     let curr_dir = by_id("nc-current-dir").dataset.dirname
 
@@ -599,6 +610,7 @@ async function fetch_nc_file_list() {
         }
     })
 
+    update_passed_timers()
     update_uploaded_files_indicators()
     by_id("nc-file-list-blocker").classList.add("hidden")
 }
@@ -647,7 +659,7 @@ function main() {
         stop_simulation()
     }
     document.getElementById("nc-fetch-file-list").onclick = async function(event) {
-        fetch_nc_file_list()
+        fetch_nc_file_list(true)
     }
     document.getElementById("fetch-results").onclick = async function(event) {
         fetch_all_results(by_id('run-id').innerText)
@@ -657,6 +669,15 @@ function main() {
     }
     document.getElementById("upload-input-files").onclick = async function(event) {
         upload_input_files()
+    }
+
+    // attach listener for user input
+    document.onmousemove = async function(event) {
+        run_status["last_user_interaction"] = Date.now()
+        if (run_status["nc_polling_interval"] == -1) {
+            fetch_nc_file_list(false)
+            run_status["nc_polling_interval"] = setInterval(fetch_nc_file_list, 3 * 1000, false)
+        }
     }
 
     // events to handle when the document is ready
