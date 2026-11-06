@@ -1,10 +1,9 @@
 using JSON
 using Logging
 
-include("./resie/src/resie_logger.jl")
-using .Resie_Logger
-
 using ResieQuasi
+
+const Resie_Logger = ResieQuasi.Resie_Logger
 using ResieQuasi.EnergySystems: all_component_parameters
 
 include("util.jl")
@@ -31,7 +30,7 @@ function simulate(working_dir)
     run_ID = uuid1() # should we rather use the sim API run ID?
     try
         with_logger(logger) do
-            ResieQuasi.load_and_run(config_file, run_ID)
+            ResieQuasi.load_and_run(config_file, run_ID; logger=logger)
         end
     catch exc
         io = IOBuffer()
