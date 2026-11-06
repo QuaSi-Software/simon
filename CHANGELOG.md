@@ -95,6 +95,10 @@ The simulation API is used by the SIMON webapp internally and is only partially 
 * Update to ReSiE v1.1.0
 * Make exceptions uncaught by ReSiE appear in the error log of a run
   * Previously these only appeared in the global log, which is not visible to the user, making debugging a failed simulation much harder
+* Updates to parameters API
+  * Required changes for ReSiE v1.1.0
+  * Add documentation links for components
+  * Fix missing categories for economic and emissions parameters of components
 
 ### Version 0.4.0
 * Add endpoint for getting a list of existing output files for a run
