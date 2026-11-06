@@ -34,6 +34,7 @@ RESULTS_FILES = {
     "logfile_balanceWarn.log",
     "logfile_general.log",
     "out.csv",
+    "out_aggregated.csv",
     "output_plot.html",
     "output_sankey.html",
     "economic_results_cashflows.html",

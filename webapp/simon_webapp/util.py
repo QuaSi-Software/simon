@@ -43,6 +43,12 @@ RESULT_FILES = [
         "element": "table"
     },
     {
+        "filename": "out_aggregated.csv",
+        "tab_name": "csv-summary-tab",
+        "tab_name_full": "Aggregated CSV",
+        "element": "table"
+    },
+    {
         "filename": "economic_results_cashflows.html",
         "tab_name": "ecorescash-tab",
         "tab_name_full": "Cashflows",
