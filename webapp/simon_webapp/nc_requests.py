@@ -5,6 +5,7 @@ from flask import session, url_for
 WEBDAV_REQUEST_PROPFIND_DATA = """<?xml version="1.0" encoding="UTF-8"?>
     <d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns" xmlns:nc="http://nextcloud.org/ns">
       <d:prop>
+        <d:getlastmodified/>
         <d:getcontenttype/>
         <d:resourcetype/>
       </d:prop>

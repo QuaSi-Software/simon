@@ -8,6 +8,10 @@
     opacity: var(--bs-btn-disabled-opacity) !important;
 }
 
+.nav-link {
+    border-color: #00000017 !important;
+}
+
 .w-25 {
     width: 25%;
 }
@@ -17,11 +21,23 @@
 }
 
 .hidden {
+    display: none;
+}
+
+.hidden-keep-spacing {
     visibility: hidden;
+}
+
+.auto-width {
+    width: auto;
 }
 
 .bold {
     font-weight: bold;
+}
+
+.bigger-font {
+    font-size: 20px;
 }
 
 .row {
@@ -29,12 +45,18 @@
 }
 
 .tab-pane {
-  max-height: 800px;
-  overflow-y: scroll;
-  width: 100%;
-  overflow-x: scroll;
-  background-color: #ececec;
-  padding: 5px;
+    max-height: 800px;
+    overflow-y: scroll;
+    width: 100%;
+    overflow-x: scroll;
+    background-color: #ececec;
+    padding: 5px;
+}
+
+#nc-fetch-file-list {
+    background-color: #bebebe;
+    color: black;
+    padding: 0 5px;
 }
 
 #nc-file-list {
@@ -43,10 +65,7 @@
     min-height: 50px;
     position: relative;
     background: white;
-}
-
-#nc-file-list span {
-    margin-left: 10px;
+    padding: 10px;
 }
 
 #nc-file-list-blocker {
@@ -84,16 +103,25 @@
     background-color: #e6e6e6;
 }
 
-#upload-input-files {
-    margin-left: 75px;
+#uploaded-files {
+    list-style: square;
 }
 
-#uploaded-files {
-    list-style: none;
+.uploaded-file-indicator {
+    width: 30px;
+    display: inline-block;
+}
+
+.uploaded-file {
+    display: inline-block;
+}
+
+.uploaded-file-flash {
+    animation: flash 1s ease-in-out;
 }
 
 #run-status {
-    margin-right: 20px;
+    display: inline;
 }
 
 @keyframes flash {
@@ -101,13 +129,10 @@
     50% { background-color: #ffff99; }
 }
 
-.uploaded-file-flash {
-    animation: flash 1s ease-in-out;
-}
 
 label[for="config-file-selection"] {
     display: inline;
-    margin: 0.375rem 0.75rem;
+    margin: 0.375rem 0.75rem 0.375rem 0;
     font-size: 1rem;
     line-height: 1.5;
 }
@@ -128,7 +153,8 @@ label[for="config-file-selection"] {
 }
 
 #fetch-results {
-    width: 150px;
+    width: 200px;
+    margin-left: calc(var(--bs-gutter-x) * .5); /* from bootstrap, is overriden by .btn */
 }
 
 #error-label {
@@ -139,4 +165,15 @@ label[for="config-file-selection"] {
 #error-list {
     color: red;
     font-weight: bold;
+}
+
+#results-tabs-control {
+    padding-left: calc(var(--bs-gutter-x) * .5); /* from bootstrap, is overridden by .nav */
+}
+
+.results-open-in-new-tab {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #dfdfdf;
 }

@@ -38,7 +38,10 @@ function simulate(working_dir)
         showerror(io, exc)
         print(io, stacktrace(catch_backtrace()))
         msg = String(take!(io))
-        @error msg
+        with_logger(logger) do
+            @error msg # run-local logger
+        end
+        @error msg # global logger of sim API
     finally
         ResieQuasi.close_run(run_ID)
         with_logger(logger) do

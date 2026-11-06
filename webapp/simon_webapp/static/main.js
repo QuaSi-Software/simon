@@ -5,7 +5,9 @@ const CSV_CONFIG = {
 }
 const MAX_CSV_ROWS = 1000
 
-var run_status = {}
+var run_status = {
+    "nc_polling_interval": -1
+}
 
 function by_id(id) {
     return document.getElementById(id)
@@ -13,6 +15,26 @@ function by_id(id) {
 
 function by_cl(class_name) {
     return Array.from(document.getElementsByClassName(class_name))
+}
+
+function update_passed_timers() {
+    let now = Date.now()
+    by_cl("passed-timer").forEach(element => {
+        let ref_time = Number(element.dataset.ref_time)
+        if (Number.isFinite(ref_time) && element.dataset.ref_time !== "") {
+            let seconds = Math.floor((now - ref_time) / 1000)
+            if (seconds >= 300) {
+                let minutes = Math.floor(seconds / 60)
+                if (minutes >= 60) {
+                    element.textContent = "> 1h ago"
+                } else {
+                    element.textContent = minutes + " min ago"
+                }
+            } else {
+                element.textContent = seconds + " s ago"
+            }
+        }
+    })
 }
 
 function last(array) {
@@ -55,16 +77,6 @@ function format_nc_file_path(file_path, selector, decode) {
     return decode ? decodeURI(path) : path
 }
 
-function add_to_query_list(query_name, response, result) {
-    let item = '<div class="query-result card"><div class="card-body">'
-            + '<span>Request: ' + query_name + '</span><br/>'
-            + '<span>Code: ' + (response.status ? response.status : 'Error') + '</span><br/>'
-            + '<span>Message: ' + (result["message"] ? result["message"] : '') + '</span><br/>'
-            + '<span>Error: ' + (result["error"] ? result["error"] : '') + '</span>'
-            + '</div></div>'
-    by_id('query-list').innerHTML = item + by_id('query-list').innerHTML
-}
-
 function clear_errors() {
     by_id("error-list").classList.add("hidden")
     by_id("error-list").innerHTML = ""
@@ -86,11 +98,21 @@ function add_error(message) {
 function clear_results() {
     by_id("results-tabs-control").classList.add("hidden")
     by_id("results-tabs-container").classList.add("hidden")
-    by_id("genlog-tab").innerHTML = ""
+    by_cl("tab-pane").forEach(tab => {
+        tab.innerHTML = ""
+        tab.classList.remove("active")
+        tab.classList.remove("show")
+    })
+    by_cl("nav-item").forEach(item => {
+        item.classList.add("hidden")
+    })
 }
 
 function reset_run() {
     stop_simulation()
+    if (run_status["nc_polling_interval"]) {
+        clearInterval(run_status["nc_polling_interval"])
+    }
     clear_results()
     clear_errors()
     sessionStorage.removeItem("run_id")
@@ -102,23 +124,32 @@ function reset_run() {
     by_id("run-status").innerHTML = "-"
     by_id("reset-run").setAttribute("disabled", "")
     by_id("fetch-results").setAttribute("disabled", "")
-    run_status = {}
+    run_status = {
+        "nc_polling_interval": -1
+    }
 }
 
 function start_polling() {
     stop_polling()
-    run_status["interval_id"] = setInterval(check_status, 10 * 1000, run_status["run_id"])
+    // set callbacks with intervals that do not coincide (often), because of a weird
+    // heisenbug that seems to occur when two intervals are executed at the same time
+    run_status["check_interval_id"] = setInterval(check_status, 3.193 * 1000, run_status["run_id"])
+    run_status["log_interval_id"] = setInterval(fetch_general_log, 9.753 * 1000, run_status["run_id"])
 }
 
 function stop_polling() {
-    if (run_status["interval_id"]) {
-        clearInterval(run_status["interval_id"]);
+    if (run_status["check_interval_id"]) {
+        clearInterval(run_status["check_interval_id"]);
+    }
+    if (run_status["log_interval_id"]) {
+        clearInterval(run_status["log_interval_id"]);
     }
 }
 
 function stop_simulation() {
     stop_polling()
-    by_id("run-status").innerText = "stopped"
+    by_id("run-status").innerText = "🛑 stopped"
+    flash_highlight_element(by_id("run-status"))
     by_id("submit-simulate").removeAttribute("disabled")
     by_id("stop-simulation").setAttribute("disabled", "")
 }
@@ -127,31 +158,44 @@ async function create_results_element(type, response) {
     if (type == "img") {
         let blob = await response.blob();
         let img = document.createElement('img');
-        img.src = URL.createObjectURL(blob);
+        let url = URL.createObjectURL(blob);
+        img.src = url
         img.alt = 'Simulation Result';
         img.width = 900;
         img.height = 533;
-        return img
+        return [img, url]
+
     } else if (type == "p") {
+        let text = await response.text()
         let obj = document.createElement('p')
-        obj.innerText = await response.text()
-        return obj
+        obj.innerText = text
+        let blob = new Blob([text], {type: 'text/plain'});
+        let url = URL.createObjectURL(blob);
+        return [obj, url]
+
     } else if (type == "table") {
         let csv = await response.text()
         let results = Papa.parse(csv, CSV_CONFIG)
-        return create_csv_table(results)
+        let blob = new Blob([csv], {type: 'text/csv'})
+        let url = URL.createObjectURL(blob)
+        return [create_csv_table(results), url]
+
     } else if (type == "html") {
+        let text = await response.text()
         let iframe = document.createElement('iframe')
         iframe.className = 'w-100 border-0'
         iframe.title = 'Simulation result'
         iframe.setAttribute('sandbox', 'allow-scripts allow-forms')
         iframe.style.height = '800px'
-        iframe.srcdoc = await response.text()
-        return iframe
+        iframe.srcdoc = text
+        let blob = new Blob([text], {type: 'text/html'})
+        let url = URL.createObjectURL(blob)
+        return [iframe, url]
+
     } else {
         let obj = document.createElement('span')
         obj.innerText = "Could not render unknown file type"
-        return obj
+        return [obj, ""]
     }
 }
 
@@ -222,44 +266,75 @@ function compare_csv_values(left, right) {
     return left_text.localeCompare(right_text, undefined, {numeric: true, sensitivity: 'base'})
 }
 
-async function fetch_results(run_id) {
-    by_id("fetch-results").setAttribute("disabled", "")
-
+async function fetch_results(run_id, file_list, sync_to_nc) {
     let element = by_id("config-file-selection")
     let input_file_dir = element.options[element.selectedIndex].dataset.dirname
-
-    let response = await fetch(API_ROOT + 'results_file_list/' + run_id)
-    let file_list = await response.json()
 
     for (const file of file_list) {
         let response = await fetch(API_ROOT + 'fetch_results/' + run_id, {
             method: 'POST',
             body: JSON.stringify({
                 "filename": file.filename,
-                "destination_dir": input_file_dir
+                "destination_dir": input_file_dir,
+                "sync_to_nc": sync_to_nc
             }),
             headers: {"Content-Type": "application/json"}
         })
-        let result = response.status >= 400 ? await response.json() : {}
-        add_to_query_list('fetch_results', response, result)
 
         if (response.status < 400) {
-            let obj = await create_results_element(file.element, response)
+            let [obj, url] = await create_results_element(file.element, response)
+
+            let link_obj = document.createElement('a')
+            link_obj.href = url
+            link_obj.target = "_blank"
+            link_obj.innerText = "Open file in new tab"
+            link_obj.classList.add("results-open-in-new-tab")
+
             let results_div = by_id(file.tab_name);
             results_div.innerHTML = '';
+            results_div.appendChild(link_obj);
             results_div.appendChild(obj);
             results_div.classList.remove("hidden")
             let results_button = by_id(file.tab_name + "-control")
             results_button.parentElement.classList.remove("hidden")
         }
     }
+}
+
+async function fetch_all_results(run_id) {
+    by_id("fetch-results").setAttribute("disabled", "")
+
+    let response = await fetch(API_ROOT + 'results_file_list/' + run_id)
+    let file_list = await response.json()
+    let results = await fetch_results(run_id, file_list, true)
 
     by_id("fetch-results").removeAttribute("disabled")
     by_id("results-tabs-control").classList.remove("hidden")
     by_id("results-tabs-container").classList.remove("hidden")
     by_id("submit-simulate").removeAttribute("disabled")
     by_id("stop-simulation").setAttribute("disabled", "")
-    by_id("fetch-results").removeAttribute("disabled")
+    by_id("genlog-tab").classList.remove("hidden")
+    by_id("genlog-tab").classList.add("show")
+    by_id("genlog-tab").classList.add("active")
+
+    return results
+}
+
+async function fetch_general_log(run_id) {
+    let file_list = [{
+        "filename": "logfile_general.log",
+        "tab_name": "genlog-tab",
+        "tab_name_full": "General log",
+        "element": "p"
+    }]
+    let results = await fetch_results(run_id, file_list, false)
+
+    by_id("results-tabs-control").classList.remove("hidden")
+    by_id("results-tabs-container").classList.remove("hidden")
+    by_id("genlog-tab").classList.add("active")
+    by_id("genlog-tab").classList.add("show")
+
+    return results
 }
 
 async function check_status(run_id) {
@@ -268,16 +343,31 @@ async function check_status(run_id) {
         {method: 'GET'}
     )
     let result = await response.json()
-    add_to_query_list('run_status', response, result)
 
-    run_status["status"] = result["code"]
-    by_id('run-status').innerText = run_status["status"]
-    sessionStorage.setItem("run_status", run_status["status"])
+    let old_status = sessionStorage.getItem("run_status")
+    let new_status = result["code"]
+    let status_element = by_id('run-status')
 
-    if (run_status["status"] === "finished") {
+    if (old_status != "running" && new_status === "running") {
+        status_element.innerText = ''
+        status_element.innerHTML = '<div class="spinner-border" role="status">'
+            + '<span class="sr-only"></span></div>'
+            + '<span class="bigger-font">&nbsp;running</span>'
+        flash_highlight_element(status_element)
+    } else if (new_status === "finished") {
         stop_polling()
-        await fetch_results(run_id)
+        status_element.innerText = "📑 fetching results"
+        flash_highlight_element(status_element)
+        await fetch_all_results(run_id)
+        status_element.innerText = "🏁 finished"
+        flash_highlight_element(status_element)
+    } else if (new_status != "running") {
+        status_element.innerText = new_status
+        flash_highlight_element(status_element)
     }
+
+    run_status["status"] = new_status
+    sessionStorage.setItem("run_status", new_status)
 }
 
 async function switch_directory(item) {
@@ -295,7 +385,7 @@ async function set_directory(new_dir, relative) {
     by_id("nc-current-dir").setAttribute("data-dirname", new_val)
     by_id("nc-current-dir").innerText = "/" + format_nc_file_path(new_val, "full", true)
     sessionStorage.setItem("nc_current_dir", new_val)
-    fetch_nc_file_list()
+    fetch_nc_file_list(true)
 }
 
 async function get_run_id() {
@@ -303,10 +393,16 @@ async function get_run_id() {
         API_ROOT + "get_run_id"
     )
     let data = await response.json()
-    add_to_query_list("get_run_id", response, data)
     sessionStorage.setItem("run_id", data["run_id"])
     by_id("reset-run").removeAttribute("disabled")
     return data["run_id"]
+}
+
+function flash_highlight_element(element) {
+    element.classList.add("uploaded-file-flash")
+    setTimeout(() => {
+        element.classList.remove("uploaded-file-flash")
+    }, 1000)
 }
 
 function add_file_to_uploaded_files(file) {
@@ -321,25 +417,33 @@ function add_file_to_uploaded_files(file) {
             item.dataset.filename === normalized_file
         )
         if (existing_element) {
-            existing_element.classList.add("uploaded-file-flash")
-            setTimeout(() => {
-                existing_element.classList.remove("uploaded-file-flash")
-            }, 1000)
+            flash_highlight_element(existing_element)
+            existing_element.parentElement.childNodes[0].dataset.ref_time = Date.now()
         }
         return
     }
 
     // add newly uploaded file to file list
-    let new_element = document.createElement("li")
-    new_element.className = "uploaded-file"
-    new_element.dataset.filename = normalized_file
-    new_element.innerHTML = "/" + format_nc_file_path(normalized_file, "full", true)
-    new_element.classList.add("uploaded-file-flash")
+    let list_element = document.createElement("li")
+    list_element.classList.add("uploaded-file-flash")
 
-    by_id("uploaded-files").appendChild(new_element)
+    let indicator = document.createElement("span")
+    indicator.dataset.ref_time = Date.now()
+    indicator.classList.add("uploaded-file-indicator")
+    indicator.innerText = "⌛"
+
+    let text_element = document.createElement("span")
+    text_element.className = "uploaded-file"
+    text_element.dataset.filename = normalized_file
+    text_element.innerHTML = "/" + format_nc_file_path(normalized_file, "full", true)
+
+    list_element.appendChild(indicator)
+    list_element.appendChild(text_element)
+
+    by_id("uploaded-files").appendChild(list_element)
 
     setTimeout(() => {
-        new_element.classList.remove("uploaded-file-flash")
+        list_element.classList.remove("uploaded-file-flash")
     }, 1000)
 
     // for possible input files (JSON), add to the input file selection
@@ -373,7 +477,8 @@ async function upload_file(item) {
     if (run_status["run_id"] === undefined) {
         run_status["run_id"] = await get_run_id()
         by_id('run-id').innerText = run_status["run_id"]
-        by_id('run-status').innerText = "new"
+        by_id('run-status').innerText = "🆕 new"
+        flash_highlight_element(by_id("run-status"))
         sessionStorage.setItem("run_status", "new")
     }
 
@@ -387,11 +492,11 @@ async function upload_file(item) {
             }
         }
     )
-    add_to_query_list("upload_file_to_sim_run", response, {})
 
     if (response.status < 300) {
         add_file_to_uploaded_files(item.dataset.filename)
         add_uploaded_file_to_session_storage(item.dataset.filename)
+        update_uploaded_files_indicators()
     } else {
         let result = await response.json()
         set_errors("File upload failed :" + result["error"])
@@ -408,8 +513,46 @@ async function upload_input_files() {
     }
 }
 
-async function fetch_nc_file_list() {
-    by_id("nc-file-list-blocker").classList.remove("hidden")
+function update_uploaded_files_indicators() {
+    by_cl("uploaded-file").forEach(item => {
+        let indicator = item.parentElement.children[0]
+        let symbol = "⌛"
+        let nc_file = null
+        by_cl("nc-file-list-file").forEach(nc_item => {
+            if (nc_item.dataset.filename == item.dataset.filename) {
+                nc_file = nc_item
+            }
+        })
+        if (nc_file != null) {
+            let timer = null
+            for (const child of nc_file.children) {
+                if (child.classList.contains("passed-timer")) {
+                    timer = child
+                }
+            }
+            if (timer != null) {
+                if (timer.dataset.ref_time >= indicator.dataset.ref_time) {
+                    symbol = "🔄️"
+                } else {
+                    symbol = "✅"
+                }
+            }
+        }
+        indicator.innerText = symbol
+    })
+}
+
+async function fetch_nc_file_list(is_blocking) {
+    if (Date.now() - run_status["last_user_interaction"] > 60 * 1000) {
+        if (run_status["nc_polling_interval"] >= 0) {
+            clearInterval(run_status["nc_polling_interval"])
+            run_status["nc_polling_interval"] = -1
+        }
+    }
+
+    if (is_blocking) {
+        by_id("nc-file-list-blocker").classList.remove("hidden")
+    }
 
     let curr_dir = by_id("nc-current-dir").dataset.dirname
 
@@ -424,7 +567,9 @@ async function fetch_nc_file_list() {
         }
     )
     let files = await response.json()
-    add_to_query_list("get_files", response, files)
+
+    by_id('nc-last-fetched').dataset.ref_time = Date.now()
+    update_passed_timers()
 
     let items = []
     files.sort((a, b) => {
@@ -433,6 +578,7 @@ async function fetch_nc_file_list() {
     }).forEach(item => {
         item.name = item.name.startsWith("/") ? except_first(item.name) : item.name
         item.name = last(item.name) == "/" ? except_last(item.name) : item.name
+        item.modified = item.modified ? item.modified * 1000 : "" // timestamp in ms
         if (item.name != "" && item.name != curr_dir) {
             let prefix = item.is_dir ? "|\>&nbsp;" : "|&nbsp;&nbsp;"
             items.push(
@@ -440,8 +586,10 @@ async function fetch_nc_file_list() {
                 + "class='" + (item.is_dir ? "nc-file-list-dir" : "nc-file-list-file") + "' "
                 + "data-" + (item.is_dir ? "dirname" : "filename") + "='"
                 + format_nc_file_path(item.name, "full", false) + "' "
-                + ">"
-                + prefix + format_nc_file_path(item.name, "filename", true)
+                + ">" + prefix
+                + "<span class='passed-timer' data-ref_time='" + item.modified
+                + "'></span>&nbsp;&nbsp;|&nbsp;&nbsp;"
+                + format_nc_file_path(item.name, "filename", true)
                 + "</li>"
             )
         }
@@ -467,6 +615,8 @@ async function fetch_nc_file_list() {
         }
     })
 
+    update_passed_timers()
+    update_uploaded_files_indicators()
     by_id("nc-file-list-blocker").classList.add("hidden")
 }
 
@@ -486,7 +636,6 @@ async function start_simulation_from_form(form_element) {
         body: form_data
     })
     result = await response.json()
-    add_to_query_list("start_simulation_from_form", response, result)
 
     if (response.status >= 400) {
         set_errors("Error: " + result["error"])
@@ -497,12 +646,15 @@ async function start_simulation_from_form(form_element) {
     start_polling()
     run_status["status"] = "waiting"
     sessionStorage.setItem("run_status", "waiting")
-    by_id('run-status').innerText = "waiting"
+    by_id('run-status').innerText = "⌛ waiting"
+    flash_highlight_element(by_id("run-status"))
     by_id("submit-simulate").setAttribute("disabled", "")
     by_id("stop-simulation").removeAttribute("disabled")
 }
 
 function main() {
+    setInterval(update_passed_timers, 1000)
+
     // attaching listeners to elements that exist when the JS is being executed
     document.getElementById('parameters-form').onsubmit = async function(event) {
         event.preventDefault()
@@ -511,14 +663,26 @@ function main() {
     document.getElementById("stop-simulation").onclick = async function(event) {
         stop_simulation()
     }
+    document.getElementById("nc-fetch-file-list").onclick = async function(event) {
+        fetch_nc_file_list(true)
+    }
     document.getElementById("fetch-results").onclick = async function(event) {
-        fetch_results(by_id('run-id').innerText)
+        fetch_all_results(by_id('run-id').innerText)
     }
     document.getElementById("reset-run").onclick = async function(event) {
         reset_run()
     }
     document.getElementById("upload-input-files").onclick = async function(event) {
         upload_input_files()
+    }
+
+    // attach listener for user input
+    document.onmousemove = async function(event) {
+        run_status["last_user_interaction"] = Date.now()
+        if (run_status["nc_polling_interval"] == -1) {
+            fetch_nc_file_list(false)
+            run_status["nc_polling_interval"] = setInterval(fetch_nc_file_list, 3 * 1000, false)
+        }
     }
 
     // events to handle when the document is ready
@@ -540,6 +704,7 @@ function main() {
             if (session_run_status !== null && session_run_status !== undefined) {
                 run_status["status"] = session_run_status
                 by_id('run-status').innerText = session_run_status
+                start_polling()
             }
 
             // load uploaded file list from session storage
@@ -549,6 +714,7 @@ function main() {
                 file_list.forEach(file => {
                     add_file_to_uploaded_files(file)
                 })
+                update_uploaded_files_indicators()
             }
 
             // fetch content for the user's NC root dir, but only if the user is logged in.

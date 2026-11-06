@@ -297,6 +297,8 @@ def fetch_results(run_id):
         - filename -> str: The name of the file to fetch
         - destination_dir -> str: The directory path on NC to where the results should
             be uploaded. This should be a NC-encoded path.
+        - sync_to_nc -> bool: If the result file should be synced to NextCloud. Defaults to
+            True, if no value is given.
 
     Response (ByteStream): The results file
     """
@@ -304,6 +306,8 @@ def fetch_results(run_id):
         return jsonify({"error": "No file name specified"}), 400
     if "destination_dir" not in request.json:
         return jsonify({"error": "No destination specified"}), 400
+
+    sync_to_nc = request.json.get("sync_to_nc", True)
 
     # fetch file from sim API
     sim_response = requests.post(
@@ -317,15 +321,16 @@ def fetch_results(run_id):
         return jsonify({"error": msg}), 500
 
     # upload to NC
-    user = quote(session["user_id"])
-    destination = request.json["destination_dir"] + "/" + request.json["filename"]
-    url = app.config["NEXTCLOUD_API_BASE_URL"] + "remote.php/dav/files/" + user \
-        + "/" + encode_nc_path(destination)
-    nc_response = ensure_request(url, app, method="PUT", data=sim_response.content)
+    if sync_to_nc:
+        user = quote(session["user_id"])
+        destination = request.json["destination_dir"] + "/" + request.json["filename"]
+        url = app.config["NEXTCLOUD_API_BASE_URL"] + "remote.php/dav/files/" + user \
+            + "/" + encode_nc_path(destination)
+        nc_response = ensure_request(url, app, method="PUT", data=sim_response.content)
 
-    if nc_response is None or not nc_response.ok:
-        msg = f"Could not upload result file {request.json["filename"]} to NextCloud"
-        return jsonify({"error": msg}), 500
+        if nc_response is None or not nc_response.ok:
+            msg = f"Could not upload result file {request.json["filename"]} to NextCloud"
+            return jsonify({"error": msg}), 500
 
     # return results so the frontend can display them too
     return sim_response.content, 200

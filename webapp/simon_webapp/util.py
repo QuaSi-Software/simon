@@ -1,6 +1,7 @@
 """Various utility functions for the webapp."""
 
 from __future__ import annotations
+from datetime import datetime, timezone
 from urllib.parse import quote, unquote
 import xml.etree.ElementTree as ET
 
@@ -145,6 +146,22 @@ RESULT_FILES = [
     }
 ]
 
+def try_parse_date(date_str: str) -> datetime | None:
+    """Parses a datetime string in the format of a NC WebDAV response.
+
+    Args:
+    -`date_str:str`: The datetime string to parse
+    Returns:
+    -`datetime|None`: The parsed datetime object or None if the parsing failed
+    """
+    # date looks like: Tue, 13 Oct 2015 17:07:45 GMT
+    try:
+        return datetime.strptime(
+            date_str, "%a, %d %b %Y %H:%M:%S GMT"
+        ).replace(tzinfo=timezone.utc)
+    except (TypeError, ValueError):
+        return None
+
 def name_from_href(href: str, username: str) -> str:
     """Extracts the file/directory name from the given response href.
 
@@ -188,6 +205,7 @@ def parse_webdav_files_response(content: str, username: str) -> tuple[bool,list]
         href = response_tag.findtext("d:href", "", namespaces)
         content_type = ""
         resource_type = ""
+        modified = ""
         is_dir = False
 
         for propstat in response_tag.findall("d:propstat", namespaces):
@@ -200,16 +218,19 @@ def parse_webdav_files_response(content: str, username: str) -> tuple[bool,list]
                 continue
             content_type = prop.findtext("d:getcontenttype", "", namespaces)
             resource_type = prop.find("d:resourcetype", namespaces)
+            modified = prop.findtext("d:getlastmodified", "", namespaces)
             if (
                 resource_type is not None and resource_type != ""
                 and len(resource_type.findall("d:collection", namespaces)) > 0
             ):
                 is_dir = True
 
+        modified = try_parse_date(modified)
         files.append({
             "name": name_from_href(href, username),
             "is_dir": is_dir,
-            "content_type": content_type
+            "content_type": content_type,
+            "modified": modified.timestamp() if modified is not None else None
         })
 
     return True, files

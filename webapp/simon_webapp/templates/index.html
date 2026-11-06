@@ -22,9 +22,9 @@
       <div class="row">
       {% if session['nextcloud_authorized'] %}
         <span id="nc-logged-in-info">Logged in with NextCloud as {{session['user_id']}}</span>
-        <a href="{{ url_for('nextcloud_logout') }}">Log out of NextCloud</a>
+        <a class="auto-width" href="{{ url_for('nextcloud_logout') }}">Log out of NextCloud</a>
       {% else %}
-        <a href="{{ url_for('nextcloud_login') }}">Login with NextCloud</a>
+        <a class="auto-width" href="{{ url_for('nextcloud_login') }}">Login with NextCloud</a>
       {% endif %}
       </div>
 
@@ -35,9 +35,12 @@
           <div id="nc-file-list">
             <div id="nc-file-list-blocker" class="hidden"></div>
 
+            <button id="nc-fetch-file-list" class="btn btn-secondary">Update</button>
+            <span>Last updated: </span>
+            <span id="nc-last-fetched" class="passed-timer"></span>
+            <br/>
             <span>Current dir: </span>
             <span id="nc-current-dir" data-dirname="">/</span>
-            <button id="upload-input-files" type="button" class="btn btn-primary btn-sm">Upload input files</button>
 
             <div id="nc-file-list-items"></div>
           </div>
@@ -49,16 +52,19 @@
           <p class="element-group">
             <button id="reset-run" type="button" class="btn btn-warning" disabled>Reset run</button>
             <span class="bold">Run ID:</span> <span id="run-id">-</span>
-            <span class="bold">Run status:</span> <span id="run-status">-</span>
             <div>
               <span class="bold">Uploaded files:</span>
+              <br/>
+              <button id="upload-input-files" type="button" class="btn btn-primary btn-sm">Upload all input files</button>
               <ul id="uploaded-files"></ul>
             </div>
 
             <form id="parameters-form" action="" method="POST" enctype="multipart/form-data">
               <div class="form-group">
                 <label for="config-file-selection" class="bold">Input file</label>
-                <select id="config-file-selection" name="config_file_selection" class="form-control w-25"></select>
+                <select id="config-file-selection" name="config_file_selection" class="form-control form-select w-75"></select>
+                <br/><br/>
+                <span class="bold bigger-font">Run status:</span> <div id="run-status" class="bigger-font">-</div>
                 <br/>
                 <input id="submit-simulate" class="btn btn-primary" type="submit" value="Simulate">
                 <button id="stop-simulation" class="btn btn-warning" disabled>Stop</button>
@@ -70,7 +76,7 @@
 
       <div class="row">
         <h4>Simulation results</h4>
-        <button id="fetch-results" type="button" class="btn btn-secondary" disabled>Fetch results</button>
+        <button id="fetch-results" type="button" class="btn btn-secondary" disabled>Load existing results</button>
         <p class="element-group">
           <span id="error-label" class="hidden">Errors</span>
           <ul id="error-list" class="hidden"></ul>
@@ -87,7 +93,7 @@
 
           <div class="tab-content hidden" id="results-tabs-container">
             {% for res in result_files %}
-            <div class="tab-pane fade hidden show {% if loop.first %}active{% endif %}"
+            <div class="tab-pane fade hidden {% if loop.first %}active{% endif %}"
               id="{{res.tab_name}}" role="tabpanel" aria-labelledby="{{res.tab_name}}-control">
             </div>
             {% endfor %}
@@ -95,16 +101,8 @@
         </p>
       </div>
 
-      <div class="row">
-        <h4>Debug output</h4>
-        <p class="element-group">
-          <span class="bold">Query list</span>
-          <div id="query-list"></div>
-        </p>
-      </div>
-
       <footer class="my-5 pt-5 text-muted text-center text-small">
-        <p class="mb-1">&copy; 2025 Etienne Ott</p>
+        <p class="mb-1">&copy; 2025-2026 <a href="https://github.com/QuaSi-Software/simon/blob/main/LICENSE.md">See license file</a></p>
         <ul class="list-inline">
           <li class="list-inline-item"><a href="/imprint">Imprint</a></li>
         </ul>
